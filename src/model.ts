@@ -14,7 +14,7 @@ export const COLORS: Record<string, string> = {
   navy:'#25395b', blue:'#7c9fca', cream:'#ede9d9', brown:'#79543b',
   black:'#22252b', gray:'#8b8e98', olive:'#687354', burgundy:'#863e54',
   white:'#ffffff', plum:'#76527f', petrol:'#347779', red:'#ca5149', stone:'#bbb5a8', gold:'#c2a054', copper:'#b97e5a',
-  yellow:'#d7a126', mustard:'#b2934c', green:'#315b45', teal:'#269fa6', coral:'#dd8c7b', pink:'#ce94b2'
+  yellow:'#d7a126', mustard:'#b2934c', green:'#315b45', teal:'#269fa6', coral:'#dd8c7b', pink:'#ce94b2', purple:'#7852a5', orange:'#ce7840'
 };
 export interface Outfit {
   schema:number; type:'outfit'; id:string; title:string; season:string;

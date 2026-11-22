@@ -1,6 +1,6 @@
 {
   "name": "style-zone",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "description": "A portable wardrobe and outfit rating workspace for Obsidian and the browser.",

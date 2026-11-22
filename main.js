@@ -6356,7 +6356,9 @@ var COLORS = {
   green: "#315b45",
   teal: "#269fa6",
   coral: "#dd8c7b",
-  pink: "#ce94b2"
+  pink: "#ce94b2",
+  purple: "#7852a5",
+  orange: "#ce7840"
 };
 function safePath(path) {
   if (!path || path.includes("\\") || path.startsWith("/") || path.includes(":") || path.split("/").some((p) => p === ".." || p === "." || !p)) throw Error("Use a relative path inside the wardrobe folder.");
