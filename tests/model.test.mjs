@@ -12,11 +12,11 @@ test('Saving known fields preserves handwritten notes and unknown frontmatter',(
  const initial=serializeRecord({...starter.pieces[0],custom_tag:'keep'});const previous=initial+'\nHandwritten sizing notes.\n';const piece=parseRecord(previous);piece.price=60;const saved=serializeRecord(piece,previous);assert(saved.includes('custom_tag: keep'));assert(saved.endsWith('Handwritten sizing notes.\n'));assert.equal(parseRecord(saved).price,60);assert(!saved.includes('originalText:'));
 });
 test('Unknown prices, missing pieces and foreign currencies do not become zero-dollar outfits',()=>{
- const o={...outfit,piece_ids:['one','missing']};const p={...starter.pieces[0],id:'one',price:20,currency:'EUR'};assert.deepEqual(cost(o,[p]).unknown,2);assert.equal(cost(outfit,starter.pieces).complete,true);assert.equal(cost(outfit,starter.pieces).known,215.97);
- const owned=starter.pieces.map(p=>({...p,ownership:'owned'}));assert.equal(cost(outfit,owned).known,0);assert.equal(cost(outfit,owned).owned,3);
+ const o={...outfit,piece_ids:['one','missing']};const p={...starter.pieces[0],id:'one',price:20,currency:'EUR'};assert.deepEqual(cost(o,[p]).unknown,2);assert.equal(cost(outfit,starter.pieces).complete,true);assert.equal(cost(outfit,starter.pieces).known,346);
+ const owned=starter.pieces.map(p=>({...p,ownership:'owned'}));assert.equal(cost(outfit,owned).known,0);assert.equal(cost(outfit,owned).owned,4);
 });
 test('Budget filtering is strict about unpriced pieces unless explicitly included',()=>{
- const catalog={...starter,ratings:[],warnings:[]};const strict=filterOutfits(catalog,{...DEFAULT_FILTERS,maxPrice:'250'});assert.equal(strict.length,1);assert.equal(strict[0].id,outfit.id);const permissive=filterOutfits(catalog,{...DEFAULT_FILTERS,maxPrice:'250',includeUnknown:true});assert(permissive.length>1);assert(filterOutfits(catalog,{...DEFAULT_FILTERS,color:'plum'}).every(o=>o.colors.includes('plum')));assert.equal(filterOutfits(catalog,{...DEFAULT_FILTERS,ownedOnly:true}).length,0);
+ const catalog={...starter,outfits:[...starter.outfits,{...outfit,id:'unpriced-look',piece_ids:['missing']}],ratings:[],warnings:[]};const strict=filterOutfits(catalog,{...DEFAULT_FILTERS,maxPrice:'400'});assert.equal(strict.length,1);assert.equal(strict[0].id,outfit.id);const permissive=filterOutfits(catalog,{...DEFAULT_FILTERS,maxPrice:'400',includeUnknown:true});assert(permissive.length>1);assert(filterOutfits(catalog,{...DEFAULT_FILTERS,color:'burgundy'}).every(o=>o.colors.includes('burgundy')));assert.equal(filterOutfits(catalog,{...DEFAULT_FILTERS,ownedOnly:true}).length,0);
 });
 test('Rating history syncs independently, while only latest rating per outfit trains preferences',()=>{
  const first={...newRating(outfit,5),id:'aaaaaaaaaa',created_at:'2026-11-21T12:00:00Z'},second={...newRating(outfit,1),id:'bbbbbbbbbb',created_at:'2026-11-21T13:00:00Z'};

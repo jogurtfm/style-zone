@@ -1,9 +1,9 @@
 {
   "id": "style-zone",
   "name": "Style Zone",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "1.8.7",
-  "description": "Explore outfits, filter palettes and shopping costs, and learn your style through quick ratings. Backed by readable vault files.",
+  "description": "Build shoppable outfit gear sets, swap researched products by slot, filter palettes and budgets, and learn your taste through quick ratings. Backed by readable vault notes.",
   "author": "jogurtfm",
   "authorUrl": "https://github.com/jogurtfm",
   "isDesktopOnly": false

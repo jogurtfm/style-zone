@@ -6,15 +6,23 @@ All records use schema version `1`. Outfit and piece notes have YAML frontmatter
 
 `Outfits/<stable-id>.md` contains `schema`, `type: outfit`, `id`, `title`, `season`, `styles` (array), `colors` (array), `occasions` (array), `piece_ids` (array), `image` (relative to the wardrobe folder), `image_credit`, and `source_urls` (array). Body text explains the combination and any practical substitutions. Images are inspiration, not proof that shopping equivalents match the original garments.
 
+Shoppable equipment sets also contain `equipment`, an object mapping slot IDs to exact piece IDs. Every equipped ID must be in `piece_ids`. The supported slots are `shoes`, `socks`, `lower`, `base`, `shirt`, `outer`, `neck`, `wrist`, `accessories`, `glasses`, and `hat`. `base` is layer 0, `shirt` is layer 1, and `outer` is layer 2. Slots can be empty. The visual board uses product photos from the equipped records, never an unrelated runway photograph. Legacy inspiration notes can be preserved in Research.
+
 ## Piece records
 
 `Pieces/<stable-id>.md` contains `schema`, `type: piece`, `id`, `title`, `category`, `colors` (array), `ownership` (`owned`, `wishlist` or `reference`), `price` (number or null), `currency` (USD for UI editing), `store`, `product_url`, `price_checked_at` (ISO date or empty), `price_note`, and `image`. Body text can record fit and fabric notes. Never infer ownership from an inspiration image.
+
+Product option records add `slot`, `compatible_slots` (array), `product_id`, `sku` (an observed available variant SKU, not a user size selection), `image_source_url`, `image_credit`, `product_checked_at`, `availability` (`available`, `unavailable` or `unverified`) and `available_sizes`. A verified option requires an exact product URL, photo, price, product identifier and dated available status. Category pages and approximate equivalents cannot become shoppable visual items. Editing the identity, retailer link or photo clears verification until researched again.
+
+To research a set, read all piece notes for each compatible slot before adding products. Collect options across slots rather than duplicating a product per outfit. Save price and available variant evidence from official retailers in Research; retain product photo provenance. Exclude unavailable leads from the selectable slot options. Stock is observed at the recorded time, not monitored live.
 
 Known shopping cost sums only pieces that are not owned. Missing records, unknown prices and non-USD prices make the total incomplete. Partial totals display the number of unpriced pieces. No currency conversion or live price refresh is implied.
 
 ## Rating events
 
 `Ratings/<UUID>.md` contains YAML fields `schema`, `type: rating`, `id`, `outfit_id`, `rating` (integer 1–5), `created_at` (ISO timestamp), `note`, `reasons` (array) and `snapshot`. The snapshot stores the outfit title, styles, colors and occasions at rating time. A readable body repeats the score and feedback. Frontmatter is the structured source of truth.
+
+New snapshots also retain `piece_ids` and `equipment`, allowing the stylist to inspect exact product and slot preferences even after a set changes. Older events without these optional fields remain valid.
 
 Create a new file for every vote, including a changed opinion. Never edit previous events to simulate a new rating. Select the event with the greatest `created_at`, breaking timestamp ties lexically by `id`, for the current opinion. Different devices can create independent event files. Synced clock skew can affect timestamp ordering; conflict copies remain available for review.
 

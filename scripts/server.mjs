@@ -32,7 +32,7 @@ async function saveRecord(record,type){
 const server=http.createServer(async(req,res)=>{
   if(!allowedHosts.has(req.headers.host??'')){json(res,403,{error:'Local host required.'});return;}
   res.setHeader('X-Content-Type-Options','nosniff');
-  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://cdn.shopify.com; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
   const url=new URL(req.url,'http://127.0.0.1');
   try{
     if(req.method==='POST'){

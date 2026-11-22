@@ -35,24 +35,24 @@ var PAIR = Symbol.for("yaml.pair");
 var SCALAR = Symbol.for("yaml.scalar");
 var SEQ = Symbol.for("yaml.seq");
 var NODE_TYPE = Symbol.for("yaml.node.type");
-var isAlias = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === ALIAS;
-var isDocument = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === DOC;
-var isMap = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === MAP;
-var isPair = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === PAIR;
-var isScalar = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SCALAR;
-var isSeq = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SEQ;
-function isCollection(node) {
-  if (node && typeof node === "object")
-    switch (node[NODE_TYPE]) {
+var isAlias = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === ALIAS;
+var isDocument = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === DOC;
+var isMap = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === MAP;
+var isPair = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === PAIR;
+var isScalar = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === SCALAR;
+var isSeq = (node2) => !!node2 && typeof node2 === "object" && node2[NODE_TYPE] === SEQ;
+function isCollection(node2) {
+  if (node2 && typeof node2 === "object")
+    switch (node2[NODE_TYPE]) {
       case MAP:
       case SEQ:
         return true;
     }
   return false;
 }
-function isNode(node) {
-  if (node && typeof node === "object")
-    switch (node[NODE_TYPE]) {
+function isNode(node2) {
+  if (node2 && typeof node2 === "object")
+    switch (node2[NODE_TYPE]) {
       case ALIAS:
       case MAP:
       case SCALAR:
@@ -61,104 +61,104 @@ function isNode(node) {
     }
   return false;
 }
-var hasAnchor = (node) => (isScalar(node) || isCollection(node)) && !!node.anchor;
+var hasAnchor = (node2) => (isScalar(node2) || isCollection(node2)) && !!node2.anchor;
 
 // node_modules/yaml/browser/dist/visit.js
 var BREAK = Symbol("break visit");
 var SKIP = Symbol("skip children");
 var REMOVE = Symbol("remove node");
-function visit(node, visitor) {
+function visit(node2, visitor) {
   const visitor_ = initVisitor(visitor);
-  if (isDocument(node)) {
-    const cd = visit_(null, node.contents, visitor_, Object.freeze([node]));
+  if (isDocument(node2)) {
+    const cd = visit_(null, node2.contents, visitor_, Object.freeze([node2]));
     if (cd === REMOVE)
-      node.contents = null;
+      node2.contents = null;
   } else
-    visit_(null, node, visitor_, Object.freeze([]));
+    visit_(null, node2, visitor_, Object.freeze([]));
 }
 visit.BREAK = BREAK;
 visit.SKIP = SKIP;
 visit.REMOVE = REMOVE;
-function visit_(key, node, visitor, path) {
-  const ctrl = callVisitor(key, node, visitor, path);
+function visit_(key, node2, visitor, path) {
+  const ctrl = callVisitor(key, node2, visitor, path);
   if (isNode(ctrl) || isPair(ctrl)) {
     replaceNode(key, path, ctrl);
     return visit_(key, ctrl, visitor, path);
   }
   if (typeof ctrl !== "symbol") {
-    if (isCollection(node)) {
-      path = Object.freeze(path.concat(node));
-      for (let i = 0; i < node.items.length; ++i) {
-        const ci = visit_(i, node.items[i], visitor, path);
+    if (isCollection(node2)) {
+      path = Object.freeze(path.concat(node2));
+      for (let i = 0; i < node2.items.length; ++i) {
+        const ci = visit_(i, node2.items[i], visitor, path);
         if (typeof ci === "number")
           i = ci - 1;
         else if (ci === BREAK)
           return BREAK;
         else if (ci === REMOVE) {
-          node.items.splice(i, 1);
+          node2.items.splice(i, 1);
           i -= 1;
         }
       }
-    } else if (isPair(node)) {
-      path = Object.freeze(path.concat(node));
-      const ck = visit_("key", node.key, visitor, path);
+    } else if (isPair(node2)) {
+      path = Object.freeze(path.concat(node2));
+      const ck = visit_("key", node2.key, visitor, path);
       if (ck === BREAK)
         return BREAK;
       else if (ck === REMOVE)
-        node.key = null;
-      const cv = visit_("value", node.value, visitor, path);
+        node2.key = null;
+      const cv = visit_("value", node2.value, visitor, path);
       if (cv === BREAK)
         return BREAK;
       else if (cv === REMOVE)
-        node.value = null;
+        node2.value = null;
     }
   }
   return ctrl;
 }
-async function visitAsync(node, visitor) {
+async function visitAsync(node2, visitor) {
   const visitor_ = initVisitor(visitor);
-  if (isDocument(node)) {
-    const cd = await visitAsync_(null, node.contents, visitor_, Object.freeze([node]));
+  if (isDocument(node2)) {
+    const cd = await visitAsync_(null, node2.contents, visitor_, Object.freeze([node2]));
     if (cd === REMOVE)
-      node.contents = null;
+      node2.contents = null;
   } else
-    await visitAsync_(null, node, visitor_, Object.freeze([]));
+    await visitAsync_(null, node2, visitor_, Object.freeze([]));
 }
 visitAsync.BREAK = BREAK;
 visitAsync.SKIP = SKIP;
 visitAsync.REMOVE = REMOVE;
-async function visitAsync_(key, node, visitor, path) {
-  const ctrl = await callVisitor(key, node, visitor, path);
+async function visitAsync_(key, node2, visitor, path) {
+  const ctrl = await callVisitor(key, node2, visitor, path);
   if (isNode(ctrl) || isPair(ctrl)) {
     replaceNode(key, path, ctrl);
     return visitAsync_(key, ctrl, visitor, path);
   }
   if (typeof ctrl !== "symbol") {
-    if (isCollection(node)) {
-      path = Object.freeze(path.concat(node));
-      for (let i = 0; i < node.items.length; ++i) {
-        const ci = await visitAsync_(i, node.items[i], visitor, path);
+    if (isCollection(node2)) {
+      path = Object.freeze(path.concat(node2));
+      for (let i = 0; i < node2.items.length; ++i) {
+        const ci = await visitAsync_(i, node2.items[i], visitor, path);
         if (typeof ci === "number")
           i = ci - 1;
         else if (ci === BREAK)
           return BREAK;
         else if (ci === REMOVE) {
-          node.items.splice(i, 1);
+          node2.items.splice(i, 1);
           i -= 1;
         }
       }
-    } else if (isPair(node)) {
-      path = Object.freeze(path.concat(node));
-      const ck = await visitAsync_("key", node.key, visitor, path);
+    } else if (isPair(node2)) {
+      path = Object.freeze(path.concat(node2));
+      const ck = await visitAsync_("key", node2.key, visitor, path);
       if (ck === BREAK)
         return BREAK;
       else if (ck === REMOVE)
-        node.key = null;
-      const cv = await visitAsync_("value", node.value, visitor, path);
+        node2.key = null;
+      const cv = await visitAsync_("value", node2.value, visitor, path);
       if (cv === BREAK)
         return BREAK;
       else if (cv === REMOVE)
-        node.value = null;
+        node2.value = null;
     }
   }
   return ctrl;
@@ -181,32 +181,32 @@ function initVisitor(visitor) {
   }
   return visitor;
 }
-function callVisitor(key, node, visitor, path) {
+function callVisitor(key, node2, visitor, path) {
   if (typeof visitor === "function")
-    return visitor(key, node, path);
-  if (isMap(node))
-    return visitor.Map?.(key, node, path);
-  if (isSeq(node))
-    return visitor.Seq?.(key, node, path);
-  if (isPair(node))
-    return visitor.Pair?.(key, node, path);
-  if (isScalar(node))
-    return visitor.Scalar?.(key, node, path);
-  if (isAlias(node))
-    return visitor.Alias?.(key, node, path);
+    return visitor(key, node2, path);
+  if (isMap(node2))
+    return visitor.Map?.(key, node2, path);
+  if (isSeq(node2))
+    return visitor.Seq?.(key, node2, path);
+  if (isPair(node2))
+    return visitor.Pair?.(key, node2, path);
+  if (isScalar(node2))
+    return visitor.Scalar?.(key, node2, path);
+  if (isAlias(node2))
+    return visitor.Alias?.(key, node2, path);
   return void 0;
 }
-function replaceNode(key, path, node) {
+function replaceNode(key, path, node2) {
   const parent = path[path.length - 1];
   if (isCollection(parent)) {
-    parent.items[key] = node;
+    parent.items[key] = node2;
   } else if (isPair(parent)) {
     if (key === "key")
-      parent.key = node;
+      parent.key = node2;
     else
-      parent.value = node;
+      parent.value = node2;
   } else if (isDocument(parent)) {
-    parent.contents = node;
+    parent.contents = node2;
   } else {
     const pt = isAlias(parent) ? "alias" : "scalar";
     throw new Error(`Cannot replace node with ${pt} parent`);
@@ -357,9 +357,9 @@ var Directives = class _Directives {
     let tagNames;
     if (doc && tagEntries.length > 0 && isNode(doc.contents)) {
       const tags = {};
-      visit(doc.contents, (_key, node) => {
-        if (isNode(node) && node.tag)
-          tags[node.tag] = true;
+      visit(doc.contents, (_key, node2) => {
+        if (isNode(node2) && node2.tag)
+          tags[node2.tag] = true;
       });
       tagNames = Object.keys(tags);
     } else
@@ -388,9 +388,9 @@ function anchorIsValid(anchor) {
 function anchorNames(root) {
   const anchors = /* @__PURE__ */ new Set();
   visit(root, {
-    Value(_key, node) {
-      if (node.anchor)
-        anchors.add(node.anchor);
+    Value(_key, node2) {
+      if (node2.anchor)
+        anchors.add(node2.anchor);
     }
   });
   return anchors;
@@ -558,20 +558,20 @@ var Alias = class extends NodeBase {
     } else {
       nodes = [];
       visit(doc, {
-        Node: (_key, node) => {
-          if (isAlias(node) || hasAnchor(node))
-            nodes.push(node);
+        Node: (_key, node2) => {
+          if (isAlias(node2) || hasAnchor(node2))
+            nodes.push(node2);
         }
       });
       if (ctx)
         ctx.aliasResolveCache = nodes;
     }
     let found = void 0;
-    for (const node of nodes) {
-      if (node === this)
+    for (const node2 of nodes) {
+      if (node2 === this)
         break;
-      if (node.anchor === this.source)
-        found = node;
+      if (node2.anchor === this.source)
+        found = node2;
     }
     if (found && ctx) {
       const { anchors, doc: doc2, maxAliasCount } = ctx;
@@ -620,22 +620,22 @@ var Alias = class extends NodeBase {
     return src;
   }
 };
-function getAliasCount(doc, node, anchors) {
-  if (isAlias(node)) {
-    const source = node.resolve(doc);
+function getAliasCount(doc, node2, anchors) {
+  if (isAlias(node2)) {
+    const source = node2.resolve(doc);
     const anchor = anchors && source && anchors.get(source);
     return anchor ? anchor.count * anchor.aliasCount : 0;
-  } else if (isCollection(node)) {
+  } else if (isCollection(node2)) {
     let count = 0;
-    for (const item of node.items) {
+    for (const item of node2.items) {
       const c = getAliasCount(doc, item, anchors);
       if (c > count)
         count = c;
     }
     return count;
-  } else if (isPair(node)) {
-    const kc = getAliasCount(doc, node.key, anchors);
-    const vc = getAliasCount(doc, node.value, anchors);
+  } else if (isPair(node2)) {
+    const kc = getAliasCount(doc, node2.key, anchors);
+    const vc = getAliasCount(doc, node2.value, anchors);
     return Math.max(kc, vc);
   }
   return 1;
@@ -706,10 +706,10 @@ function createNode(value, tagName, ctx) {
       value = value.toJSON();
     }
     if (!value || typeof value !== "object") {
-      const node2 = new Scalar(value);
+      const node3 = new Scalar(value);
       if (ref)
-        ref.node = node2;
-      return node2;
+        ref.node = node3;
+      return node3;
     }
     tagObj = value instanceof Map ? schema4[MAP] : Symbol.iterator in Object(value) ? schema4[SEQ] : schema4[MAP];
   }
@@ -717,14 +717,14 @@ function createNode(value, tagName, ctx) {
     onTagObj(tagObj);
     delete ctx.onTagObj;
   }
-  const node = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar(value);
+  const node2 = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar(value);
   if (tagName)
-    node.tag = tagName;
+    node2.tag = tagName;
   else if (!tagObj.default)
-    node.tag = tagObj.tag;
+    node2.tag = tagObj.tag;
   if (ref)
-    ref.node = node;
-  return node;
+    ref.node = node2;
+  return node2;
 }
 
 // node_modules/yaml/browser/dist/nodes/Collection.js
@@ -785,10 +785,10 @@ var Collection = class extends NodeBase {
       this.add(value);
     else {
       const [key, ...rest] = path;
-      const node = this.get(key, true);
-      if (isCollection(node))
-        node.addIn(rest, value);
-      else if (node === void 0 && this.schema)
+      const node2 = this.get(key, true);
+      if (isCollection(node2))
+        node2.addIn(rest, value);
+      else if (node2 === void 0 && this.schema)
         this.set(key, collectionFromPath(this.schema, rest, value));
       else
         throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
@@ -802,9 +802,9 @@ var Collection = class extends NodeBase {
     const [key, ...rest] = path;
     if (rest.length === 0)
       return this.delete(key);
-    const node = this.get(key, true);
-    if (isCollection(node))
-      return node.deleteIn(rest);
+    const node2 = this.get(key, true);
+    if (isCollection(node2))
+      return node2.deleteIn(rest);
     else
       throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
   }
@@ -815,17 +815,17 @@ var Collection = class extends NodeBase {
    */
   getIn(path, keepScalar) {
     const [key, ...rest] = path;
-    const node = this.get(key, true);
+    const node2 = this.get(key, true);
     if (rest.length === 0)
-      return !keepScalar && isScalar(node) ? node.value : node;
+      return !keepScalar && isScalar(node2) ? node2.value : node2;
     else
-      return isCollection(node) ? node.getIn(rest, keepScalar) : void 0;
+      return isCollection(node2) ? node2.getIn(rest, keepScalar) : void 0;
   }
   hasAllNullValues(allowScalar) {
-    return this.items.every((node) => {
-      if (!isPair(node))
+    return this.items.every((node2) => {
+      if (!isPair(node2))
         return false;
-      const n = node.value;
+      const n = node2.value;
       return n == null || allowScalar && isScalar(n) && n.value == null && !n.commentBefore && !n.comment && !n.tag;
     });
   }
@@ -836,8 +836,8 @@ var Collection = class extends NodeBase {
     const [key, ...rest] = path;
     if (rest.length === 0)
       return this.has(key);
-    const node = this.get(key, true);
-    return isCollection(node) ? node.hasIn(rest) : false;
+    const node2 = this.get(key, true);
+    return isCollection(node2) ? node2.hasIn(rest) : false;
   }
   /**
    * Sets a value in this collection. For `!!set`, `value` needs to be a
@@ -848,10 +848,10 @@ var Collection = class extends NodeBase {
     if (rest.length === 0) {
       this.set(key, value);
     } else {
-      const node = this.get(key, true);
-      if (isCollection(node))
-        node.setIn(rest, value);
-      else if (node === void 0 && this.schema)
+      const node2 = this.get(key, true);
+      if (isCollection(node2))
+        node2.setIn(rest, value);
+      else if (node2 === void 0 && this.schema)
         this.set(key, collectionFromPath(this.schema, rest, value));
       else
         throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
@@ -1340,16 +1340,16 @@ function getTagObject(tags, item) {
   }
   return tagObj;
 }
-function stringifyProps(node, tagObj, { anchors, doc }) {
+function stringifyProps(node2, tagObj, { anchors, doc }) {
   if (!doc.directives)
     return "";
   const props = [];
-  const anchor = (isScalar(node) || isCollection(node)) && node.anchor;
+  const anchor = (isScalar(node2) || isCollection(node2)) && node2.anchor;
   if (anchor && anchorIsValid(anchor)) {
     anchors.add(anchor);
     props.push(`&${anchor}`);
   }
-  const tag = node.tag ?? (tagObj.default ? null : tagObj.tag);
+  const tag = node2.tag ?? (tagObj.default ? null : tagObj.tag);
   if (tag)
     props.push(doc.directives.tagString(tag));
   return props.join(" ");
@@ -1371,15 +1371,15 @@ function stringify(item, ctx, onComment, onChompKeep) {
     }
   }
   let tagObj = void 0;
-  const node = isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
-  tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node));
-  const props = stringifyProps(node, tagObj, ctx);
+  const node2 = isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
+  tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node2));
+  const props = stringifyProps(node2, tagObj, ctx);
   if (props.length > 0)
     ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
-  const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx, onComment, onChompKeep) : isScalar(node) ? stringifyString(node, ctx, onComment, onChompKeep) : node.toString(ctx, onComment, onChompKeep);
+  const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node2, ctx, onComment, onChompKeep) : isScalar(node2) ? stringifyString(node2, ctx, onComment, onChompKeep) : node2.toString(ctx, onComment, onChompKeep);
   if (!props)
     return str;
-  return isScalar(node) || str[0] === "{" || str[0] === "[" ? `${props} ${str}` : `${props}
+  return isScalar(node2) || str[0] === "{" || str[0] === "[" ? `${props} ${str}` : `${props}
 ${ctx.indent}${str}`;
 }
 
@@ -1599,8 +1599,8 @@ function stringifyKey(key, jsKey, ctx) {
   if (isNode(key) && ctx?.doc) {
     const strCtx = createStringifyContext(ctx.doc, {});
     strCtx.anchors = /* @__PURE__ */ new Set();
-    for (const node of ctx.anchors.keys())
-      strCtx.anchors.add(node.anchor);
+    for (const node2 of ctx.anchors.keys())
+      strCtx.anchors.add(node2.anchor);
     strCtx.inFlow = true;
     strCtx.inStringifyKey = true;
     const strKey = key.toString(strCtx);
@@ -1877,8 +1877,8 @@ var YAMLMap = class extends Collection {
   }
   get(key, keepScalar) {
     const it = findPair(this.items, key);
-    const node = it?.value;
-    return (!keepScalar && isScalar(node) ? node.value : node) ?? void 0;
+    const node2 = it?.value;
+    return (!keepScalar && isScalar(node2) ? node2.value : node2) ?? void 0;
   }
   has(key) {
     return !!findPair(this.items, key);
@@ -2127,9 +2127,9 @@ var floatExp = {
   format: "EXP",
   test: /^[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)[eE][-+]?[0-9]+$/,
   resolve: (str) => parseFloat(str),
-  stringify(node) {
-    const num = Number(node.value);
-    return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+  stringify(node2) {
+    const num = Number(node2.value);
+    return isFinite(num) ? num.toExponential() : stringifyNumber(node2);
   }
 };
 var float = {
@@ -2138,11 +2138,11 @@ var float = {
   tag: "tag:yaml.org,2002:float",
   test: /^[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)$/,
   resolve(str) {
-    const node = new Scalar(parseFloat(str));
+    const node2 = new Scalar(parseFloat(str));
     const dot = str.indexOf(".");
     if (dot !== -1 && str[str.length - 1] === "0")
-      node.minFractionDigits = str.length - dot - 1;
-    return node;
+      node2.minFractionDigits = str.length - dot - 1;
+    return node2;
   },
   stringify: stringifyNumber
 };
@@ -2150,11 +2150,11 @@ var float = {
 // node_modules/yaml/browser/dist/schema/core/int.js
 var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
 var intResolve = (str, offset, radix, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str.substring(offset), radix);
-function intStringify(node, radix, prefix) {
-  const { value } = node;
+function intStringify(node2, radix, prefix) {
+  const { value } = node2;
   if (intIdentify(value) && value >= 0)
     return prefix + value.toString(radix);
-  return stringifyNumber(node);
+  return stringifyNumber(node2);
 }
 var intOct = {
   identify: (value) => intIdentify(value) && value >= 0,
@@ -2163,7 +2163,7 @@ var intOct = {
   format: "OCT",
   test: /^0o[0-7]+$/,
   resolve: (str, _onError, opt) => intResolve(str, 2, 8, opt),
-  stringify: (node) => intStringify(node, 8, "0o")
+  stringify: (node2) => intStringify(node2, 8, "0o")
 };
 var int = {
   identify: intIdentify,
@@ -2180,7 +2180,7 @@ var intHex = {
   format: "HEX",
   test: /^0x[0-9a-fA-F]+$/,
   resolve: (str, _onError, opt) => intResolve(str, 2, 16, opt),
-  stringify: (node) => intStringify(node, 16, "0x")
+  stringify: (node2) => intStringify(node2, 16, "0x")
 };
 
 // node_modules/yaml/browser/dist/schema/core/schema.js
@@ -2481,9 +2481,9 @@ var floatExp2 = {
   format: "EXP",
   test: /^[-+]?(?:[0-9][0-9_]*)?(?:\.[0-9_]*)?[eE][-+]?[0-9]+$/,
   resolve: (str) => parseFloat(str.replace(/_/g, "")),
-  stringify(node) {
-    const num = Number(node.value);
-    return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+  stringify(node2) {
+    const num = Number(node2.value);
+    return isFinite(num) ? num.toExponential() : stringifyNumber(node2);
   }
 };
 var float2 = {
@@ -2492,14 +2492,14 @@ var float2 = {
   tag: "tag:yaml.org,2002:float",
   test: /^[-+]?(?:[0-9][0-9_]*)?\.[0-9_]*$/,
   resolve(str) {
-    const node = new Scalar(parseFloat(str.replace(/_/g, "")));
+    const node2 = new Scalar(parseFloat(str.replace(/_/g, "")));
     const dot = str.indexOf(".");
     if (dot !== -1) {
       const f = str.substring(dot + 1).replace(/_/g, "");
       if (f[f.length - 1] === "0")
-        node.minFractionDigits = f.length;
+        node2.minFractionDigits = f.length;
     }
-    return node;
+    return node2;
   },
   stringify: stringifyNumber
 };
@@ -2529,13 +2529,13 @@ function intResolve2(str, offset, radix, { intAsBigInt }) {
   const n = parseInt(str, radix);
   return sign === "-" ? -1 * n : n;
 }
-function intStringify2(node, radix, prefix) {
-  const { value } = node;
+function intStringify2(node2, radix, prefix) {
+  const { value } = node2;
   if (intIdentify3(value)) {
     const str = value.toString(radix);
     return value < 0 ? "-" + prefix + str.substr(1) : prefix + str;
   }
-  return stringifyNumber(node);
+  return stringifyNumber(node2);
 }
 var intBin = {
   identify: intIdentify3,
@@ -2544,7 +2544,7 @@ var intBin = {
   format: "BIN",
   test: /^[-+]?0b[0-1_]+$/,
   resolve: (str, _onError, opt) => intResolve2(str, 2, 2, opt),
-  stringify: (node) => intStringify2(node, 2, "0b")
+  stringify: (node2) => intStringify2(node2, 2, "0b")
 };
 var intOct2 = {
   identify: intIdentify3,
@@ -2553,7 +2553,7 @@ var intOct2 = {
   format: "OCT",
   test: /^[-+]?0[0-7_]+$/,
   resolve: (str, _onError, opt) => intResolve2(str, 1, 8, opt),
-  stringify: (node) => intStringify2(node, 8, "0")
+  stringify: (node2) => intStringify2(node2, 8, "0")
 };
 var int2 = {
   identify: intIdentify3,
@@ -2570,7 +2570,7 @@ var intHex2 = {
   format: "HEX",
   test: /^[-+]?0x[0-9a-fA-F_]+$/,
   resolve: (str, _onError, opt) => intResolve2(str, 2, 16, opt),
-  stringify: (node) => intStringify2(node, 16, "0x")
+  stringify: (node2) => intStringify2(node2, 16, "0x")
 };
 
 // node_modules/yaml/browser/dist/schema/yaml-1.1/set.js
@@ -2660,13 +2660,13 @@ function parseSexagesimal(str, asBigInt) {
   const res = parts.replace(/_/g, "").split(":").reduce((res2, p) => res2 * num(60) + num(p), num(0));
   return sign === "-" ? num(-1) * res : res;
 }
-function stringifySexagesimal(node) {
-  let { value } = node;
+function stringifySexagesimal(node2) {
+  let { value } = node2;
   let num = (n) => n;
   if (typeof value === "bigint")
     num = (n) => BigInt(n);
   else if (isNaN(value) || !isFinite(value))
-    return stringifyNumber(node);
+    return stringifyNumber(node2);
   let sign = "";
   if (value < 0) {
     sign = "-";
@@ -2996,13 +2996,13 @@ var Document = class _Document {
    * `name` will be used as a prefix for a new unique anchor.
    * If `name` is undefined, the generated anchor will use 'a' as a prefix.
    */
-  createAlias(node, name) {
-    if (!node.anchor) {
+  createAlias(node2, name) {
+    if (!node2.anchor) {
       const prev = anchorNames(this);
-      node.anchor = // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      node2.anchor = // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       !name || prev.has(name) ? findNewAnchor(name || "a", prev) : name;
     }
-    return new Alias(node.anchor);
+    return new Alias(node2.anchor);
   }
   createNode(value, replacer, options) {
     let _replacer = void 0;
@@ -3034,11 +3034,11 @@ var Document = class _Document {
       schema: this.schema,
       sourceObjects
     };
-    const node = createNode(value, tag, ctx);
-    if (flow && isCollection(node))
-      node.flow = true;
+    const node2 = createNode(value, tag, ctx);
+    if (flow && isCollection(node2))
+      node2.flow = true;
     setAnchors();
-    return node;
+    return node2;
   }
   /**
    * Convert a key and a value into a `Pair` using the current schema,
@@ -3579,11 +3579,11 @@ function resolveBlockSeq({ composeNode: composeNode2, composeEmptyNode: composeE
         continue;
       }
     }
-    const node = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, start, null, props, onError);
+    const node2 = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, start, null, props, onError);
     if (ctx.schema.compat)
       flowIndentCheck(bs.indent, value, onError);
-    offset = node.range[2];
-    seq2.items.push(node);
+    offset = node2.range[2];
+    seq2.items.push(node2);
   }
   seq2.range = [bs.offset, offset, commentEnd ?? offset];
   return seq2;
@@ -3850,12 +3850,12 @@ function composeCollection(CN2, ctx, token, props, onError) {
   }
   const coll = resolveCollection(CN2, ctx, token, onError, tagName, tag);
   const res = tag.resolve?.(coll, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg), ctx.options) ?? coll;
-  const node = isNode(res) ? res : new Scalar(res);
-  node.range = coll.range;
-  node.tag = tagName;
+  const node2 = isNode(res) ? res : new Scalar(res);
+  node2.range = coll.range;
+  node2.tag = tagName;
   if (tag?.format)
-    node.format = tag.format;
-  return node;
+    node2.format = tag.format;
+  return node2;
 }
 
 // node_modules/yaml/browser/dist/compose/resolve-block-scalar.js
@@ -4347,11 +4347,11 @@ var CN = { composeNode, composeEmptyNode };
 function composeNode(ctx, token, props, onError) {
   const atKey = ctx.atKey;
   const { spaceBefore, comment, anchor, tag } = props;
-  let node;
+  let node2;
   let isSrcToken = true;
   switch (token.type) {
     case "alias":
-      node = composeAlias(ctx, token, onError);
+      node2 = composeAlias(ctx, token, onError);
       if (anchor || tag)
         onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
       break;
@@ -4359,17 +4359,17 @@ function composeNode(ctx, token, props, onError) {
     case "single-quoted-scalar":
     case "double-quoted-scalar":
     case "block-scalar":
-      node = composeScalar(ctx, token, tag, onError);
+      node2 = composeScalar(ctx, token, tag, onError);
       if (anchor)
-        node.anchor = anchor.source.substring(1);
+        node2.anchor = anchor.source.substring(1);
       break;
     case "block-map":
     case "block-seq":
     case "flow-collection":
       try {
-        node = composeCollection(CN, ctx, token, props, onError);
+        node2 = composeCollection(CN, ctx, token, props, onError);
         if (anchor)
-          node.anchor = anchor.source.substring(1);
+          node2.anchor = anchor.source.substring(1);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         onError(token, "RESOURCE_EXHAUSTION", message);
@@ -4381,24 +4381,24 @@ function composeNode(ctx, token, props, onError) {
       isSrcToken = false;
     }
   }
-  node ?? (node = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
-  if (anchor && node.anchor === "")
+  node2 ?? (node2 = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
+  if (anchor && node2.anchor === "")
     onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
-  if (atKey && ctx.options.stringKeys && (!isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
+  if (atKey && ctx.options.stringKeys && (!isScalar(node2) || typeof node2.value !== "string" || node2.tag && node2.tag !== "tag:yaml.org,2002:str")) {
     const msg = "With stringKeys, all keys must be strings";
     onError(tag ?? token, "NON_STRING_KEY", msg);
   }
   if (spaceBefore)
-    node.spaceBefore = true;
+    node2.spaceBefore = true;
   if (comment) {
     if (token.type === "scalar" && token.source === "")
-      node.comment = comment;
+      node2.comment = comment;
     else
-      node.commentBefore = comment;
+      node2.commentBefore = comment;
   }
   if (ctx.options.keepSourceTokens && isSrcToken)
-    node.srcToken = token;
-  return node;
+    node2.srcToken = token;
+  return node2;
 }
 function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
   const token = {
@@ -4407,19 +4407,19 @@ function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anch
     indent: -1,
     source: ""
   };
-  const node = composeScalar(ctx, token, tag, onError);
+  const node2 = composeScalar(ctx, token, tag, onError);
   if (anchor) {
-    node.anchor = anchor.source.substring(1);
-    if (node.anchor === "")
+    node2.anchor = anchor.source.substring(1);
+    if (node2.anchor === "")
       onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
   }
   if (spaceBefore)
-    node.spaceBefore = true;
+    node2.spaceBefore = true;
   if (comment) {
-    node.comment = comment;
-    node.range[2] = end;
+    node2.comment = comment;
+    node2.range[2] = end;
   }
-  return node;
+  return node2;
 }
 function composeAlias({ options }, { offset, source, end }, onError) {
   const alias = new Alias(source.substring(1));
@@ -6321,6 +6321,19 @@ function stringify3(value, replacer, options) {
 
 // src/model.ts
 var SCHEMA = 1;
+var GEAR_SLOTS = [
+  { id: "hat", label: "Hat", short: "Hat" },
+  { id: "glasses", label: "Glasses", short: "Glasses" },
+  { id: "neck", label: "Neck", short: "Neck" },
+  { id: "base", label: "Layer 0 \xB7 under", short: "Layer 0" },
+  { id: "shirt", label: "Layer 1 \xB7 shirt", short: "Layer 1" },
+  { id: "outer", label: "Layer 2 \xB7 overshirt / jacket", short: "Layer 2" },
+  { id: "wrist", label: "Wrist", short: "Wrist" },
+  { id: "lower", label: "Lower body", short: "Lower body" },
+  { id: "accessories", label: "Accessories", short: "Accessory" },
+  { id: "socks", label: "Socks", short: "Socks" },
+  { id: "shoes", label: "Shoes", short: "Shoes" }
+];
 var COLORS = {
   navy: "#25395b",
   blue: "#7c9fca",
@@ -6334,7 +6347,9 @@ var COLORS = {
   plum: "#76527f",
   petrol: "#347779",
   red: "#ca5149",
-  stone: "#bbb5a8"
+  stone: "#bbb5a8",
+  gold: "#c2a054",
+  copper: "#b97e5a"
 };
 function safePath(path) {
   if (!path || path.includes("\\") || path.startsWith("/") || path.includes(":") || path.split("/").some((p) => p === ".." || p === "." || !p)) throw Error("Use a relative path inside the wardrobe folder.");
@@ -6347,6 +6362,40 @@ function safeUrl(value) {
   } catch {
     return "";
   }
+}
+function pieceSlots(piece) {
+  const slots = new Set(GEAR_SLOTS.map((s) => s.id));
+  return [.../* @__PURE__ */ new Set([...piece.compatible_slots ?? [], ...piece.slot ? [piece.slot] : []])].filter((s) => slots.has(s));
+}
+function isProduct(piece) {
+  return Boolean(piece.availability === "available" && piece.product_checked_at && (piece.product_id || piece.sku) && safeUrl(piece.product_url) && (piece.image || safeUrl(piece.image_source_url ?? "")) && piece.price !== null);
+}
+function reconcileProductEdit(previous, next) {
+  if (previous && ["title", "store", "product_url", "image"].some((key) => previous[key] !== next[key])) return { ...next, availability: "unverified", product_checked_at: "", image_source_url: "" };
+  return next;
+}
+function equipmentFor(outfit, pieces) {
+  if (outfit.equipment) return Object.fromEntries(GEAR_SLOTS.filter((s) => typeof outfit.equipment?.[s.id] === "string").map((s) => [s.id, outfit.equipment[s.id]]));
+  const result = {};
+  for (const id of outfit.piece_ids) {
+    const p = pieces.find((x) => x.id === id);
+    if (p?.slot && !result[p.slot]) result[p.slot] = id;
+  }
+  return result;
+}
+function slotOptions(pieces, slot) {
+  return pieces.filter((p) => isProduct(p) && pieceSlots(p).includes(slot)).sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity) || a.title.localeCompare(b.title));
+}
+function createVariation(outfit, equipment, pieces, title) {
+  const ids = [...new Set(Object.values(equipment).filter((id) => Boolean(id)))];
+  if (!ids.length) throw Error("Equip at least one product.");
+  for (const slot of GEAR_SLOTS) {
+    const id = equipment[slot.id];
+    if (!id) continue;
+    const piece = pieces.find((p) => p.id === id);
+    if (!piece || !isProduct(piece) || !pieceSlots(piece).includes(slot.id)) throw Error(`Choose a verified product for ${slot.label}.`);
+  }
+  return { ...outfit, id: `outfit-${crypto.randomUUID()}`, path: void 0, originalText: void 0, title: title.trim() || `${outfit.title} / Remix`, piece_ids: ids, equipment: { ...equipment }, colors: [...new Set(ids.flatMap((id) => pieces.find((p) => p.id === id)?.colors ?? []))], image: "", image_credit: "", source_urls: ids.map((id) => pieces.find((p) => p.id === id).product_url), notes: `Variation of ${outfit.title}. Exact products are tagged by equipment slot.` };
 }
 var array = (value) => Array.isArray(value) ? value.filter((x) => typeof x === "string") : [];
 function parseRecord(text, path = "") {
@@ -6395,7 +6444,7 @@ function parseRating(text) {
   return validateRating(parse(match[1]));
 }
 function newRating(outfit, rating, note = "", reasons = []) {
-  return validateRating({ schema: 1, type: "rating", id: crypto.randomUUID(), outfit_id: outfit.id, rating, created_at: (/* @__PURE__ */ new Date()).toISOString(), note, reasons, snapshot: { title: outfit.title, styles: [...outfit.styles], colors: [...outfit.colors], occasions: [...outfit.occasions] } });
+  return validateRating({ schema: 1, type: "rating", id: crypto.randomUUID(), outfit_id: outfit.id, rating, created_at: (/* @__PURE__ */ new Date()).toISOString(), note, reasons, snapshot: { title: outfit.title, styles: [...outfit.styles], colors: [...outfit.colors], occasions: [...outfit.occasions], piece_ids: [...outfit.piece_ids], ...outfit.equipment ? { equipment: { ...outfit.equipment } } : {} } });
 }
 function latestRatings(events) {
   const result = /* @__PURE__ */ new Map();
@@ -6457,6 +6506,191 @@ function filterOutfits(catalog, filters) {
   });
 }
 
+// src/equipment.ts
+var node = (tag, cls = "", text = "") => {
+  const e = document.createElement(tag);
+  e.className = cls;
+  e.textContent = text;
+  return e;
+};
+var usd = (n) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
+function slotIcon(slot) {
+  const paths = { hat: "M3 16h18M6 16V9a6 6 0 0 1 12 0v7", glasses: "M2 12h3m5 0h4m5 0h3M5 8h5v7H5zM14 8h5v7h-5z", neck: "m6 3 6 8 6-8M6 3l-2 8 7 10 4-3-3-7", base: "m8 4-6 4 3 5 3-2v10h8V11l3 2 3-5-6-4-4 3z", shirt: "m8 4-6 4 3 5 3-2v10h8V11l3 2 3-5-6-4-4 3zM12 8v13", outer: "M8 3 3 7v14h5V10l4 4 4-4v11h5V7l-5-4-4 7z", wrist: "M9 2h6v5H9zM9 17h6v5H9zM7 7h10v10H7z", lower: "M6 3h12l2 18h-6l-2-10-2 10H4zM6 7h12", accessories: "M5 8h14v13H5zM8 8V5a4 4 0 0 1 8 0v3", socks: "M8 3h8v11l-7 7H4v-6l4-4zM8 7h8", shoes: "M3 10h5l3 5 9 2 1 4H3zM3 17h10" };
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  const p = document.createElementNS(svg.namespaceURI, "path");
+  p.setAttribute("d", paths[slot] ?? paths.accessories);
+  p.setAttribute("fill", "none");
+  p.setAttribute("stroke", "currentColor");
+  p.setAttribute("stroke-width", "1.5");
+  p.setAttribute("stroke-linejoin", "round");
+  svg.append(p);
+  return svg;
+}
+function productPhoto(piece, store) {
+  const frame = node("div", "sz-product-photo");
+  if (!isProduct(piece)) {
+    frame.append(node("span", "sz-muted", "Exact product needed"));
+    return frame;
+  }
+  const img = document.createElement("img");
+  img.alt = piece.title;
+  img.loading = "lazy";
+  let fallback = safeUrl(piece.image_source_url ?? "");
+  try {
+    if (piece.image) img.src = store.imageUrl(piece.image);
+    else img.src = fallback;
+  } catch {
+    img.src = fallback;
+    fallback = "";
+  }
+  img.onerror = () => {
+    if (fallback && img.src !== fallback) {
+      img.src = fallback;
+      fallback = "";
+    } else {
+      img.remove();
+      frame.append(node("span", "sz-muted", "Photo unavailable"));
+    }
+  };
+  frame.append(img);
+  return frame;
+}
+function gearBoard(outfit, pieces, store, onSlot, compact = false) {
+  const eq = equipmentFor(outfit, pieces), board = node("div", `sz-gear-board ${compact ? "sz-gear-compact" : ""}`);
+  board.setAttribute("aria-label", `Tagged products in ${outfit.title}`);
+  for (const slot of GEAR_SLOTS) {
+    const id = eq[slot.id], piece = pieces.find((p) => p.id === id);
+    if (compact && !piece) continue;
+    const button2 = document.createElement("button");
+    button2.type = "button";
+    button2.className = `sz-gear-slot ${piece && isProduct(piece) ? "is-equipped" : "is-empty"}`;
+    button2.dataset.slot = slot.id;
+    button2.setAttribute("aria-label", `${slot.label}: ${piece?.title ?? "Empty slot"}`);
+    button2.onclick = () => onSlot(slot.id);
+    if (piece && isProduct(piece)) button2.append(productPhoto(piece, store));
+    else button2.append(slotIcon(slot.id));
+    const tag = node("span", "sz-slot-tag", slot.short);
+    tag.prepend(slotIcon(slot.id));
+    button2.append(tag);
+    if (piece && isProduct(piece)) {
+      button2.append(node("span", "sz-slot-price", usd(piece.price)));
+      button2.title = `${slot.label} \xB7 ${piece.title} \xB7 ${usd(piece.price)} \xB7 ${piece.store}`;
+    } else button2.append(node("span", "sz-empty-label", piece ? "Product link needed" : "Optional"));
+    board.append(button2);
+  }
+  return board;
+}
+function productInfo(piece, store) {
+  const box = node("section", "sz-product-info");
+  box.append(productPhoto(piece, store), node("p", "sz-eyebrow", piece.store), node("h3", "", piece.title), node("strong", "sz-product-price", piece.price === null ? "Unpriced" : `${piece.currency} ${piece.price.toFixed(2)}`));
+  if (isProduct(piece)) {
+    const a = document.createElement("a");
+    a.className = "sz-button sz-primary";
+    a.href = safeUrl(piece.product_url);
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = "View exact product";
+    box.append(a, node("p", "sz-stock", `Available when checked ${piece.product_checked_at}`));
+    const sizes = piece.available_sizes ?? [];
+    if (sizes.length) {
+      const details = node("details", "sz-available-sizes");
+      details.append(node("summary", "", `${sizes.length} available size options`), node("p", "sz-muted", sizes.join(", ")));
+      box.append(details);
+    } else box.append(node("p", "sz-muted", "Choose your size at the retailer."));
+  } else box.append(node("p", "sz-muted", "This item needs a verified product link and photograph before it can appear in a shoppable set."));
+  box.append(node("p", "sz-muted", piece.price_note), node("p", "sz-credit", piece.image_credit ?? ""));
+  return box;
+}
+function loadoutEditor(parent, outfit, catalog, store, onSave, initialSlot) {
+  let eq = { ...equipmentFor(outfit, catalog.pieces) }, selected = initialSlot ?? "shirt", name = `${outfit.title} / Remix`, dirty = false;
+  const draw = () => {
+    parent.replaceChildren();
+    const current = { ...outfit, equipment: eq, piece_ids: [...new Set(Object.values(eq).filter((x) => Boolean(x)))] };
+    const summary = cost(current, catalog.pieces);
+    const header = node("div", "sz-loadout-summary");
+    header.append(node("span", "sz-loadout-pill", `${Object.keys(eq).length} / ${GEAR_SLOTS.length} slots equipped`), node("strong", "", summary.unknown ? `${usd(summary.known)} + unpriced` : usd(summary.known)), node("p", "sz-muted", "Exact products shown. Optional slots can stay empty. Prices and stock are dated observations, before tax and shipping."));
+    parent.append(header);
+    const columns = node("div", "sz-equipment-editor"), visual = node("div", "sz-equipment-visual");
+    const board = gearBoard(current, catalog.pieces, store, (slot) => {
+      selected = slot;
+      draw();
+    });
+    board.querySelector(`[data-slot="${selected}"]`)?.setAttribute("aria-pressed", "true");
+    visual.append(board);
+    const selectedSlot = GEAR_SLOTS.find((s) => s.id === selected);
+    const panel = node("section", "sz-slot-options");
+    panel.append(node("p", "sz-eyebrow", "EQUIPMENT SLOT"), node("h3", "", selectedSlot.label));
+    const equipped = catalog.pieces.find((p) => p.id === eq[selected]);
+    if (equipped) {
+      panel.append(productInfo(equipped, store));
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "sz-text-button";
+      remove.textContent = "Leave this slot empty";
+      remove.onclick = () => {
+        delete eq[selected];
+        dirty = true;
+        draw();
+      };
+      panel.append(remove);
+    } else panel.append(node("p", "sz-muted", "No item equipped. Choose a product below or keep this slot empty."));
+    const options = slotOptions(catalog.pieces, selected);
+    panel.append(node("h3", "sz-options-heading", `${options.length} researched options`));
+    const list = node("div", "sz-options-list");
+    for (const p of options) {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = `sz-option-row ${eq[selected] === p.id ? "is-equipped" : ""}`;
+      row.setAttribute("aria-label", `Equip ${p.title} in ${selectedSlot.label}`);
+      row.append(productPhoto(p, store));
+      const text = node("span", "sz-option-copy");
+      text.append(node("strong", "", p.title), node("span", "sz-muted", `${p.store} \xB7 ${usd(p.price)}`), node("span", "sz-equip-label", eq[selected] === p.id ? "Equipped" : "Try this item"));
+      row.append(text);
+      row.onclick = () => {
+        for (const slot of GEAR_SLOTS) if (eq[slot.id] === p.id) delete eq[slot.id];
+        eq[selected] = p.id;
+        dirty = true;
+        draw();
+      };
+      list.append(row);
+    }
+    panel.append(list);
+    columns.append(visual, panel);
+    parent.append(columns);
+    const savebar = node("div", "sz-save-variation");
+    const input2 = document.createElement("input");
+    input2.className = "sz-input";
+    input2.value = name;
+    input2.setAttribute("aria-label", "Variation name");
+    input2.oninput = () => name = input2.value;
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "sz-button sz-primary";
+    save.textContent = "Save as new set";
+    save.disabled = !dirty;
+    const status = node("p", "sz-muted");
+    status.setAttribute("role", "status");
+    save.onclick = () => {
+      save.disabled = true;
+      void (async () => {
+        try {
+          await onSave(createVariation(outfit, eq, catalog.pieces, name));
+          dirty = false;
+          status.textContent = "Variation saved. Original set preserved.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : String(error);
+          save.disabled = false;
+        }
+      })();
+    };
+    savebar.append(input2, save, status);
+    parent.append(savebar);
+  };
+  draw();
+}
+
 // src/app.ts
 function el(tag, cls = "", text = "") {
   const x = document.createElement(tag);
@@ -6512,6 +6746,7 @@ var StyleZoneApp = class {
     __publicField(this, "filters", { ...DEFAULT_FILTERS });
     __publicField(this, "page", "outfits");
     __publicField(this, "focusId", "");
+    __publicField(this, "inventorySlot", "");
     __publicField(this, "detail", null);
     __publicField(this, "unsub");
     __publicField(this, "disposed", false);
@@ -6569,6 +6804,8 @@ var StyleZoneApp = class {
   }
   navigate(page) {
     this.page = page;
+    const content = this.root.querySelector(".sz-content");
+    if (content) content.scrollTop = 0;
     this.render();
   }
   toast(message, error = false) {
@@ -6589,7 +6826,7 @@ var StyleZoneApp = class {
     rail.append(brand, el("p", "sz-rail-caption", "A wardrobe that gets you."));
     const nav = el("nav", "sz-nav");
     nav.setAttribute("aria-label", "Style Zone");
-    for (const [id, icon, title] of [["outfits", "\u25EB", "Outfit lab"], ["rate", "\u2726", "Quick rate"], ["wardrobe", "\u25A4", "Your pieces"], ["profile", "\u25C9", "Your taste"]]) {
+    for (const [id, icon, title] of [["outfits", "\u25EB", "Loadouts"], ["rate", "\u2726", "Quick rate"], ["wardrobe", "\u25A4", "Item database"], ["profile", "\u25C9", "Your taste"]]) {
       const b = button(title, () => this.navigate(id), `sz-nav-button ${this.page === id ? "is-active" : ""}`);
       b.prepend(el("span", "sz-nav-icon", icon));
       b.setAttribute("aria-current", this.page === id ? "page" : "false");
@@ -6630,11 +6867,11 @@ var StyleZoneApp = class {
   }
   renderOutfits(parent) {
     const focused = this.page === "rate";
-    const heading = this.heading(parent, focused ? "TRUST YOUR FIRST INSTINCT" : "BUILD YOUR NEXT ROTATION", focused ? "Would you wear this?" : "Find your kind of good.", focused ? "Rate from 1 to 5. The next look follows automatically." : "Explore a few directions. Save what clicks. Make the look your own.");
-    if (!focused) heading.append(button("Create outfit", () => this.outfitForm(), "sz-button sz-primary"));
+    const heading = this.heading(parent, focused ? "TRUST YOUR FIRST INSTINCT" : "YOUR EQUIPMENT SETS", focused ? "Would you wear this?" : "Build your daily loadout.", focused ? "Rate from 1 to 5. The next look follows automatically." : "Real products, tagged by slot. Swap a piece, save a set, find your style.");
+    if (!focused) heading.append(button("Create set", () => this.outfitForm(), "sz-button sz-primary"));
     const stats = el("div", "sz-stats");
     const profile = taste(this.data.ratings);
-    for (const [n, t] of [[this.data.outfits.length, "outfit ideas"], [profile.liked, "strong contenders"], [this.data.pieces.filter((p) => p.ownership === "owned").length, "pieces you own"]]) {
+    for (const [n, t] of [[this.data.outfits.length, "outfit sets"], [this.data.pieces.filter(isProduct).length, "shop options"], [profile.liked, "sets you love"]]) {
       const item = el("div");
       item.append(el("strong", "", String(n)), el("span", "", String(t)));
       stats.append(item);
@@ -6786,41 +7023,23 @@ var StyleZoneApp = class {
     panel.append(toggles);
     parent.append(panel);
   }
-  image(outfit) {
-    const wrap = el("div", "sz-look-image");
-    const image = el("img");
-    image.alt = `Inspiration reference for ${outfit.title}`;
-    image.loading = "lazy";
-    try {
-      image.src = this.store.imageUrl(outfit.image);
-    } catch {
-    }
-    image.onerror = () => {
-      image.hidden = true;
-      wrap.classList.add("sz-image-missing");
-      wrap.append(el("span", "", outfit.styles[0] ?? "Your next look"));
-    };
-    wrap.append(image, el("span", "sz-image-label", "INSPIRATION REFERENCE"));
-    return wrap;
-  }
   outfitCard(outfit, focus = false) {
-    const card = el("article", `sz-outfit-card ${focus ? "sz-focused" : ""}`);
+    const card = el("article", `sz-outfit-card sz-loadout-card ${focus ? "sz-focused" : ""}`);
     card.dataset.outfitId = outfit.id;
-    const picture = button("", () => this.openOutfit(outfit), "sz-picture-button");
-    picture.setAttribute("aria-label", `View outfit: ${outfit.title}`);
-    picture.append(this.image(outfit));
-    card.append(picture);
+    const visual = el("div", "sz-loadout-visual");
+    visual.append(gearBoard(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot), true));
+    card.append(visual);
     const body = el("div", "sz-card-body");
     const meta = el("div", "sz-card-meta");
-    meta.append(el("span", "sz-eyebrow", outfit.styles[0] ?? "YOUR EDIT"), this.swatches(outfit.colors));
+    meta.append(el("span", "sz-eyebrow", outfit.styles[0] ?? "YOUR SET"), this.swatches(outfit.colors));
     body.append(meta, el("h2", "", outfit.title), el("p", "sz-card-description", outfit.notes.split("\n")[0] || outfit.season));
     const c = cost(outfit, this.data.pieces), price = el("div", "sz-cost");
-    price.append(el("strong", "", c.unknown ? `${money(c.known)} known` : c.known ? `${money(c.known)} to buy` : "Already in your wardrobe"), el("span", "sz-muted", c.unknown ? `${c.unknown} unpriced \xB7 ${c.owned} owned` : `${c.owned} owned \xB7 before tax / shipping`));
+    price.append(el("strong", "", c.unknown ? `${money(c.known)} known` : c.known ? `${money(c.known)} to buy` : "Already in your wardrobe"), el("span", "sz-muted", c.unknown ? `${c.unknown} unpriced \xB7 ${c.owned} owned` : `${outfit.piece_ids.length} tagged products \xB7 ${c.owned} owned`));
     body.append(price);
     const latest = latestRatings(this.data.ratings).get(outfit.id);
     body.append(this.ratingButtons(outfit, latest?.rating, focus));
     const footer = el("div", "sz-card-footer");
-    footer.append(button("See the pieces", () => this.openOutfit(outfit), "sz-text-button"), el("span", "sz-muted", latest ? `Rated ${latest.rating}/5` : "Not rated"));
+    footer.append(button("Inspect / swap gear", () => this.openOutfit(outfit), "sz-text-button"), el("span", "sz-muted", latest ? `Rated ${latest.rating}/5` : "Not rated"));
     body.append(footer);
     const match = recommendation(outfit, this.data.ratings);
     if (match.reasons.length) body.append(el("p", "sz-match", `Fits your interest in ${match.reasons.join(" + ")}`));
@@ -6897,66 +7116,53 @@ var StyleZoneApp = class {
     dialog.showModal();
     return dialog;
   }
-  openOutfit(outfit) {
-    const dialog = this.dialog(outfit.title), layout = el("div", "sz-detail-layout"), visual = el("div");
-    visual.append(this.image(outfit), el("p", "sz-credit", outfit.image_credit || "Image credit on linked source."));
-    const details = el("div");
-    details.append(this.swatches(outfit.colors), el("p", "sz-intro", outfit.notes), el("p", "sz-muted", `${outfit.season} \xB7 ${outfit.occasions.join(", ")}`));
-    const c = cost(outfit, this.data.pieces);
-    details.append(el("h3", "", c.unknown ? `${money(c.known)} known + ${c.unknown} unpriced` : `${money(c.known)} left to buy`), el("p", "sz-muted", "Suggested equivalents below may differ from the reference photo. Prices exclude tax and shipping; check the retailer for your size and current price."));
-    for (const id of outfit.piece_ids) {
-      const p = this.data.pieces.find((p2) => p2.id === id);
-      if (!p) {
-        details.append(el("p", "sz-warning", `Missing piece: ${id}`));
-        continue;
-      }
-      details.append(this.pieceRow(p));
-    }
-    const rate = el("section", "sz-detail-rate");
-    rate.append(el("h3", "", "How does this feel?"));
-    const rating = latestRatings(this.data.ratings).get(outfit.id);
+  openOutfit(outfit, slot) {
+    const dialog = this.dialog(outfit.title), editor = el("div", "sz-loadout-editor-host");
+    loadoutEditor(editor, outfit, this.data, this.store, async (variation) => {
+      await this.store.saveOutfit(variation);
+      this.toast("New set saved. The original stays intact.");
+    }, slot);
+    dialog.append(editor);
+    const feedback = el("section", "sz-detail-rate");
+    feedback.append(el("h3", "", "Would you equip this set?"));
+    const latest = latestRatings(this.data.ratings).get(outfit.id);
     const note = el("textarea", "sz-input");
-    note.placeholder = "What works or doesn\u2019t? Optional.";
     note.setAttribute("aria-label", "Reason for your outfit rating");
-    note.value = rating?.note ?? "";
-    const chosen = new Set(rating?.reasons ?? []);
-    const reasons = el("div", "sz-reason-tags");
-    for (const reason of ["Love the palette", "Love the shape", "Too formal", "Too busy", "Wrong fit"]) {
+    note.placeholder = "What clicks? What would you change?";
+    note.value = latest?.note ?? "";
+    feedback.append(note);
+    const chosen = new Set(latest?.reasons ?? []), tags = el("div", "sz-reason-tags");
+    for (const reason of ["Love the palette", "Love the layers", "Too formal", "Too busy", "Wrong fit"]) {
       const b = button(reason, () => {
         chosen.has(reason) ? chosen.delete(reason) : chosen.add(reason);
         b.setAttribute("aria-pressed", String(chosen.has(reason)));
       }, "sz-reason");
       b.setAttribute("aria-pressed", String(chosen.has(reason)));
-      reasons.append(b);
+      tags.append(b);
     }
-    rate.append(note, reasons);
-    const rg = el("div", "sz-rating");
+    feedback.append(tags);
+    const ratings = el("div", "sz-rating");
     for (let n = 1; n <= 5; n++) {
       const b = button(String(n), () => {
         void this.rate(outfit, n, false, note.value, [...chosen]).then((saved) => {
-          if (saved) {
-            rg.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === n)));
-          }
+          if (saved) ratings.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === n)));
         });
       }, "sz-rate-button");
       b.setAttribute("aria-label", `Save ${n} out of 5 with feedback`);
-      b.setAttribute("aria-pressed", String(rating?.rating === n));
-      rg.append(b);
+      b.setAttribute("aria-pressed", String(latest?.rating === n));
+      ratings.append(b);
     }
-    rate.append(rg);
-    details.append(rate);
-    const sources = el("div", "sz-sources");
-    sources.append(el("h3", "", "Original references"));
-    outfit.source_urls.forEach((url, i) => {
-      if (safeUrl(url)) sources.append(link(`Source ${i + 1}`, url));
-    });
-    if (outfit.path && this.store.openNote) sources.append(button("Open outfit note", () => {
+    feedback.append(ratings);
+    dialog.append(feedback);
+    if (outfit.path && this.store.openNote) dialog.append(button("Open set note", () => {
       dialog.close();
       this.store.openNote(outfit.path);
     }, "sz-text-button"));
-    details.append(sources);
-    layout.append(visual, details);
-    dialog.append(layout);
+  }
+  openProduct(piece) {
+    const dialog = this.dialog(piece.title);
+    dialog.append(productInfo(piece, this.store));
+    dialog.append(button("Edit item record", () => this.pieceForm(piece), "sz-button sz-subtle"));
   }
   pieceRow(piece) {
     const row = el("div", "sz-piece-row");
@@ -6971,28 +7177,44 @@ var StyleZoneApp = class {
     return row;
   }
   renderPieces(parent) {
-    const h = this.heading(parent, "MAKE THE MOST OF WHAT YOU HAVE", "Your pieces. Your possibilities.", "Add what you own, collect potential additions, and keep useful prices and links in one place.");
+    const h = this.heading(parent, "YOUR RESEARCHED ITEM DATABASE", "A good option for every slot.", "Exact products, colors, prices and buy links. Each slot keeps its own pool of alternatives.");
     h.append(button("Add a piece", () => this.pieceForm(), "sz-button sz-primary"));
-    const owned = this.data.pieces.filter((p) => p.ownership === "owned").length;
-    parent.append(el("p", "sz-muted", `${owned} owned \xB7 ${this.data.pieces.length - owned} ideas to explore`));
-    if (!owned) parent.append(el("div", "sz-tip", "Nothing has been marked as yours yet. Add your clothes or edit an equivalent you already own."));
+    const slots = el("div", "sz-slot-tabs");
+    const all = button("All slots", () => {
+      this.inventorySlot = "";
+      this.render();
+    }, `sz-slot-filter ${!this.inventorySlot ? "is-active" : ""}`);
+    slots.append(all);
+    for (const slot of GEAR_SLOTS) {
+      const n = slotOptions(this.data.pieces, slot.id).length;
+      const b = button(`${slot.short} \xB7 ${n}`, () => {
+        this.inventorySlot = slot.id;
+        this.render();
+      }, `sz-slot-filter ${this.inventorySlot === slot.id ? "is-active" : ""}`);
+      b.prepend(slotIcon(slot.id));
+      b.setAttribute("aria-label", `Item database slot: ${slot.label}`);
+      slots.append(b);
+    }
+    parent.append(slots);
+    const visible = this.inventorySlot ? slotOptions(this.data.pieces, this.inventorySlot) : this.data.pieces.filter(isProduct);
+    parent.append(el("p", "sz-muted", `${visible.length} exact products \xB7 availability checked on each item record`));
     const grid = el("div", "sz-pieces-grid");
-    for (const p of this.data.pieces) {
-      const card = el("article", "sz-piece-card");
-      if (p.image) {
-        const image = el("img");
-        try {
-          image.src = this.store.imageUrl(p.image);
-        } catch {
-        }
-        image.alt = p.title;
-        image.loading = "lazy";
-        card.append(image);
-      }
-      card.append(this.swatches(p.colors), el("span", "sz-eyebrow", p.category), this.pieceRow(p));
+    for (const p of visible) {
+      const card = el("article", "sz-piece-card sz-inventory-card");
+      const photo = button("", () => this.openProduct(p), "sz-product-thumb-button");
+      photo.setAttribute("aria-label", `Inspect product: ${p.title}`);
+      photo.append(productPhoto(p, this.store));
+      card.append(photo, this.swatches(p.colors), el("span", "sz-eyebrow", `${p.store} / ${pieceSlots(p).map((id) => GEAR_SLOTS.find((s) => s.id === id)?.short).join(" + ")}`), this.pieceRow(p));
       grid.append(card);
     }
     parent.append(grid);
+    const pending = this.data.pieces.filter((p) => !isProduct(p));
+    if (pending.length) {
+      const more = el("details", "sz-unverified-items");
+      more.append(el("summary", "", `${pending.length} personal / unverified records`), el("p", "sz-muted", "These records are preserved. They need an exact product link and verification before appearing in the shoppable item database."));
+      for (const p of pending) more.append(this.pieceRow(p));
+      parent.append(more);
+    }
   }
   pieceForm(piece) {
     const dialog = this.dialog(piece ? "Edit your piece" : "Add a piece"), form = el("form", "sz-form");
@@ -7002,6 +7224,8 @@ var StyleZoneApp = class {
     const category = select("category", ["top", "knitwear", "outerwear", "bottom", "shoes", "accessory", "other"].map((x) => [x, x]), piece?.category ?? "top");
     const ownership = select("ownership", [["owned", "I own this"], ["wishlist", "On my wishlist"], ["reference", "An idea / equivalent"]], piece?.ownership ?? "owned");
     form.append(label("Category", category), label("Status", ownership));
+    const gearSlot = select("slot", GEAR_SLOTS.map((s) => [s.id, s.label]), piece?.slot ?? "shirt");
+    form.append(label("Equipment slot", gearSlot));
     const colors = input("colors", piece?.colors.join(", ") ?? "");
     colors.placeholder = "navy, cream, brown";
     form.append(label("Colors separated by commas", colors));
@@ -7038,8 +7262,8 @@ var StyleZoneApp = class {
         try {
           const file = upload.files?.[0], imagePath = file ? await this.store.saveImage(file) : image.value.trim();
           const id = piece?.id ?? `piece-${crypto.randomUUID()}`;
-          const record = { ...piece ?? {}, schema: 1, type: "piece", id, title: title.value.trim(), category: category.value, ownership: ownership.value, colors: colors.value.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean), price: price.value === "" ? null : Number(price.value), currency: "USD", store: store.value.trim(), product_url: url.value.trim(), price_checked_at: checked.value, price_note: priceNote.value.trim(), image: imagePath, notes: piece?.notes ?? notes.value.trim() };
-          await this.store.savePiece(record);
+          const record = { ...piece ?? {}, schema: 1, type: "piece", id, title: title.value.trim(), category: category.value, slot: gearSlot.value, compatible_slots: piece && piece.slot === gearSlot.value ? piece.compatible_slots ?? [gearSlot.value] : [gearSlot.value], ownership: ownership.value, colors: colors.value.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean), price: price.value === "" ? null : Number(price.value), currency: "USD", store: store.value.trim(), product_url: url.value.trim(), price_checked_at: checked.value, price_note: priceNote.value.trim(), image: imagePath, notes: piece?.notes ?? notes.value.trim() };
+          await this.store.savePiece(reconcileProductEdit(piece, record));
           dialog.close();
           this.toast("Piece saved.");
           await this.reload();
@@ -7052,35 +7276,22 @@ var StyleZoneApp = class {
     dialog.append(form);
   }
   outfitForm() {
-    const dialog = this.dialog("Create an outfit"), form = el("form", "sz-form");
+    const dialog = this.dialog("Create an equipment set"), form = el("form", "sz-form");
     const title = input("title");
     title.required = true;
-    form.append(label("Outfit name", title));
+    form.append(label("Set name", title));
     const styles = input("styles");
     styles.placeholder = "retro sport, relaxed";
     form.append(label("Directions separated by commas", styles));
-    const colors = input("colors");
-    colors.placeholder = "navy, cream, brown";
-    form.append(label("Palette separated by commas", colors));
     const occasions = input("occasions");
     occasions.placeholder = "everyday, evening";
     form.append(label("Occasions separated by commas", occasions));
-    const image = input("image");
-    image.placeholder = "Assets/Research/01-S01.jpg";
-    form.append(label("Image path in wardrobe folder", image));
-    const upload = input("photo", "", "file");
-    upload.accept = "image/jpeg,image/png,image/webp,image/gif";
-    form.append(label("Or attach an outfit photo", upload));
-    const credit = input("image_credit");
-    form.append(label("Image credit", credit));
-    const source = input("source_url", "", "url");
-    form.append(label("Inspiration source link", source));
     const items = el("fieldset", "sz-piece-choices");
-    items.append(el("legend", "", "Choose pieces"));
-    for (const p of this.data.pieces) {
+    items.append(el("legend", "", "Choose exact products"));
+    for (const p of this.data.pieces.filter(isProduct)) {
       const checkbox = input("piece_ids", p.id, "checkbox");
       const l = el("label", "sz-checkbox");
-      l.append(checkbox, el("span", "", `${p.title} \xB7 ${p.ownership}`));
+      l.append(checkbox, el("span", "", `${p.title} \xB7 ${p.slot ?? "slot needed"} \xB7 ${money(p.price)}`));
       items.append(l);
     }
     form.append(items);
@@ -7088,7 +7299,7 @@ var StyleZoneApp = class {
     form.append(label("Styling notes", notes));
     const error = el("p", "sz-form-error");
     error.setAttribute("role", "alert");
-    const save = el("button", "sz-button sz-primary", "Save outfit");
+    const save = el("button", "sz-button sz-primary", "Save set");
     save.type = "submit";
     form.append(error, save);
     form.onsubmit = (e) => {
@@ -7097,15 +7308,21 @@ var StyleZoneApp = class {
       void (async () => {
         try {
           const pieceIds = [...items.querySelectorAll("input:checked")].map((x) => x.value);
-          if (!pieceIds.length) throw Error("Choose at least one piece.");
+          if (!pieceIds.length) throw Error("Choose at least one exact product.");
+          const equipment = {};
+          for (const id of pieceIds) {
+            const p = this.data.pieces.find((p2) => p2.id === id);
+            const slot = pieceSlots(p).find((s) => !equipment[s]);
+            if (!slot) throw Error(`One product per slot: ${p.title} has no free compatible slot.`);
+            equipment[slot] = id;
+          }
           const list = (text) => text.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
-          const file = upload.files?.[0];
-          const o = { schema: 1, type: "outfit", id: `outfit-${crypto.randomUUID()}`, title: title.value.trim(), season: "Fall Winter 2026", styles: list(styles.value), colors: list(colors.value), occasions: list(occasions.value), piece_ids: pieceIds, image: file ? await this.store.saveImage(file) : image.value.trim(), image_credit: credit.value.trim(), source_urls: source.value ? [source.value] : [], notes: notes.value.trim() };
+          const o = { schema: 1, type: "outfit", id: `outfit-${crypto.randomUUID()}`, title: title.value.trim(), season: "Fall Winter 2026", styles: list(styles.value), colors: unique(pieceIds.flatMap((id) => this.data.pieces.find((p) => p.id === id).colors)), occasions: list(occasions.value), piece_ids: pieceIds, equipment, image: "", image_credit: "", source_urls: pieceIds.map((id) => this.data.pieces.find((p) => p.id === id).product_url), notes: notes.value.trim() };
           await this.store.saveOutfit(o);
           dialog.close();
           this.page = "outfits";
           await this.reload();
-          this.toast("Outfit added.");
+          this.toast("Equipment set added.");
         } catch (e2) {
           error.textContent = e2 instanceof Error ? e2.message : String(e2);
           save.disabled = false;
@@ -7168,948 +7385,1406 @@ var catalog_default = {
     {
       schema: 1,
       type: "outfit",
-      id: "rugby-denim",
-      title: "The weekend stripe",
+      id: "set-low-key",
+      title: "Low-key Loadout",
       season: "Fall Winter 2026",
       styles: [
-        "retro sport"
+        "textured minimalism"
       ],
       colors: [
-        "navy",
-        "cream",
-        "brown"
+        "white",
+        "gray",
+        "cream"
       ],
       occasions: [
         "everyday",
         "weekend"
       ],
       piece_ids: [
-        "rugby",
-        "dark-jeans",
-        "tan-loafers"
+        "product-white-tee",
+        "product-charcoal-apres",
+        "product-natural-socks",
+        "product-white-premier"
       ],
-      image: "Assets/Research/01-S01.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      equipment: {
+        shirt: "product-white-tee",
+        lower: "product-charcoal-apres",
+        socks: "product-natural-socks",
+        shoes: "product-white-premier"
+      },
+      image: "",
+      image_credit: "",
       source_urls: [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+        "https://www.taylorstitch.com/products/waffle-sock-in-natural-2501",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white"
       ],
-      notes: "A strong stripe, straight denim and tan loafers. Try a relaxed top with a clean break at the ankle. The photograph shows inspiration; the linked pieces are proposed equivalents."
+      notes: "A white tee, charcoal sashiko pants and clean white sneakers. Four actual products, with the optional slots left open."
     },
     {
       schema: 1,
       type: "outfit",
-      id: "track-tailoring",
-      title: "Off duty, dialed in",
+      id: "set-campus",
+      title: "Campus Courier",
       season: "Fall Winter 2026",
       styles: [
         "retro sport"
       ],
       colors: [
+        "white",
         "navy",
         "cream",
-        "gray"
-      ],
-      occasions: [
-        "everyday",
-        "creative work"
-      ],
-      piece_ids: [
-        "track-jacket",
-        "cream-tee",
-        "gray-trousers",
-        "white-trainers"
-      ],
-      image: "Assets/Research/02-S01.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      source_urls: [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
-      ],
-      notes: "Let a track jacket loosen up the trousers. Keep the tee plain so the silhouette and stripe do the work."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "heritage-knit",
-      title: "A little mountain air",
-      season: "Fall Winter 2026",
-      styles: [
-        "heritage prep"
-      ],
-      colors: [
-        "olive",
-        "cream",
-        "burgundy",
-        "blue"
-      ],
-      occasions: [
-        "weekend",
-        "outdoors"
-      ],
-      piece_ids: [
-        "fair-isle",
-        "dark-jeans",
-        "brown-boots"
-      ],
-      image: "Assets/Research/04-S01.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      source_urls: [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
-      ],
-      notes: "Make the sweater the interesting part. Add dark jeans and simple brown boots; skip extra patterns at first."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "oxford-cardigan",
-      title: "The easy collegiate",
-      season: "Fall Winter 2026",
-      styles: [
-        "heritage prep"
-      ],
-      colors: [
-        "blue",
-        "cream",
-        "olive",
-        "brown"
-      ],
-      occasions: [
-        "everyday",
-        "creative work"
-      ],
-      piece_ids: [
-        "oxford",
-        "cardigan",
-        "olive-chinos",
-        "tan-loafers"
-      ],
-      image: "Assets/Research/07-S03.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      source_urls: [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren",
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
-      ],
-      notes: "A pale oxford under a cotton cardigan, grounded by olive chinos. Leave a little collar showing."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "brown-leather",
-      title: "After the last set",
-      season: "Fall Winter 2026",
-      styles: [
-        "leather and denim"
-      ],
-      colors: [
-        "brown",
-        "cream",
-        "black"
-      ],
-      occasions: [
-        "evening",
-        "everyday"
-      ],
-      piece_ids: [
-        "leather-jacket",
-        "cream-tee",
-        "black-jeans",
-        "black-boots"
-      ],
-      image: "Assets/Research/09-S04.jpg",
-      image_credit: "Christina Fragkou",
-      source_urls: [
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
-        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
-      ],
-      notes: "Brown leather and faded black denim with a cream tee. The pictured dark layers suggest proportion, rather than an exact copy."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "denim-trousers",
-      title: "Denim, dressed a little",
-      season: "Fall Winter 2026",
-      styles: [
-        "leather and denim"
-      ],
-      colors: [
-        "navy",
-        "cream",
-        "gray",
-        "black"
-      ],
-      occasions: [
-        "creative work",
-        "evening"
-      ],
-      piece_ids: [
-        "denim-jacket",
-        "knit-polo",
-        "gray-trousers",
-        "derbies"
-      ],
-      image: "Assets/Research/08-S04.jpg",
-      image_credit: "Christina Fragkou",
-      source_urls: [
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
-      ],
-      notes: "Pair a denim jacket with a fine knit polo and proper trousers. Keep the shoes quiet."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "soft-tailoring",
-      title: "A softer kind of sharp",
-      season: "Fall Winter 2026",
-      styles: [
-        "relaxed tailoring"
-      ],
-      colors: [
-        "brown",
-        "blue",
-        "gray"
-      ],
-      occasions: [
-        "creative work",
-        "dinner"
-      ],
-      piece_ids: [
-        "soft-blazer",
-        "oxford",
-        "gray-trousers",
-        "tan-loafers"
-      ],
-      image: "Assets/Research/05-S03.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      source_urls: [
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/",
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
-      ],
-      notes: "Soft shoulders, a pale blue shirt and straight charcoal trousers. Try the shirt open at the neck."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "crew-pleats",
-      title: "No meeting required",
-      season: "Fall Winter 2026",
-      styles: [
-        "relaxed tailoring"
-      ],
-      colors: [
-        "gray",
-        "navy",
-        "black"
-      ],
-      occasions: [
-        "creative work",
-        "everyday"
-      ],
-      piece_ids: [
-        "crewneck",
-        "gray-trousers",
-        "wool-jacket",
-        "derbies"
-      ],
-      image: "Assets/Research/11-S04.jpg",
-      image_credit: "Christina Fragkou",
-      source_urls: [
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908",
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows"
-      ],
-      notes: "A fine crewneck and short wool jacket make tailoring feel easy. Use the street reference to compare length and drape."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "suede-stone",
-      title: "Quiet texture",
-      season: "Fall Winter 2026",
-      styles: [
-        "textured minimalism"
-      ],
-      colors: [
-        "blue",
         "stone",
-        "brown"
-      ],
-      occasions: [
-        "everyday",
-        "dinner"
-      ],
-      piece_ids: [
-        "oxford",
-        "stone-trousers",
-        "suede-jacket",
-        "white-trainers"
-      ],
-      image: "Assets/Research/17-S08.jpg",
-      image_credit: "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
-      source_urls: [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee"
-      ],
-      notes: "Pale blue and stone under a soft brown jacket. Texture carries the interest, with simple sneakers below."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "cocoa-charcoal",
-      title: "Cocoa after hours",
-      season: "Fall Winter 2026",
-      styles: [
-        "textured minimalism"
-      ],
-      colors: [
         "brown",
-        "gray",
-        "navy",
-        "black"
-      ],
-      occasions: [
-        "creative work",
-        "evening"
-      ],
-      piece_ids: [
-        "brown-knit",
-        "gray-trousers",
-        "light-mac",
-        "derbies"
-      ],
-      image: "Assets/Research/16-S08.jpg",
-      image_credit: "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
-      source_urls: [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee",
-        "https://www.pradagroup.com/content/dam/pradagroup/documents/2026/Gennaio/Inglese/Prada-Fall-Winter-2026-Menswear-show-PR.pdf"
-      ],
-      notes: "Keep the color shifts close and let the long outer layer change the shape. A lightweight mac works on milder days."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "plum-night",
-      title: "One good going out shirt",
-      season: "Fall Winter 2026",
-      styles: [
-        "expressive evening"
-      ],
-      colors: [
-        "plum",
-        "black"
-      ],
-      occasions: [
-        "evening",
-        "dinner"
-      ],
-      piece_ids: [
-        "plum-shirt",
-        "black-jeans",
-        "black-boots"
-      ],
-      image: "Assets/Research/06-S03.jpg",
-      image_credit: "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      source_urls: [
-        "https://www.gq.com/story/the-9-fall-winter-2026-menswear-trends-to-try-right-now",
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
-      ],
-      notes: "A textured plum shirt and black denim. Try sheen, a subtle weave or an open collar before a more decorative top."
-    },
-    {
-      schema: 1,
-      type: "outfit",
-      id: "striped-layer",
-      title: "Color, with an anchor",
-      season: "Fall Winter 2026",
-      styles: [
-        "expressive evening"
-      ],
-      colors: [
-        "plum",
-        "petrol",
-        "cream",
         "black",
         "gray"
       ],
       occasions: [
+        "everyday",
+        "weekend"
+      ],
+      piece_ids: [
+        "product-white-tee",
+        "product-navy-rugby",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-white-premier",
+        "product-black-glasses",
+        "product-coal-cap"
+      ],
+      equipment: {
+        base: "product-white-tee",
+        shirt: "product-navy-rugby",
+        lower: "product-khaki-deck-pants",
+        socks: "product-navy-socks",
+        shoes: "product-white-premier",
+        glasses: "product-black-glasses",
+        hat: "product-coal-cap"
+      },
+      image: "",
+      image_credit: "",
+      source_urls: [
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/rugby-shirt-in-navy-stripe-2610",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+        "https://goodr.com/products/a-unicorns-calamity",
+        "https://www.taylorstitch.com/products/mercer-cap-in-coal-herringbone-wool-2611"
+      ],
+      notes: "Navy stripes and khaki cord make a relaxed collegiate set. The white tee is the under layer; the rugby is layer one."
+    },
+    {
+      schema: 1,
+      type: "outfit",
+      id: "set-forest",
+      title: "Forest Sidequest",
+      season: "Fall Winter 2026",
+      styles: [
+        "heritage prep"
+      ],
+      colors: [
+        "white",
+        "olive",
+        "black",
+        "navy",
+        "brown",
+        "cream"
+      ],
+      occasions: [
+        "everyday",
+        "weekend"
+      ],
+      piece_ids: [
+        "product-white-tee",
+        "product-forest-flannel",
+        "product-olive-overshirt",
+        "product-navy-deck-pants",
+        "product-coffee-socks",
+        "product-brown-captain",
+        "product-natural-beanie"
+      ],
+      equipment: {
+        base: "product-white-tee",
+        shirt: "product-forest-flannel",
+        outer: "product-olive-overshirt",
+        lower: "product-navy-deck-pants",
+        socks: "product-coffee-socks",
+        shoes: "product-brown-captain",
+        hat: "product-natural-beanie"
+      },
+      image: "",
+      image_credit: "",
+      source_urls: [
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/crater-shirt-in-dark-forest-2611",
+        "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-olive-wool-2610",
+        "https://www.taylorstitch.com/products/deck-pant-in-dark-navy-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/camp-sock-in-marled-coffee-2409",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/seafarer-beanie-in-natural-donegal-2611"
+      ],
+      notes: "Forest flannel under an olive wool overshirt, grounded with navy pants and brown boots. Remove layer two for milder weather."
+    },
+    {
+      schema: 1,
+      type: "outfit",
+      id: "set-night",
+      title: "After-hours Charcoal",
+      season: "Fall Winter 2026",
+      styles: [
+        "expressive evening"
+      ],
+      colors: [
+        "burgundy",
+        "black",
+        "gray",
+        "navy",
+        "brown",
+        "gold"
+      ],
+      occasions: [
         "evening",
         "creative work"
       ],
       piece_ids: [
-        "striped-knit",
-        "black-trousers",
-        "plain-coat",
-        "derbies"
+        "product-port-tee",
+        "product-black-trucker",
+        "product-charcoal-apres",
+        "product-navy-socks",
+        "product-brown-captain",
+        "product-brass-cuff",
+        "product-amber-glasses"
       ],
-      image: "Assets/Research/12-S11.jpg",
-      image_credit: "Courtesy of Dries Van Noten; see official show page for full credits",
+      equipment: {
+        shirt: "product-port-tee",
+        outer: "product-black-trucker",
+        lower: "product-charcoal-apres",
+        socks: "product-navy-socks",
+        shoes: "product-brown-captain",
+        wrist: "product-brass-cuff",
+        glasses: "product-amber-glasses"
+      },
+      image: "",
+      image_credit: "",
       source_urls: [
-        "https://www.driesvannoten.com/en-eu/pages/show-aw-26-27-men",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/dries-van-noten"
+        "https://www.taylorstitch.com/products/organic-cotton-shop-tee-in-port-twist-2610",
+        "https://www.taylorstitch.com/products/long-haul-jacket-in-faded-black-washed-moleskin-2610",
+        "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/hammered-cuff-in-brass-2611",
+        "https://goodr.com/products/whiskey-shots-with-satan"
       ],
-      notes: "Anchor a colorful striped knit with black trousers and a plain coat. Start with one expressive piece."
+      notes: "Port, faded black and charcoal with warm brown boots. Brass and amber are optional accents you can swap out."
+    },
+    {
+      schema: 1,
+      type: "outfit",
+      id: "set-blue",
+      title: "Everyday Blue",
+      season: "Fall Winter 2026",
+      styles: [
+        "relaxed tailoring"
+      ],
+      colors: [
+        "blue",
+        "stone",
+        "brown",
+        "navy",
+        "white"
+      ],
+      occasions: [
+        "creative work",
+        "dinner"
+      ],
+      piece_ids: [
+        "product-blue-oxford",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-white-premier",
+        "product-brown-belt"
+      ],
+      equipment: {
+        shirt: "product-blue-oxford",
+        lower: "product-khaki-deck-pants",
+        socks: "product-navy-socks",
+        shoes: "product-white-premier",
+        accessories: "product-brown-belt"
+      },
+      image: "",
+      image_credit: "",
+      source_urls: [
+        "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+        "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402"
+      ],
+      notes: "A blue Oxford and khaki deck pants with white leather sneakers. A straightforward set for testing cleaner shapes."
+    },
+    {
+      schema: 1,
+      type: "outfit",
+      id: "set-corduroy",
+      title: "Corduroy Night",
+      season: "Fall Winter 2026",
+      styles: [
+        "relaxed tailoring"
+      ],
+      colors: [
+        "blue",
+        "navy",
+        "stone",
+        "brown",
+        "copper"
+      ],
+      occasions: [
+        "dinner",
+        "evening"
+      ],
+      piece_ids: [
+        "product-blue-oxford",
+        "product-navy-sportcoat",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-brown-captain",
+        "product-copper-cuff",
+        "product-eddy-scarf",
+        "product-brown-belt"
+      ],
+      equipment: {
+        shirt: "product-blue-oxford",
+        outer: "product-navy-sportcoat",
+        lower: "product-khaki-deck-pants",
+        socks: "product-navy-socks",
+        shoes: "product-brown-captain",
+        wrist: "product-copper-cuff",
+        neck: "product-eddy-scarf",
+        accessories: "product-brown-belt"
+      },
+      image: "",
+      image_credit: "",
+      source_urls: [
+        "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+        "https://www.taylorstitch.com/products/riley-sportcoat-in-dark-navy-corduroy-2611",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/twisted-cuff-in-copper-2701",
+        "https://www.taylorstitch.com/products/fireside-scarf-in-eddy-plaid-2610",
+        "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402"
+      ],
+      notes: "Navy corduroy over a blue Oxford, with khaki pants and brown boots. The scarf, cuff and belt are optional slots, each linked to its exact product."
     }
   ],
   pieces: [
     {
       schema: 1,
       type: "piece",
-      id: "rugby",
-      title: "Union rugby polo \xB7 choose a stripe",
+      id: "product-white-tee",
+      title: "The Organic Cotton Tee in Vintage White",
       category: "top",
-      colors: [
-        "navy",
-        "cream"
+      slot: "base",
+      compatible_slots: [
+        "base",
+        "shirt"
       ],
-      ownership: "reference",
+      colors: [
+        "white"
+      ],
+      ownership: "wishlist",
       price: 55,
       currency: "USD",
-      store: "Levi\u2019s",
-      product_url: "https://www.levi.com/US/en_US/clothing/men/shirts/c/levi_clothing_men_shirts/facets/feature-style/rugby",
-      price_checked_at: "2026-11-21",
-      price_note: "Union Rugby Polo listed at $55. Choose a color and size at the retailer. Member discounts excluded.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "dark-jeans",
-      title: "501 Original \xB7 Clean Rigid dark wash",
-      category: "bottom",
-      colors: [
-        "navy",
-        "blue"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-white-tee.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/products/organic-cotton-tee-in-vintage-white-2304_001.jpg?v=1790611991",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6821053497421",
+      sku: "2304OCTB38",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
       ],
-      ownership: "reference",
-      price: 50.97,
-      currency: "USD",
-      store: "Levi\u2019s",
-      product_url: "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-mens-jeans/p/005010536",
-      price_checked_at: "2026-11-21",
-      price_note: "Displayed sale price on November 21. Size availability and later promotions may differ.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "tan-loafers",
-      title: "Brantin Loafer \xB7 tan leather",
-      category: "shoes",
-      colors: [
-        "brown"
-      ],
-      ownership: "reference",
-      price: 110,
-      currency: "USD",
-      store: "Clarks",
-      product_url: "https://www.clarks.com/en-us/brantin-loafer/26187662-p",
-      price_checked_at: "2026-11-21",
-      price_note: "Base price $110; page also advertises $66 applied in cart. Budget uses the base price until checkout terms are confirmed.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "track-jacket",
-      title: "Retro track jacket",
-      category: "outerwear",
-      colors: [
-        "navy",
-        "cream"
-      ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "adidas",
-      product_url: "https://www.adidas.com/us",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "cream-tee",
-      title: "Plain cream cotton tee",
+      id: "product-port-tee",
+      title: "The Organic Cotton Shop Tee in Port Twist",
       category: "top",
-      colors: [
-        "cream"
+      slot: "base",
+      compatible_slots: [
+        "base",
+        "shirt"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "UNIQLO",
-      product_url: "https://www.uniqlo.com/us/en/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "gray-trousers",
-      title: "Straight charcoal trousers",
-      category: "bottom",
       colors: [
-        "gray"
-      ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Abercrombie & Fitch",
-      product_url: "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "white-trainers",
-      title: "Low leather trainers",
-      category: "shoes",
-      colors: [
-        "white",
-        "gray"
-      ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "adidas",
-      product_url: "https://www.adidas.com/us",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "fair-isle",
-      title: "Patterned heritage sweater",
-      category: "knitwear",
-      colors: [
-        "olive",
-        "cream",
         "burgundy"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 65,
       currency: "USD",
-      store: "J.Crew",
-      product_url: "https://www.jcrew.com/plp/mens/categories/clothing/sweaters",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "brown-boots",
-      title: "Brown leather boots",
-      category: "shoes",
-      colors: [
-        "brown"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/organic-cotton-shop-tee-in-port-twist-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-port-tee.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheOrganicCottonShopTee-PortTwist_PDP_001.jpg?v=1792077854",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759503753293",
+      sku: "2610OCSTPT36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XXL - 46"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Clarks",
-      product_url: "https://www.clarks.com/en-us",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "oxford",
-      title: "Pale blue oxford shirt",
+      id: "product-blue-oxford",
+      title: "The Jack in Blue Everyday Oxford",
       category: "top",
+      slot: "shirt",
+      compatible_slots: [
+        "shirt"
+      ],
       colors: [
         "blue"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 118,
       currency: "USD",
-      store: "J.Crew",
-      product_url: "https://www.jcrew.com/p/BE996",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-blue-oxford.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/jack-in-blue-everyday-oxford-2304_001.jpg?v=1790611605",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6824013660237",
+      sku: "2304JBEO36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "cardigan",
-      title: "Oatmeal cotton cardigan",
-      category: "knitwear",
+      id: "product-navy-rugby",
+      title: "The Rugby Shirt in Navy Stripe",
+      category: "top",
+      slot: "shirt",
+      compatible_slots: [
+        "shirt"
+      ],
       colors: [
+        "navy",
         "cream"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 128,
       currency: "USD",
-      store: "UNIQLO",
-      product_url: "https://www.uniqlo.com/us/en/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/rugby-shirt-in-navy-stripe-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-navy-rugby.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Rugby_Shirt_in_Navy_Stripe_PDP_001.jpg?v=1790707363",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759505358925",
+      sku: "2610RSNS36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "olive-chinos",
-      title: "Straight olive chinos",
-      category: "bottom",
+      id: "product-forest-flannel",
+      title: "The Crater Shirt in Dark Forest",
+      category: "top",
+      slot: "shirt",
+      compatible_slots: [
+        "shirt",
+        "outer"
+      ],
+      colors: [
+        "olive",
+        "black"
+      ],
+      ownership: "wishlist",
+      price: 148,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/crater-shirt-in-dark-forest-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-forest-flannel.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Crater_Shirt_in_Dark_Forest_PDP_001.jpg?v=1793832582",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759504801869",
+      sku: "2611CSDF36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-navy-overshirt",
+      title: "The Maritime Shirt Jacket in Heather Navy Wool",
+      category: "outerwear",
+      slot: "outer",
+      compatible_slots: [
+        "outer"
+      ],
+      colors: [
+        "navy"
+      ],
+      ownership: "wishlist",
+      price: 198,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-navy-wool-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-navy-overshirt.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Maritime_Shirt_Jacket_in_Heather_Navy_Wool_PDP_001.jpg?v=1790895632",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759502082125",
+      sku: "2610MSJHNW36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-olive-overshirt",
+      title: "The Maritime Shirt Jacket in Heather Olive Wool",
+      category: "outerwear",
+      slot: "outer",
+      compatible_slots: [
+        "outer"
+      ],
       colors: [
         "olive"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 198,
       currency: "USD",
-      store: "J.Crew",
-      product_url: "https://www.jcrew.com/plp/mens/categories/clothing/pants-and-chinos",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "leather-jacket",
-      title: "Brown leather jacket",
-      category: "outerwear",
-      colors: [
-        "brown"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-olive-wool-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-olive-overshirt.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Maritime_Shirt_Jacket_in_Heather_Olive_Wool_PDP_001.jpg?v=1790895686",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759502114893",
+      sku: "2610MSJHOW36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Vintage / secondhand",
-      product_url: "https://www.ebay.com/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "black-jeans",
-      title: "Straight faded black jeans",
-      category: "bottom",
+      id: "product-black-trucker",
+      title: "The Long Haul Jacket in Faded Black Washed Moleskin",
+      category: "outerwear",
+      slot: "outer",
+      compatible_slots: [
+        "outer"
+      ],
       colors: [
         "black"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 248,
       currency: "USD",
-      store: "Levi\u2019s",
-      product_url: "https://www.levi.com/US/en_US/clothing/men/jeans/c/levi_clothing_men_jeans",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "black-boots",
-      title: "Black leather boots",
-      category: "shoes",
-      colors: [
-        "black"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/long-haul-jacket-in-faded-black-washed-moleskin-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-black-trucker.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_productname_PDP_001_42fad0c6-bea0-4a47-be05-7f58e6e0aada.jpg?v=1792427224",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759502016589",
+      sku: "2610LHJFBWM36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Clarks",
-      product_url: "https://www.clarks.com/en-us",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "denim-jacket",
-      title: "Dark denim jacket",
+      id: "product-navy-sportcoat",
+      title: "The Riley Sportcoat in Dark Navy Corduroy",
       category: "outerwear",
+      slot: "outer",
+      compatible_slots: [
+        "outer"
+      ],
       colors: [
         "navy"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 238,
       currency: "USD",
-      store: "Levi\u2019s",
-      product_url: "https://www.levi.com/US/en_US/clothing/men/outerwear/c/levi_clothing_men_outerwear",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "knit-polo",
-      title: "Fine knit polo",
-      category: "knitwear",
-      colors: [
-        "cream"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/riley-sportcoat-in-dark-navy-corduroy-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-navy-sportcoat.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Riley_Sportcoat_in_Dark_Navy_Corduroy_PDP_001.jpg?v=1791822946",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759504080973",
+      sku: "2611RSDNC36",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XXL - 46"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "COS",
-      product_url: "https://www.cos.com/en-us/men",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "soft-blazer",
-      title: "Soft tobacco blazer",
-      category: "outerwear",
+      id: "product-khaki-deck-pants",
+      title: "The Deck Pant in Khaki Bedford Cord",
+      category: "bottom",
+      slot: "lower",
+      compatible_slots: [
+        "lower"
+      ],
       colors: [
+        "stone",
         "brown"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 148,
       currency: "USD",
-      store: "J.Crew",
-      product_url: "https://www.jcrew.com/plp/mens/categories/clothing/blazers",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-khaki-deck-pants.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Deck_Pant_in_Khaki_Bedford_PDP_001.jpg?v=1792019167",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7454614028365",
+      sku: "2512DPKBC2832",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "28 / 32",
+        "29 / 32",
+        "30 / 32",
+        "31 / 32",
+        "32 / 32",
+        "33 / 32",
+        "34 / 32",
+        "35 / 32",
+        "36 / 32",
+        "38 / 32",
+        "28 / 34",
+        "29 / 34",
+        "30 / 34",
+        "31 / 34",
+        "32 / 34",
+        "33 / 34",
+        "34 / 34",
+        "35 / 34",
+        "36 / 34",
+        "38 / 34"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "crewneck",
-      title: "Fine gray crewneck",
-      category: "knitwear",
+      id: "product-navy-deck-pants",
+      title: "The Deck Pant in Dark Navy Bedford Cord",
+      category: "bottom",
+      slot: "lower",
+      compatible_slots: [
+        "lower"
+      ],
+      colors: [
+        "navy"
+      ],
+      ownership: "wishlist",
+      price: 148,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/deck-pant-in-dark-navy-bedford-cord-2512",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-navy-deck-pants.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/instock_m_q425_The_Deck_Pant-DarkNavyBedfordCord_portrait_001.jpg?v=1793993552",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7454613995597",
+      sku: "2512DPDNBC2832",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "28 / 32",
+        "29 / 32",
+        "30 / 32",
+        "31 / 32",
+        "32 / 32",
+        "33 / 32",
+        "34 / 32",
+        "35 / 32",
+        "36 / 32",
+        "38 / 32",
+        "28 / 34",
+        "29 / 34",
+        "30 / 34",
+        "31 / 34",
+        "32 / 34",
+        "33 / 34",
+        "34 / 34",
+        "35 / 34",
+        "36 / 34",
+        "38 / 34"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-charcoal-apres",
+      title: "The Apres Pant in Charcoal Sashiko",
+      category: "bottom",
+      slot: "lower",
+      compatible_slots: [
+        "lower"
+      ],
       colors: [
         "gray"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 128,
       currency: "USD",
-      store: "UNIQLO",
-      product_url: "https://www.uniqlo.com/us/en/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "wool-jacket",
-      title: "Short navy wool jacket",
-      category: "outerwear",
-      colors: [
-        "navy"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-charcoal-apres.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/products/apres-pant-in-charcoal-sashiko_001.jpg?v=1790611008",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6549279834189",
+      sku: "2109APCSXS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS / Regular",
+        "XS / Long",
+        "S / Long",
+        "M / Regular",
+        "M / Long",
+        "L / Regular",
+        "L / Long",
+        "XL / Regular",
+        "XL / Long",
+        "XXL / Regular",
+        "XXL / Long"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "COS",
-      product_url: "https://www.cos.com/en-us/men",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "derbies",
-      title: "Black leather derbies",
-      category: "shoes",
-      colors: [
-        "black"
-      ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Clarks",
-      product_url: "https://www.clarks.com/en-us",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "stone-trousers",
-      title: "Straight stone trousers",
+      id: "product-olive-roamer",
+      title: "The Roamer Pant in Smoked Olive Corduroy",
       category: "bottom",
-      colors: [
-        "stone"
+      slot: "lower",
+      compatible_slots: [
+        "lower"
       ],
-      ownership: "reference",
-      price: null,
+      colors: [
+        "olive"
+      ],
+      ownership: "wishlist",
+      price: 138,
       currency: "USD",
-      store: "Abercrombie & Fitch",
-      product_url: "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/roamer-pant-in-smoked-olive-corduroy-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-olive-roamer.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Roamer_Pant_in_Smoked_Olive_Corduroy_PDP_001.jpg?v=1793992458",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759506178125",
+      sku: "2611RPSOCXS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "suede-jacket",
-      title: "Brown suede jacket",
-      category: "outerwear",
-      colors: [
-        "brown"
+      id: "product-navy-socks",
+      title: "The Merino Sock in Navy",
+      category: "accessory",
+      slot: "socks",
+      compatible_slots: [
+        "socks"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Vintage / secondhand",
-      product_url: "https://www.ebay.com/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "brown-knit",
-      title: "Fine cocoa knit",
-      category: "knitwear",
-      colors: [
-        "brown"
-      ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "UNIQLO",
-      product_url: "https://www.uniqlo.com/us/en/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "light-mac",
-      title: "Lightweight navy mac",
-      category: "outerwear",
       colors: [
         "navy"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 32,
       currency: "USD",
-      store: "COS",
-      product_url: "https://www.cos.com/en-us/men",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      schema: 1,
-      type: "piece",
-      id: "plum-shirt",
-      title: "Textured plum evening shirt",
-      category: "top",
-      colors: [
-        "plum"
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-navy-socks.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/products/the-merino-sock-in-navy_001.jpg?v=1790612365",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "4488163786829",
+      sku: "2005MSNSM",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "S/M (7-9)",
+        "L/XL (9.5-13)"
       ],
-      ownership: "reference",
-      price: null,
-      currency: "USD",
-      store: "Vintage / secondhand",
-      product_url: "https://www.ebay.com/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "striped-knit",
-      title: "Fitted multicolor striped knit",
-      category: "knitwear",
+      id: "product-natural-socks",
+      title: "The Waffle Sock in Natural",
+      category: "accessory",
+      slot: "socks",
+      compatible_slots: [
+        "socks"
+      ],
       colors: [
-        "plum",
-        "petrol",
         "cream"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 28,
       currency: "USD",
-      store: "Vintage / secondhand",
-      product_url: "https://www.ebay.com/",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/waffle-sock-in-natural-2501",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-natural-socks.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/waffle-sock-in-natural-2501_001.jpg?v=1790612434",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7307482792013",
+      sku: "2501WSNSM",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "S/M",
+        "L/XL"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "black-trousers",
-      title: "Relaxed black trousers",
-      category: "bottom",
+      id: "product-coffee-socks",
+      title: "The Camp Sock in Marled Coffee",
+      category: "accessory",
+      slot: "socks",
+      compatible_slots: [
+        "socks"
+      ],
+      colors: [
+        "brown"
+      ],
+      ownership: "wishlist",
+      price: 30,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/camp-sock-in-marled-coffee-2409",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-coffee-socks.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/camp-sock-in-marled-coffee-2409_001.jpg?v=1790611176",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6990292189261",
+      sku: "2409CSMCOSM",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "S/M",
+        "L/XL"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-natural-beanie",
+      title: "The Seafarer Beanie in Natural Donegal",
+      category: "accessory",
+      slot: "hat",
+      compatible_slots: [
+        "hat"
+      ],
+      colors: [
+        "cream"
+      ],
+      ownership: "wishlist",
+      price: 48,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/seafarer-beanie-in-natural-donegal-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-natural-beanie.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheSeafarerBeanie-NaturalDonegal_PDP_001.jpg?v=1791489893",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759505588301",
+      sku: "2611SBNDOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-coal-cap",
+      title: "The Mercer Cap in Coal Herringbone Wool",
+      category: "accessory",
+      slot: "hat",
+      compatible_slots: [
+        "hat"
+      ],
+      colors: [
+        "gray",
+        "black"
+      ],
+      ownership: "wishlist",
+      price: 68,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/mercer-cap-in-coal-herringbone-wool-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-coal-cap.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Mercer_Cap_in_Coal_Herringbone_PDP_001.jpg?v=1794247586",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759505752141",
+      sku: "2611MCCHWOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-eddy-scarf",
+      title: "The Fireside Scarf in Eddy Plaid",
+      category: "accessory",
+      slot: "neck",
+      compatible_slots: [
+        "neck"
+      ],
+      colors: [
+        "navy",
+        "blue",
+        "brown"
+      ],
+      ownership: "wishlist",
+      price: 88,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/fireside-scarf-in-eddy-plaid-2610",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-eddy-scarf.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheFiresideScarf-EddyPlaid_PDP_001.jpg?v=1792177330",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7759504048205",
+      sku: "2610FSEPOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-butterscotch-scarf",
+      title: "The Fireside Scarf in Butterscotch Plaid",
+      category: "accessory",
+      slot: "neck",
+      compatible_slots: [
+        "neck"
+      ],
+      colors: [
+        "brown",
+        "cream"
+      ],
+      ownership: "wishlist",
+      price: 88,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/fireside-scarf-in-butterscotch-plaid-2510",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-butterscotch-scarf.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/instock_m_q425_The_Fireside_Scarf-ButterscotchPlaid_portrait_001.jpg?v=1792176559",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7454613012557",
+      sku: "2510FSBPOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-brass-cuff",
+      title: "The Hammered Cuff in Brass",
+      category: "accessory",
+      slot: "wrist",
+      compatible_slots: [
+        "wrist"
+      ],
+      colors: [
+        "gold"
+      ],
+      ownership: "wishlist",
+      price: 80,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/hammered-cuff-in-brass-2611",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-brass-cuff.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheHammeredCuff-Brass_PDP_001.jpg?v=1793208241",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7949354598477",
+      sku: "2611HCBOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-copper-cuff",
+      title: "The Twisted Cuff in Copper",
+      category: "accessory",
+      slot: "wrist",
+      compatible_slots: [
+        "wrist"
+      ],
+      colors: [
+        "copper"
+      ],
+      ownership: "wishlist",
+      price: 80,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/twisted-cuff-in-copper-2701",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-copper-cuff.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheTwistedCuff-Copper_PDP_001.jpg?v=1793216185",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "7909623038029",
+      sku: "2611TCCOS",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "One Size"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-brown-belt",
+      title: "The Braided Belt in Dark Brown",
+      category: "accessory",
+      slot: "accessories",
+      compatible_slots: [
+        "accessories"
+      ],
+      colors: [
+        "brown"
+      ],
+      ownership: "wishlist",
+      price: 98,
+      currency: "USD",
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-brown-belt.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/braided-belt-in-dark-brown-2402_001.jpg?v=1790611092",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6967395516493",
+      sku: "2402BBDB30",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "30",
+        "32",
+        "36",
+        "38"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-black-belt",
+      title: "The Foundation Belt in Black",
+      category: "accessory",
+      slot: "accessories",
+      compatible_slots: [
+        "accessories"
+      ],
       colors: [
         "black"
       ],
-      ownership: "reference",
-      price: null,
+      ownership: "wishlist",
+      price: 88,
       currency: "USD",
-      store: "Abercrombie & Fitch",
-      product_url: "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Taylor Stitch",
+      product_url: "https://www.taylorstitch.com/products/foundation-belt-in-black-2402",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-black-belt.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0070/1922/files/foundation-belt-in-black-2402_001.jpg?v=1790611493",
+      image_credit: "Product photograph courtesy of Taylor Stitch",
+      product_id: "6886867501133",
+      sku: "2402FBBL28",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "28",
+        "30",
+        "32"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       schema: 1,
       type: "piece",
-      id: "plain-coat",
-      title: "Plain charcoal coat",
-      category: "outerwear",
-      colors: [
-        "gray"
+      id: "product-brown-captain",
+      title: "Captain | Brown",
+      category: "shoes",
+      slot: "shoes",
+      compatible_slots: [
+        "shoes"
       ],
-      ownership: "reference",
-      price: null,
+      colors: [
+        "brown"
+      ],
+      ownership: "wishlist",
+      price: 199,
       currency: "USD",
-      store: "COS",
-      product_url: "https://www.cos.com/en-us/men",
-      price_checked_at: "",
-      price_note: "Browse the retailer; an exact product and price have not been selected.",
-      image: "",
-      notes: "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      store: "Thursday Boot Company",
+      product_url: "https://thursdayboots.com/products/mens-brown-captain",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-brown-captain.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0419/1525/files/1024x1024-Men-Captain-Brown-081226-3.4-d17ac2.jpg?v=1790357464",
+      image_credit: "Product photograph courtesy of Thursday Boot Company",
+      product_id: "2219740613",
+      sku: "BRNCPN6",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "Standard / 6",
+        "Standard / 6.5",
+        "Standard / 7",
+        "Standard / 7.5",
+        "Standard / 8",
+        "Standard / 8.5",
+        "Standard / 9",
+        "Standard / 9.5",
+        "Standard / 10",
+        "Standard / 10.5",
+        "Standard / 11",
+        "Standard / 11.5",
+        "Standard / 12",
+        "Standard / 12.5",
+        "Standard / 13",
+        "Standard / 13.5",
+        "Standard / 14",
+        "Standard / 15",
+        "Standard / 16",
+        "Wide / 6",
+        "Wide / 6.5",
+        "Wide / 7",
+        "Wide / 7.5",
+        "Wide / 8",
+        "Wide / 8.5",
+        "Wide / 9",
+        "Wide / 9.5",
+        "Wide / 10",
+        "Wide / 10.5",
+        "Wide / 11",
+        "Wide / 11.5",
+        "Wide / 12",
+        "Wide / 12.5",
+        "Wide / 13.5",
+        "Wide / 14",
+        "Wide / 15",
+        "Wide / 16"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-white-premier",
+      title: "Premier Low Top | White",
+      category: "shoes",
+      slot: "shoes",
+      compatible_slots: [
+        "shoes"
+      ],
+      colors: [
+        "white"
+      ],
+      ownership: "wishlist",
+      price: 135,
+      currency: "USD",
+      store: "Thursday Boot Company",
+      product_url: "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-white-premier.jpg",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0419/1525/files/1024x1024-Men-Premier-LowTop-White-BlindEyelets-121423-3.4_2_3615bf9d-be8c-4f08-a54e-f6a5b91208ca.jpg?v=1705532975",
+      image_credit: "Product photograph courtesy of Thursday Boot Company",
+      product_id: "4797155410010",
+      sku: "WHTPLOW6",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "Standard / 6",
+        "Standard / 6.5",
+        "Standard / 7",
+        "Standard / 7.5",
+        "Standard / 8",
+        "Standard / 8.5",
+        "Standard / 9",
+        "Standard / 9.5",
+        "Standard / 10",
+        "Standard / 10.5",
+        "Standard / 11",
+        "Standard / 11.5",
+        "Standard / 12",
+        "Standard / 12.5",
+        "Standard / 13",
+        "Standard / 13.5",
+        "Standard / 14",
+        "Standard / 15",
+        "Standard / 16",
+        "Wide (EE) / 6",
+        "Wide (EEE) / 6",
+        "Wide (EE) / 6.5",
+        "Wide (EEE) / 6.5",
+        "Wide (EE) / 7",
+        "Wide (EEE) / 7",
+        "Wide (EE) / 7.5",
+        "Wide (EEE) / 7.5",
+        "Wide (EE) / 8",
+        "Wide (EEE) / 8",
+        "Wide (EE) / 8.5",
+        "Wide (EEE) / 8.5",
+        "Wide (EE) / 9",
+        "Wide (EEE) / 9",
+        "Wide (EE) / 9.5",
+        "Wide (EEE) / 9.5",
+        "Wide (EE) / 10",
+        "Wide (EEE) / 10",
+        "Wide (EE) / 10.5",
+        "Wide (EEE) / 10.5",
+        "Wide (EE) / 11",
+        "Wide (EEE) / 11",
+        "Wide (EE) / 11.5",
+        "Wide (EEE) / 11.5",
+        "Wide (EE) / 12",
+        "Wide (EEE) / 12",
+        "Wide (EE) / 12.5",
+        "Wide (EEE) / 12.5",
+        "Wide (EE) / 13",
+        "Wide (EEE) / 13",
+        "Wide (EE) / 13.5",
+        "Wide (EEE) / 13.5",
+        "Wide (EE) / 14",
+        "Wide (EEE) / 14",
+        "Wide (EE) / 15",
+        "Wide (EEE) / 15",
+        "Wide (EE) / 16",
+        "Wide (EEE) / 16"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-amber-glasses",
+      title: "Whiskey Shots With Satan",
+      category: "accessory",
+      slot: "glasses",
+      compatible_slots: [
+        "glasses"
+      ],
+      colors: [
+        "black",
+        "brown"
+      ],
+      ownership: "wishlist",
+      price: 30,
+      currency: "USD",
+      store: "goodr",
+      product_url: "https://goodr.com/products/whiskey-shots-with-satan",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-amber-glasses.png",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0084/1616/5946/files/1_WHISKEY_SHOTS_WITH_SATAN_Side_Transparent_e206cc51-8c34-46d1-956d-d4781ebf7b86.png?v=1689751008",
+      image_credit: "Product photograph courtesy of goodr",
+      product_id: "1461115584570",
+      sku: "G00583-OG-02",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "Original",
+        "Small",
+        "Large"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      schema: 1,
+      type: "piece",
+      id: "product-black-glasses",
+      title: "A Unicorn's Calamity",
+      category: "accessory",
+      slot: "glasses",
+      compatible_slots: [
+        "glasses"
+      ],
+      colors: [
+        "black"
+      ],
+      ownership: "wishlist",
+      price: 30,
+      currency: "USD",
+      store: "goodr",
+      product_url: "https://goodr.com/products/a-unicorns-calamity",
+      price_checked_at: "2026-11-22",
+      price_note: "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      image: "Assets/Products/product-black-glasses.png",
+      image_source_url: "https://cdn.shopify.com/s/files/1/0084/1616/5946/files/1_SideTransparent_ae333825-e7f4-49fa-821b-96803652ff47.png?v=1716912584",
+      image_credit: "Product photograph courtesy of goodr",
+      product_id: "7189749432378",
+      sku: "G00352-OG-01",
+      product_checked_at: "2026-11-22",
+      availability: "available",
+      available_sizes: [
+        "Original",
+        "Small",
+        "Large"
+      ],
+      notes: "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     }
   ]
 };

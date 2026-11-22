@@ -6,9 +6,11 @@ Explore outfit ideas, filter by palette, style, occasion, store and shopping cos
 
 Install with BRAT using **jogurtfm/style-zone**. Open **Style Zone: Open wardrobe** from the command palette or the shirt ribbon icon. The default data folder is `Sync/Style Zone` inside your vault. Point both devices at the same synced vault and let notes and image attachments sync.
 
+Version 0.2.0 introduces tagged, shoppable equipment sets and fixes mobile scrolling in Obsidian's bounded pane. The wardrobe homebase is the `Style Zone` subdirectory of the configured Relay root (`Sync` on this desktop), including research and drop folders. If the same shared root has a different local name on your phone, set the wardrobe folder to that root followed by `/Style Zone` in Style Zone settings.
+
 The first release supports desktop and mobile through Obsidian APIs, without Node or Electron calls in the plugin. The phone itself still needs a device installation and check. A successful GitHub release does not establish that a phone has installed it.
 
-If you need starting records, run **Style Zone: Add starter outfit ideas**. Existing IDs are preserved. The 12 ideas and 29 suggested equivalents are not claims about clothes you own. Research photographs are private vault assets and are not bundled into the public release. Missing photos display a style placeholder.
+If you need starting records, run **Style Zone: Add starter outfit ideas**. Existing IDs are preserved. The starter catalog contains 6 equipment sets and 28 exact products with dated retailer observations; it makes no claim that you own them. Product photos are stored as private vault assets, with a fallback to their original retailer CDN URLs. Binary photographs are not bundled into the public release.
 
 ## Browser companion
 
@@ -28,13 +30,15 @@ The browser server does not expose your vault over the internet. The phone uses 
 ## What you can do
 
 - Browse a grid of suggestions or use Quick rate, with automatic progression and keyboard shortcuts 1–5.
+- Inspect tagged product photos in an equipment board. Slots include shoes, socks, lower body, base layer, shirt, outer layer, neck, wrist, accessories, glasses and hat. Optional slots can stay empty.
+- Open a slot to compare researched alternatives, swap products and save a new set. The original set stays intact. The item database keeps at least two starter choices for every slot, including compatible layering slots.
 - Filter palettes, styles, occasions, stores, rating status and maximum USD cost to buy. Only owned items contribute zero cost. Unknown prices are excluded from a strict budget filter unless explicitly included.
-- Open a look for sources, credits, suggested equivalents, dated prices, retailer links and optional rating feedback.
+- Open a product for the exact retailer page, photo credit, dated price and available size options. Rate complete sets with optional written feedback.
 - Add pieces and outfits, attach images, and change ownership, prices and links. Handwritten note bodies and unfamiliar frontmatter fields are preserved.
 - See a transparent taste profile, including patterns supported by few ratings. The latest rating per outfit is used once; history is retained. Signals are local feature associations, not a trained remote model.
 - Export the catalog, complete rating history and derived preference summary as JSON for a stylist or language model. The agent can also read the Markdown folder directly.
 
-Most starter prices are deliberately blank until an exact equivalent is selected. Three observations were collected November 21, 2026: a Levi’s rugby listing, Levi’s 501 Clean Rigid jeans, and Clarks Brantin loafers. Prices are snapshots; sizes, colors, offers, tax and shipping can change. Store category links are labeled as browsing references.
+Starter product observations were collected November 22, 2026 from the official Taylor Stitch, Thursday Boot Company and goodr storefronts. Every selected product had an available variant when checked; unavailable leads were excluded. The first batch leans toward heritage and casual clothing. Set totals range from $346 to $1,001 for every equipped item, before tax and shipping. Photos show exact products rather than approximations of runway garments. Prices, sizes and stock remain retailer snapshots. User records lacking verified product information are preserved separately from the shoppable item database.
 
 ## Readable data and sync
 
@@ -51,3 +55,5 @@ npm test
 ```
 
 `main.js`, `manifest.json` and `styles.css` are the three BRAT release assets. Keep the release tag and manifest version identical. Browser output is generated into ignored `dist/`. `scripts/github.mjs` uses an existing Windows Git Credential Manager login and Node 24 with `--use-system-ca`; credentials stay in memory. It checks authentication by default and publishes only with `--publish`.
+
+To refresh the researched option evidence, use `node --use-system-ca scripts/scrape-slot-options.mjs --out .local/a-new-slot-report.json` with trusted Node 24+. It reads registered exact product URLs from the catalog, checks public retailer metadata and records available variants. It never overwrites wardrobe notes, ownership or ratings. Discover additional products from official retailers, assign their compatible slots, and review evidence before applying record updates. The current adapters cover Taylor Stitch, Thursday Boot Company and goodr.

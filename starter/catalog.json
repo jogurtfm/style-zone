@@ -4,948 +4,1406 @@
     {
       "schema": 1,
       "type": "outfit",
-      "id": "rugby-denim",
-      "title": "The weekend stripe",
+      "id": "set-low-key",
+      "title": "Low-key Loadout",
       "season": "Fall Winter 2026",
       "styles": [
-        "retro sport"
+        "textured minimalism"
       ],
       "colors": [
-        "navy",
-        "cream",
-        "brown"
+        "white",
+        "gray",
+        "cream"
       ],
       "occasions": [
         "everyday",
         "weekend"
       ],
       "piece_ids": [
-        "rugby",
-        "dark-jeans",
-        "tan-loafers"
+        "product-white-tee",
+        "product-charcoal-apres",
+        "product-natural-socks",
+        "product-white-premier"
       ],
-      "image": "Assets/Research/01-S01.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "equipment": {
+        "shirt": "product-white-tee",
+        "lower": "product-charcoal-apres",
+        "socks": "product-natural-socks",
+        "shoes": "product-white-premier"
+      },
+      "image": "",
+      "image_credit": "",
       "source_urls": [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+        "https://www.taylorstitch.com/products/waffle-sock-in-natural-2501",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white"
       ],
-      "notes": "A strong stripe, straight denim and tan loafers. Try a relaxed top with a clean break at the ankle. The photograph shows inspiration; the linked pieces are proposed equivalents."
+      "notes": "A white tee, charcoal sashiko pants and clean white sneakers. Four actual products, with the optional slots left open."
     },
     {
       "schema": 1,
       "type": "outfit",
-      "id": "track-tailoring",
-      "title": "Off duty, dialed in",
+      "id": "set-campus",
+      "title": "Campus Courier",
       "season": "Fall Winter 2026",
       "styles": [
         "retro sport"
       ],
       "colors": [
+        "white",
         "navy",
         "cream",
-        "gray"
-      ],
-      "occasions": [
-        "everyday",
-        "creative work"
-      ],
-      "piece_ids": [
-        "track-jacket",
-        "cream-tee",
-        "gray-trousers",
-        "white-trainers"
-      ],
-      "image": "Assets/Research/02-S01.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      "source_urls": [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
-      ],
-      "notes": "Let a track jacket loosen up the trousers. Keep the tee plain so the silhouette and stripe do the work."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "heritage-knit",
-      "title": "A little mountain air",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "heritage prep"
-      ],
-      "colors": [
-        "olive",
-        "cream",
-        "burgundy",
-        "blue"
-      ],
-      "occasions": [
-        "weekend",
-        "outdoors"
-      ],
-      "piece_ids": [
-        "fair-isle",
-        "dark-jeans",
-        "brown-boots"
-      ],
-      "image": "Assets/Research/04-S01.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      "source_urls": [
-        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
-      ],
-      "notes": "Make the sweater the interesting part. Add dark jeans and simple brown boots; skip extra patterns at first."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "oxford-cardigan",
-      "title": "The easy collegiate",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "heritage prep"
-      ],
-      "colors": [
-        "blue",
-        "cream",
-        "olive",
-        "brown"
-      ],
-      "occasions": [
-        "everyday",
-        "creative work"
-      ],
-      "piece_ids": [
-        "oxford",
-        "cardigan",
-        "olive-chinos",
-        "tan-loafers"
-      ],
-      "image": "Assets/Research/07-S03.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      "source_urls": [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren",
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
-      ],
-      "notes": "A pale oxford under a cotton cardigan, grounded by olive chinos. Leave a little collar showing."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "brown-leather",
-      "title": "After the last set",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "leather and denim"
-      ],
-      "colors": [
-        "brown",
-        "cream",
-        "black"
-      ],
-      "occasions": [
-        "evening",
-        "everyday"
-      ],
-      "piece_ids": [
-        "leather-jacket",
-        "cream-tee",
-        "black-jeans",
-        "black-boots"
-      ],
-      "image": "Assets/Research/09-S04.jpg",
-      "image_credit": "Christina Fragkou",
-      "source_urls": [
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
-        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
-      ],
-      "notes": "Brown leather and faded black denim with a cream tee. The pictured dark layers suggest proportion, rather than an exact copy."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "denim-trousers",
-      "title": "Denim, dressed a little",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "leather and denim"
-      ],
-      "colors": [
-        "navy",
-        "cream",
-        "gray",
-        "black"
-      ],
-      "occasions": [
-        "creative work",
-        "evening"
-      ],
-      "piece_ids": [
-        "denim-jacket",
-        "knit-polo",
-        "gray-trousers",
-        "derbies"
-      ],
-      "image": "Assets/Research/08-S04.jpg",
-      "image_credit": "Christina Fragkou",
-      "source_urls": [
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
-      ],
-      "notes": "Pair a denim jacket with a fine knit polo and proper trousers. Keep the shoes quiet."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "soft-tailoring",
-      "title": "A softer kind of sharp",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "relaxed tailoring"
-      ],
-      "colors": [
-        "brown",
-        "blue",
-        "gray"
-      ],
-      "occasions": [
-        "creative work",
-        "dinner"
-      ],
-      "piece_ids": [
-        "soft-blazer",
-        "oxford",
-        "gray-trousers",
-        "tan-loafers"
-      ],
-      "image": "Assets/Research/05-S03.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      "source_urls": [
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/",
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
-      ],
-      "notes": "Soft shoulders, a pale blue shirt and straight charcoal trousers. Try the shirt open at the neck."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "crew-pleats",
-      "title": "No meeting required",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "relaxed tailoring"
-      ],
-      "colors": [
-        "gray",
-        "navy",
-        "black"
-      ],
-      "occasions": [
-        "creative work",
-        "everyday"
-      ],
-      "piece_ids": [
-        "crewneck",
-        "gray-trousers",
-        "wool-jacket",
-        "derbies"
-      ],
-      "image": "Assets/Research/11-S04.jpg",
-      "image_credit": "Christina Fragkou",
-      "source_urls": [
-        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908",
-        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows"
-      ],
-      "notes": "A fine crewneck and short wool jacket make tailoring feel easy. Use the street reference to compare length and drape."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "suede-stone",
-      "title": "Quiet texture",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "textured minimalism"
-      ],
-      "colors": [
-        "blue",
         "stone",
-        "brown"
-      ],
-      "occasions": [
-        "everyday",
-        "dinner"
-      ],
-      "piece_ids": [
-        "oxford",
-        "stone-trousers",
-        "suede-jacket",
-        "white-trainers"
-      ],
-      "image": "Assets/Research/17-S08.jpg",
-      "image_credit": "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
-      "source_urls": [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee"
-      ],
-      "notes": "Pale blue and stone under a soft brown jacket. Texture carries the interest, with simple sneakers below."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "cocoa-charcoal",
-      "title": "Cocoa after hours",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "textured minimalism"
-      ],
-      "colors": [
         "brown",
-        "gray",
-        "navy",
-        "black"
-      ],
-      "occasions": [
-        "creative work",
-        "evening"
-      ],
-      "piece_ids": [
-        "brown-knit",
-        "gray-trousers",
-        "light-mac",
-        "derbies"
-      ],
-      "image": "Assets/Research/16-S08.jpg",
-      "image_credit": "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
-      "source_urls": [
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee",
-        "https://www.pradagroup.com/content/dam/pradagroup/documents/2026/Gennaio/Inglese/Prada-Fall-Winter-2026-Menswear-show-PR.pdf"
-      ],
-      "notes": "Keep the color shifts close and let the long outer layer change the shape. A lightweight mac works on milder days."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "plum-night",
-      "title": "One good going out shirt",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "expressive evening"
-      ],
-      "colors": [
-        "plum",
-        "black"
-      ],
-      "occasions": [
-        "evening",
-        "dinner"
-      ],
-      "piece_ids": [
-        "plum-shirt",
-        "black-jeans",
-        "black-boots"
-      ],
-      "image": "Assets/Research/06-S03.jpg",
-      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
-      "source_urls": [
-        "https://www.gq.com/story/the-9-fall-winter-2026-menswear-trends-to-try-right-now",
-        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
-      ],
-      "notes": "A textured plum shirt and black denim. Try sheen, a subtle weave or an open collar before a more decorative top."
-    },
-    {
-      "schema": 1,
-      "type": "outfit",
-      "id": "striped-layer",
-      "title": "Color, with an anchor",
-      "season": "Fall Winter 2026",
-      "styles": [
-        "expressive evening"
-      ],
-      "colors": [
-        "plum",
-        "petrol",
-        "cream",
         "black",
         "gray"
       ],
       "occasions": [
+        "everyday",
+        "weekend"
+      ],
+      "piece_ids": [
+        "product-white-tee",
+        "product-navy-rugby",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-white-premier",
+        "product-black-glasses",
+        "product-coal-cap"
+      ],
+      "equipment": {
+        "base": "product-white-tee",
+        "shirt": "product-navy-rugby",
+        "lower": "product-khaki-deck-pants",
+        "socks": "product-navy-socks",
+        "shoes": "product-white-premier",
+        "glasses": "product-black-glasses",
+        "hat": "product-coal-cap"
+      },
+      "image": "",
+      "image_credit": "",
+      "source_urls": [
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/rugby-shirt-in-navy-stripe-2610",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+        "https://goodr.com/products/a-unicorns-calamity",
+        "https://www.taylorstitch.com/products/mercer-cap-in-coal-herringbone-wool-2611"
+      ],
+      "notes": "Navy stripes and khaki cord make a relaxed collegiate set. The white tee is the under layer; the rugby is layer one."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "set-forest",
+      "title": "Forest Sidequest",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "heritage prep"
+      ],
+      "colors": [
+        "white",
+        "olive",
+        "black",
+        "navy",
+        "brown",
+        "cream"
+      ],
+      "occasions": [
+        "everyday",
+        "weekend"
+      ],
+      "piece_ids": [
+        "product-white-tee",
+        "product-forest-flannel",
+        "product-olive-overshirt",
+        "product-navy-deck-pants",
+        "product-coffee-socks",
+        "product-brown-captain",
+        "product-natural-beanie"
+      ],
+      "equipment": {
+        "base": "product-white-tee",
+        "shirt": "product-forest-flannel",
+        "outer": "product-olive-overshirt",
+        "lower": "product-navy-deck-pants",
+        "socks": "product-coffee-socks",
+        "shoes": "product-brown-captain",
+        "hat": "product-natural-beanie"
+      },
+      "image": "",
+      "image_credit": "",
+      "source_urls": [
+        "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+        "https://www.taylorstitch.com/products/crater-shirt-in-dark-forest-2611",
+        "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-olive-wool-2610",
+        "https://www.taylorstitch.com/products/deck-pant-in-dark-navy-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/camp-sock-in-marled-coffee-2409",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/seafarer-beanie-in-natural-donegal-2611"
+      ],
+      "notes": "Forest flannel under an olive wool overshirt, grounded with navy pants and brown boots. Remove layer two for milder weather."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "set-night",
+      "title": "After-hours Charcoal",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "expressive evening"
+      ],
+      "colors": [
+        "burgundy",
+        "black",
+        "gray",
+        "navy",
+        "brown",
+        "gold"
+      ],
+      "occasions": [
         "evening",
         "creative work"
       ],
       "piece_ids": [
-        "striped-knit",
-        "black-trousers",
-        "plain-coat",
-        "derbies"
+        "product-port-tee",
+        "product-black-trucker",
+        "product-charcoal-apres",
+        "product-navy-socks",
+        "product-brown-captain",
+        "product-brass-cuff",
+        "product-amber-glasses"
       ],
-      "image": "Assets/Research/12-S11.jpg",
-      "image_credit": "Courtesy of Dries Van Noten; see official show page for full credits",
+      "equipment": {
+        "shirt": "product-port-tee",
+        "outer": "product-black-trucker",
+        "lower": "product-charcoal-apres",
+        "socks": "product-navy-socks",
+        "shoes": "product-brown-captain",
+        "wrist": "product-brass-cuff",
+        "glasses": "product-amber-glasses"
+      },
+      "image": "",
+      "image_credit": "",
       "source_urls": [
-        "https://www.driesvannoten.com/en-eu/pages/show-aw-26-27-men",
-        "https://www.vogue.com/fashion-shows/fall-2026-menswear/dries-van-noten"
+        "https://www.taylorstitch.com/products/organic-cotton-shop-tee-in-port-twist-2610",
+        "https://www.taylorstitch.com/products/long-haul-jacket-in-faded-black-washed-moleskin-2610",
+        "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/hammered-cuff-in-brass-2611",
+        "https://goodr.com/products/whiskey-shots-with-satan"
       ],
-      "notes": "Anchor a colorful striped knit with black trousers and a plain coat. Start with one expressive piece."
+      "notes": "Port, faded black and charcoal with warm brown boots. Brass and amber are optional accents you can swap out."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "set-blue",
+      "title": "Everyday Blue",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "relaxed tailoring"
+      ],
+      "colors": [
+        "blue",
+        "stone",
+        "brown",
+        "navy",
+        "white"
+      ],
+      "occasions": [
+        "creative work",
+        "dinner"
+      ],
+      "piece_ids": [
+        "product-blue-oxford",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-white-premier",
+        "product-brown-belt"
+      ],
+      "equipment": {
+        "shirt": "product-blue-oxford",
+        "lower": "product-khaki-deck-pants",
+        "socks": "product-navy-socks",
+        "shoes": "product-white-premier",
+        "accessories": "product-brown-belt"
+      },
+      "image": "",
+      "image_credit": "",
+      "source_urls": [
+        "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+        "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402"
+      ],
+      "notes": "A blue Oxford and khaki deck pants with white leather sneakers. A straightforward set for testing cleaner shapes."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "set-corduroy",
+      "title": "Corduroy Night",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "relaxed tailoring"
+      ],
+      "colors": [
+        "blue",
+        "navy",
+        "stone",
+        "brown",
+        "copper"
+      ],
+      "occasions": [
+        "dinner",
+        "evening"
+      ],
+      "piece_ids": [
+        "product-blue-oxford",
+        "product-navy-sportcoat",
+        "product-khaki-deck-pants",
+        "product-navy-socks",
+        "product-brown-captain",
+        "product-copper-cuff",
+        "product-eddy-scarf",
+        "product-brown-belt"
+      ],
+      "equipment": {
+        "shirt": "product-blue-oxford",
+        "outer": "product-navy-sportcoat",
+        "lower": "product-khaki-deck-pants",
+        "socks": "product-navy-socks",
+        "shoes": "product-brown-captain",
+        "wrist": "product-copper-cuff",
+        "neck": "product-eddy-scarf",
+        "accessories": "product-brown-belt"
+      },
+      "image": "",
+      "image_credit": "",
+      "source_urls": [
+        "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+        "https://www.taylorstitch.com/products/riley-sportcoat-in-dark-navy-corduroy-2611",
+        "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+        "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+        "https://thursdayboots.com/products/mens-brown-captain",
+        "https://www.taylorstitch.com/products/twisted-cuff-in-copper-2701",
+        "https://www.taylorstitch.com/products/fireside-scarf-in-eddy-plaid-2610",
+        "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402"
+      ],
+      "notes": "Navy corduroy over a blue Oxford, with khaki pants and brown boots. The scarf, cuff and belt are optional slots, each linked to its exact product."
     }
   ],
   "pieces": [
     {
       "schema": 1,
       "type": "piece",
-      "id": "rugby",
-      "title": "Union rugby polo · choose a stripe",
+      "id": "product-white-tee",
+      "title": "The Organic Cotton Tee in Vintage White",
       "category": "top",
-      "colors": [
-        "navy",
-        "cream"
+      "slot": "base",
+      "compatible_slots": [
+        "base",
+        "shirt"
       ],
-      "ownership": "reference",
-      "price": 55,
+      "colors": [
+        "white"
+      ],
+      "ownership": "wishlist",
+      "price": 55.0,
       "currency": "USD",
-      "store": "Levi’s",
-      "product_url": "https://www.levi.com/US/en_US/clothing/men/shirts/c/levi_clothing_men_shirts/facets/feature-style/rugby",
-      "price_checked_at": "2026-11-21",
-      "price_note": "Union Rugby Polo listed at $55. Choose a color and size at the retailer. Member discounts excluded.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/organic-cotton-tee-in-vintage-white-2304",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-white-tee.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/products/organic-cotton-tee-in-vintage-white-2304_001.jpg?v=1790611991",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6821053497421",
+      "sku": "2304OCTB38",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "dark-jeans",
-      "title": "501 Original · Clean Rigid dark wash",
-      "category": "bottom",
-      "colors": [
-        "navy",
-        "blue"
-      ],
-      "ownership": "reference",
-      "price": 50.97,
-      "currency": "USD",
-      "store": "Levi’s",
-      "product_url": "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-mens-jeans/p/005010536",
-      "price_checked_at": "2026-11-21",
-      "price_note": "Displayed sale price on November 21. Size availability and later promotions may differ.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "tan-loafers",
-      "title": "Brantin Loafer · tan leather",
-      "category": "shoes",
-      "colors": [
-        "brown"
-      ],
-      "ownership": "reference",
-      "price": 110,
-      "currency": "USD",
-      "store": "Clarks",
-      "product_url": "https://www.clarks.com/en-us/brantin-loafer/26187662-p",
-      "price_checked_at": "2026-11-21",
-      "price_note": "Base price $110; page also advertises $66 applied in cart. Budget uses the base price until checkout terms are confirmed.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "track-jacket",
-      "title": "Retro track jacket",
-      "category": "outerwear",
-      "colors": [
-        "navy",
-        "cream"
-      ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "adidas",
-      "product_url": "https://www.adidas.com/us",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "cream-tee",
-      "title": "Plain cream cotton tee",
+      "id": "product-port-tee",
+      "title": "The Organic Cotton Shop Tee in Port Twist",
       "category": "top",
-      "colors": [
-        "cream"
+      "slot": "base",
+      "compatible_slots": [
+        "base",
+        "shirt"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "UNIQLO",
-      "product_url": "https://www.uniqlo.com/us/en/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "gray-trousers",
-      "title": "Straight charcoal trousers",
-      "category": "bottom",
       "colors": [
-        "gray"
-      ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Abercrombie & Fitch",
-      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "white-trainers",
-      "title": "Low leather trainers",
-      "category": "shoes",
-      "colors": [
-        "white",
-        "gray"
-      ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "adidas",
-      "product_url": "https://www.adidas.com/us",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "fair-isle",
-      "title": "Patterned heritage sweater",
-      "category": "knitwear",
-      "colors": [
-        "olive",
-        "cream",
         "burgundy"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 65.0,
       "currency": "USD",
-      "store": "J.Crew",
-      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/sweaters",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "brown-boots",
-      "title": "Brown leather boots",
-      "category": "shoes",
-      "colors": [
-        "brown"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/organic-cotton-shop-tee-in-port-twist-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-port-tee.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheOrganicCottonShopTee-PortTwist_PDP_001.jpg?v=1792077854",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759503753293",
+      "sku": "2610OCSTPT36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XXL - 46"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Clarks",
-      "product_url": "https://www.clarks.com/en-us",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "oxford",
-      "title": "Pale blue oxford shirt",
+      "id": "product-blue-oxford",
+      "title": "The Jack in Blue Everyday Oxford",
       "category": "top",
+      "slot": "shirt",
+      "compatible_slots": [
+        "shirt"
+      ],
       "colors": [
         "blue"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 118.0,
       "currency": "USD",
-      "store": "J.Crew",
-      "product_url": "https://www.jcrew.com/p/BE996",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/jack-in-blue-everyday-oxford-2304",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-blue-oxford.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/jack-in-blue-everyday-oxford-2304_001.jpg?v=1790611605",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6824013660237",
+      "sku": "2304JBEO36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "cardigan",
-      "title": "Oatmeal cotton cardigan",
-      "category": "knitwear",
+      "id": "product-navy-rugby",
+      "title": "The Rugby Shirt in Navy Stripe",
+      "category": "top",
+      "slot": "shirt",
+      "compatible_slots": [
+        "shirt"
+      ],
       "colors": [
+        "navy",
         "cream"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 128.0,
       "currency": "USD",
-      "store": "UNIQLO",
-      "product_url": "https://www.uniqlo.com/us/en/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/rugby-shirt-in-navy-stripe-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-navy-rugby.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Rugby_Shirt_in_Navy_Stripe_PDP_001.jpg?v=1790707363",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759505358925",
+      "sku": "2610RSNS36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "olive-chinos",
-      "title": "Straight olive chinos",
-      "category": "bottom",
+      "id": "product-forest-flannel",
+      "title": "The Crater Shirt in Dark Forest",
+      "category": "top",
+      "slot": "shirt",
+      "compatible_slots": [
+        "shirt",
+        "outer"
+      ],
+      "colors": [
+        "olive",
+        "black"
+      ],
+      "ownership": "wishlist",
+      "price": 148.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/crater-shirt-in-dark-forest-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-forest-flannel.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Crater_Shirt_in_Dark_Forest_PDP_001.jpg?v=1793832582",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759504801869",
+      "sku": "2611CSDF36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-navy-overshirt",
+      "title": "The Maritime Shirt Jacket in Heather Navy Wool",
+      "category": "outerwear",
+      "slot": "outer",
+      "compatible_slots": [
+        "outer"
+      ],
+      "colors": [
+        "navy"
+      ],
+      "ownership": "wishlist",
+      "price": 198.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-navy-wool-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-navy-overshirt.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Maritime_Shirt_Jacket_in_Heather_Navy_Wool_PDP_001.jpg?v=1790895632",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759502082125",
+      "sku": "2610MSJHNW36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-olive-overshirt",
+      "title": "The Maritime Shirt Jacket in Heather Olive Wool",
+      "category": "outerwear",
+      "slot": "outer",
+      "compatible_slots": [
+        "outer"
+      ],
       "colors": [
         "olive"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 198.0,
       "currency": "USD",
-      "store": "J.Crew",
-      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/pants-and-chinos",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "leather-jacket",
-      "title": "Brown leather jacket",
-      "category": "outerwear",
-      "colors": [
-        "brown"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/maritime-shirt-jacket-in-heather-olive-wool-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-olive-overshirt.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Maritime_Shirt_Jacket_in_Heather_Olive_Wool_PDP_001.jpg?v=1790895686",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759502114893",
+      "sku": "2610MSJHOW36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Vintage / secondhand",
-      "product_url": "https://www.ebay.com/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "black-jeans",
-      "title": "Straight faded black jeans",
-      "category": "bottom",
+      "id": "product-black-trucker",
+      "title": "The Long Haul Jacket in Faded Black Washed Moleskin",
+      "category": "outerwear",
+      "slot": "outer",
+      "compatible_slots": [
+        "outer"
+      ],
       "colors": [
         "black"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 248.0,
       "currency": "USD",
-      "store": "Levi’s",
-      "product_url": "https://www.levi.com/US/en_US/clothing/men/jeans/c/levi_clothing_men_jeans",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "black-boots",
-      "title": "Black leather boots",
-      "category": "shoes",
-      "colors": [
-        "black"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/long-haul-jacket-in-faded-black-washed-moleskin-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-black-trucker.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_productname_PDP_001_42fad0c6-bea0-4a47-be05-7f58e6e0aada.jpg?v=1792427224",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759502016589",
+      "sku": "2610LHJFBWM36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XL - 44",
+        "XXL - 46"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Clarks",
-      "product_url": "https://www.clarks.com/en-us",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "denim-jacket",
-      "title": "Dark denim jacket",
+      "id": "product-navy-sportcoat",
+      "title": "The Riley Sportcoat in Dark Navy Corduroy",
       "category": "outerwear",
+      "slot": "outer",
+      "compatible_slots": [
+        "outer"
+      ],
       "colors": [
         "navy"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 238.0,
       "currency": "USD",
-      "store": "Levi’s",
-      "product_url": "https://www.levi.com/US/en_US/clothing/men/outerwear/c/levi_clothing_men_outerwear",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "knit-polo",
-      "title": "Fine knit polo",
-      "category": "knitwear",
-      "colors": [
-        "cream"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/riley-sportcoat-in-dark-navy-corduroy-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-navy-sportcoat.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Riley_Sportcoat_in_Dark_Navy_Corduroy_PDP_001.jpg?v=1791822946",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759504080973",
+      "sku": "2611RSDNC36",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS - 36",
+        "S - 38",
+        "M - 40",
+        "L - 42",
+        "XXL - 46"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "COS",
-      "product_url": "https://www.cos.com/en-us/men",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "soft-blazer",
-      "title": "Soft tobacco blazer",
-      "category": "outerwear",
+      "id": "product-khaki-deck-pants",
+      "title": "The Deck Pant in Khaki Bedford Cord",
+      "category": "bottom",
+      "slot": "lower",
+      "compatible_slots": [
+        "lower"
+      ],
       "colors": [
+        "stone",
         "brown"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 148.0,
       "currency": "USD",
-      "store": "J.Crew",
-      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/blazers",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/deck-pant-in-khaki-bedford-cord-2512",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-khaki-deck-pants.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Deck_Pant_in_Khaki_Bedford_PDP_001.jpg?v=1792019167",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7454614028365",
+      "sku": "2512DPKBC2832",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "28 / 32",
+        "29 / 32",
+        "30 / 32",
+        "31 / 32",
+        "32 / 32",
+        "33 / 32",
+        "34 / 32",
+        "35 / 32",
+        "36 / 32",
+        "38 / 32",
+        "28 / 34",
+        "29 / 34",
+        "30 / 34",
+        "31 / 34",
+        "32 / 34",
+        "33 / 34",
+        "34 / 34",
+        "35 / 34",
+        "36 / 34",
+        "38 / 34"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "crewneck",
-      "title": "Fine gray crewneck",
-      "category": "knitwear",
+      "id": "product-navy-deck-pants",
+      "title": "The Deck Pant in Dark Navy Bedford Cord",
+      "category": "bottom",
+      "slot": "lower",
+      "compatible_slots": [
+        "lower"
+      ],
+      "colors": [
+        "navy"
+      ],
+      "ownership": "wishlist",
+      "price": 148.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/deck-pant-in-dark-navy-bedford-cord-2512",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-navy-deck-pants.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/instock_m_q425_The_Deck_Pant-DarkNavyBedfordCord_portrait_001.jpg?v=1793993552",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7454613995597",
+      "sku": "2512DPDNBC2832",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "28 / 32",
+        "29 / 32",
+        "30 / 32",
+        "31 / 32",
+        "32 / 32",
+        "33 / 32",
+        "34 / 32",
+        "35 / 32",
+        "36 / 32",
+        "38 / 32",
+        "28 / 34",
+        "29 / 34",
+        "30 / 34",
+        "31 / 34",
+        "32 / 34",
+        "33 / 34",
+        "34 / 34",
+        "35 / 34",
+        "36 / 34",
+        "38 / 34"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-charcoal-apres",
+      "title": "The Apres Pant in Charcoal Sashiko",
+      "category": "bottom",
+      "slot": "lower",
+      "compatible_slots": [
+        "lower"
+      ],
       "colors": [
         "gray"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 128.0,
       "currency": "USD",
-      "store": "UNIQLO",
-      "product_url": "https://www.uniqlo.com/us/en/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "wool-jacket",
-      "title": "Short navy wool jacket",
-      "category": "outerwear",
-      "colors": [
-        "navy"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/apres-pant-in-charcoal-sashiko",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-charcoal-apres.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/products/apres-pant-in-charcoal-sashiko_001.jpg?v=1790611008",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6549279834189",
+      "sku": "2109APCSXS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS / Regular",
+        "XS / Long",
+        "S / Long",
+        "M / Regular",
+        "M / Long",
+        "L / Regular",
+        "L / Long",
+        "XL / Regular",
+        "XL / Long",
+        "XXL / Regular",
+        "XXL / Long"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "COS",
-      "product_url": "https://www.cos.com/en-us/men",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "derbies",
-      "title": "Black leather derbies",
-      "category": "shoes",
-      "colors": [
-        "black"
-      ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Clarks",
-      "product_url": "https://www.clarks.com/en-us",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "stone-trousers",
-      "title": "Straight stone trousers",
+      "id": "product-olive-roamer",
+      "title": "The Roamer Pant in Smoked Olive Corduroy",
       "category": "bottom",
-      "colors": [
-        "stone"
+      "slot": "lower",
+      "compatible_slots": [
+        "lower"
       ],
-      "ownership": "reference",
-      "price": null,
+      "colors": [
+        "olive"
+      ],
+      "ownership": "wishlist",
+      "price": 138.0,
       "currency": "USD",
-      "store": "Abercrombie & Fitch",
-      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/roamer-pant-in-smoked-olive-corduroy-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-olive-roamer.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Roamer_Pant_in_Smoked_Olive_Corduroy_PDP_001.jpg?v=1793992458",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759506178125",
+      "sku": "2611RPSOCXS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "suede-jacket",
-      "title": "Brown suede jacket",
-      "category": "outerwear",
-      "colors": [
-        "brown"
+      "id": "product-navy-socks",
+      "title": "The Merino Sock in Navy",
+      "category": "accessory",
+      "slot": "socks",
+      "compatible_slots": [
+        "socks"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Vintage / secondhand",
-      "product_url": "https://www.ebay.com/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "brown-knit",
-      "title": "Fine cocoa knit",
-      "category": "knitwear",
-      "colors": [
-        "brown"
-      ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "UNIQLO",
-      "product_url": "https://www.uniqlo.com/us/en/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "light-mac",
-      "title": "Lightweight navy mac",
-      "category": "outerwear",
       "colors": [
         "navy"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 32.0,
       "currency": "USD",
-      "store": "COS",
-      "product_url": "https://www.cos.com/en-us/men",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
-    },
-    {
-      "schema": 1,
-      "type": "piece",
-      "id": "plum-shirt",
-      "title": "Textured plum evening shirt",
-      "category": "top",
-      "colors": [
-        "plum"
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/the-merino-sock-in-navy",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-navy-socks.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/products/the-merino-sock-in-navy_001.jpg?v=1790612365",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "4488163786829",
+      "sku": "2005MSNSM",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "S/M (7-9)",
+        "L/XL (9.5-13)"
       ],
-      "ownership": "reference",
-      "price": null,
-      "currency": "USD",
-      "store": "Vintage / secondhand",
-      "product_url": "https://www.ebay.com/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "striped-knit",
-      "title": "Fitted multicolor striped knit",
-      "category": "knitwear",
+      "id": "product-natural-socks",
+      "title": "The Waffle Sock in Natural",
+      "category": "accessory",
+      "slot": "socks",
+      "compatible_slots": [
+        "socks"
+      ],
       "colors": [
-        "plum",
-        "petrol",
         "cream"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 28.0,
       "currency": "USD",
-      "store": "Vintage / secondhand",
-      "product_url": "https://www.ebay.com/",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/waffle-sock-in-natural-2501",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-natural-socks.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/waffle-sock-in-natural-2501_001.jpg?v=1790612434",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7307482792013",
+      "sku": "2501WSNSM",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "S/M",
+        "L/XL"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "black-trousers",
-      "title": "Relaxed black trousers",
-      "category": "bottom",
+      "id": "product-coffee-socks",
+      "title": "The Camp Sock in Marled Coffee",
+      "category": "accessory",
+      "slot": "socks",
+      "compatible_slots": [
+        "socks"
+      ],
+      "colors": [
+        "brown"
+      ],
+      "ownership": "wishlist",
+      "price": 30.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/camp-sock-in-marled-coffee-2409",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-coffee-socks.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/camp-sock-in-marled-coffee-2409_001.jpg?v=1790611176",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6990292189261",
+      "sku": "2409CSMCOSM",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "S/M",
+        "L/XL"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-natural-beanie",
+      "title": "The Seafarer Beanie in Natural Donegal",
+      "category": "accessory",
+      "slot": "hat",
+      "compatible_slots": [
+        "hat"
+      ],
+      "colors": [
+        "cream"
+      ],
+      "ownership": "wishlist",
+      "price": 48.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/seafarer-beanie-in-natural-donegal-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-natural-beanie.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheSeafarerBeanie-NaturalDonegal_PDP_001.jpg?v=1791489893",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759505588301",
+      "sku": "2611SBNDOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-coal-cap",
+      "title": "The Mercer Cap in Coal Herringbone Wool",
+      "category": "accessory",
+      "slot": "hat",
+      "compatible_slots": [
+        "hat"
+      ],
+      "colors": [
+        "gray",
+        "black"
+      ],
+      "ownership": "wishlist",
+      "price": 68.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/mercer-cap-in-coal-herringbone-wool-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-coal-cap.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_The_Mercer_Cap_in_Coal_Herringbone_PDP_001.jpg?v=1794247586",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759505752141",
+      "sku": "2611MCCHWOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-eddy-scarf",
+      "title": "The Fireside Scarf in Eddy Plaid",
+      "category": "accessory",
+      "slot": "neck",
+      "compatible_slots": [
+        "neck"
+      ],
+      "colors": [
+        "navy",
+        "blue",
+        "brown"
+      ],
+      "ownership": "wishlist",
+      "price": 88.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/fireside-scarf-in-eddy-plaid-2610",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-eddy-scarf.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheFiresideScarf-EddyPlaid_PDP_001.jpg?v=1792177330",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7759504048205",
+      "sku": "2610FSEPOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-butterscotch-scarf",
+      "title": "The Fireside Scarf in Butterscotch Plaid",
+      "category": "accessory",
+      "slot": "neck",
+      "compatible_slots": [
+        "neck"
+      ],
+      "colors": [
+        "brown",
+        "cream"
+      ],
+      "ownership": "wishlist",
+      "price": 88.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/fireside-scarf-in-butterscotch-plaid-2510",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-butterscotch-scarf.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/instock_m_q425_The_Fireside_Scarf-ButterscotchPlaid_portrait_001.jpg?v=1792176559",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7454613012557",
+      "sku": "2510FSBPOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-brass-cuff",
+      "title": "The Hammered Cuff in Brass",
+      "category": "accessory",
+      "slot": "wrist",
+      "compatible_slots": [
+        "wrist"
+      ],
+      "colors": [
+        "gold"
+      ],
+      "ownership": "wishlist",
+      "price": 80.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/hammered-cuff-in-brass-2611",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-brass-cuff.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheHammeredCuff-Brass_PDP_001.jpg?v=1793208241",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7949354598477",
+      "sku": "2611HCBOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-copper-cuff",
+      "title": "The Twisted Cuff in Copper",
+      "category": "accessory",
+      "slot": "wrist",
+      "compatible_slots": [
+        "wrist"
+      ],
+      "colors": [
+        "copper"
+      ],
+      "ownership": "wishlist",
+      "price": 80.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/twisted-cuff-in-copper-2701",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-copper-cuff.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/Q426_TheTwistedCuff-Copper_PDP_001.jpg?v=1793216185",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "7909623038029",
+      "sku": "2611TCCOS",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "One Size"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-brown-belt",
+      "title": "The Braided Belt in Dark Brown",
+      "category": "accessory",
+      "slot": "accessories",
+      "compatible_slots": [
+        "accessories"
+      ],
+      "colors": [
+        "brown"
+      ],
+      "ownership": "wishlist",
+      "price": 98.0,
+      "currency": "USD",
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/braided-belt-in-dark-brown-2402",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-brown-belt.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/braided-belt-in-dark-brown-2402_001.jpg?v=1790611092",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6967395516493",
+      "sku": "2402BBDB30",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "30",
+        "32",
+        "36",
+        "38"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-black-belt",
+      "title": "The Foundation Belt in Black",
+      "category": "accessory",
+      "slot": "accessories",
+      "compatible_slots": [
+        "accessories"
+      ],
       "colors": [
         "black"
       ],
-      "ownership": "reference",
-      "price": null,
+      "ownership": "wishlist",
+      "price": 88.0,
       "currency": "USD",
-      "store": "Abercrombie & Fitch",
-      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Taylor Stitch",
+      "product_url": "https://www.taylorstitch.com/products/foundation-belt-in-black-2402",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-black-belt.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0070/1922/files/foundation-belt-in-black-2402_001.jpg?v=1790611493",
+      "image_credit": "Product photograph courtesy of Taylor Stitch",
+      "product_id": "6886867501133",
+      "sku": "2402FBBL28",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "28",
+        "30",
+        "32"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     },
     {
       "schema": 1,
       "type": "piece",
-      "id": "plain-coat",
-      "title": "Plain charcoal coat",
-      "category": "outerwear",
-      "colors": [
-        "gray"
+      "id": "product-brown-captain",
+      "title": "Captain | Brown",
+      "category": "shoes",
+      "slot": "shoes",
+      "compatible_slots": [
+        "shoes"
       ],
-      "ownership": "reference",
-      "price": null,
+      "colors": [
+        "brown"
+      ],
+      "ownership": "wishlist",
+      "price": 199.0,
       "currency": "USD",
-      "store": "COS",
-      "product_url": "https://www.cos.com/en-us/men",
-      "price_checked_at": "",
-      "price_note": "Browse the retailer; an exact product and price have not been selected.",
-      "image": "",
-      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+      "store": "Thursday Boot Company",
+      "product_url": "https://thursdayboots.com/products/mens-brown-captain",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-brown-captain.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0419/1525/files/1024x1024-Men-Captain-Brown-081226-3.4-d17ac2.jpg?v=1790357464",
+      "image_credit": "Product photograph courtesy of Thursday Boot Company",
+      "product_id": "2219740613",
+      "sku": "BRNCPN6",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "Standard / 6",
+        "Standard / 6.5",
+        "Standard / 7",
+        "Standard / 7.5",
+        "Standard / 8",
+        "Standard / 8.5",
+        "Standard / 9",
+        "Standard / 9.5",
+        "Standard / 10",
+        "Standard / 10.5",
+        "Standard / 11",
+        "Standard / 11.5",
+        "Standard / 12",
+        "Standard / 12.5",
+        "Standard / 13",
+        "Standard / 13.5",
+        "Standard / 14",
+        "Standard / 15",
+        "Standard / 16",
+        "Wide / 6",
+        "Wide / 6.5",
+        "Wide / 7",
+        "Wide / 7.5",
+        "Wide / 8",
+        "Wide / 8.5",
+        "Wide / 9",
+        "Wide / 9.5",
+        "Wide / 10",
+        "Wide / 10.5",
+        "Wide / 11",
+        "Wide / 11.5",
+        "Wide / 12",
+        "Wide / 12.5",
+        "Wide / 13.5",
+        "Wide / 14",
+        "Wide / 15",
+        "Wide / 16"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-white-premier",
+      "title": "Premier Low Top | White",
+      "category": "shoes",
+      "slot": "shoes",
+      "compatible_slots": [
+        "shoes"
+      ],
+      "colors": [
+        "white"
+      ],
+      "ownership": "wishlist",
+      "price": 135.0,
+      "currency": "USD",
+      "store": "Thursday Boot Company",
+      "product_url": "https://thursdayboots.com/products/mens-premier-low-top-sneaker-white",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-white-premier.jpg",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0419/1525/files/1024x1024-Men-Premier-LowTop-White-BlindEyelets-121423-3.4_2_3615bf9d-be8c-4f08-a54e-f6a5b91208ca.jpg?v=1705532975",
+      "image_credit": "Product photograph courtesy of Thursday Boot Company",
+      "product_id": "4797155410010",
+      "sku": "WHTPLOW6",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "Standard / 6",
+        "Standard / 6.5",
+        "Standard / 7",
+        "Standard / 7.5",
+        "Standard / 8",
+        "Standard / 8.5",
+        "Standard / 9",
+        "Standard / 9.5",
+        "Standard / 10",
+        "Standard / 10.5",
+        "Standard / 11",
+        "Standard / 11.5",
+        "Standard / 12",
+        "Standard / 12.5",
+        "Standard / 13",
+        "Standard / 13.5",
+        "Standard / 14",
+        "Standard / 15",
+        "Standard / 16",
+        "Wide (EE) / 6",
+        "Wide (EEE) / 6",
+        "Wide (EE) / 6.5",
+        "Wide (EEE) / 6.5",
+        "Wide (EE) / 7",
+        "Wide (EEE) / 7",
+        "Wide (EE) / 7.5",
+        "Wide (EEE) / 7.5",
+        "Wide (EE) / 8",
+        "Wide (EEE) / 8",
+        "Wide (EE) / 8.5",
+        "Wide (EEE) / 8.5",
+        "Wide (EE) / 9",
+        "Wide (EEE) / 9",
+        "Wide (EE) / 9.5",
+        "Wide (EEE) / 9.5",
+        "Wide (EE) / 10",
+        "Wide (EEE) / 10",
+        "Wide (EE) / 10.5",
+        "Wide (EEE) / 10.5",
+        "Wide (EE) / 11",
+        "Wide (EEE) / 11",
+        "Wide (EE) / 11.5",
+        "Wide (EEE) / 11.5",
+        "Wide (EE) / 12",
+        "Wide (EEE) / 12",
+        "Wide (EE) / 12.5",
+        "Wide (EEE) / 12.5",
+        "Wide (EE) / 13",
+        "Wide (EEE) / 13",
+        "Wide (EE) / 13.5",
+        "Wide (EEE) / 13.5",
+        "Wide (EE) / 14",
+        "Wide (EEE) / 14",
+        "Wide (EE) / 15",
+        "Wide (EEE) / 15",
+        "Wide (EE) / 16",
+        "Wide (EEE) / 16"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-amber-glasses",
+      "title": "Whiskey Shots With Satan",
+      "category": "accessory",
+      "slot": "glasses",
+      "compatible_slots": [
+        "glasses"
+      ],
+      "colors": [
+        "black",
+        "brown"
+      ],
+      "ownership": "wishlist",
+      "price": 30.0,
+      "currency": "USD",
+      "store": "goodr",
+      "product_url": "https://goodr.com/products/whiskey-shots-with-satan",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-amber-glasses.png",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0084/1616/5946/files/1_WHISKEY_SHOTS_WITH_SATAN_Side_Transparent_e206cc51-8c34-46d1-956d-d4781ebf7b86.png?v=1689751008",
+      "image_credit": "Product photograph courtesy of goodr",
+      "product_id": "1461115584570",
+      "sku": "G00583-OG-02",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "Original",
+        "Small",
+        "Large"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "product-black-glasses",
+      "title": "A Unicorn's Calamity",
+      "category": "accessory",
+      "slot": "glasses",
+      "compatible_slots": [
+        "glasses"
+      ],
+      "colors": [
+        "black"
+      ],
+      "ownership": "wishlist",
+      "price": 30.0,
+      "currency": "USD",
+      "store": "goodr",
+      "product_url": "https://goodr.com/products/a-unicorns-calamity",
+      "price_checked_at": "2026-11-22",
+      "price_note": "Displayed price for this exact product and color. Tax and shipping excluded; select your size at the retailer.",
+      "image": "Assets/Products/product-black-glasses.png",
+      "image_source_url": "https://cdn.shopify.com/s/files/1/0084/1616/5946/files/1_SideTransparent_ae333825-e7f4-49fa-821b-96803652ff47.png?v=1716912584",
+      "image_credit": "Product photograph courtesy of goodr",
+      "product_id": "7189749432378",
+      "sku": "G00352-OG-01",
+      "product_checked_at": "2026-11-22",
+      "availability": "available",
+      "available_sizes": [
+        "Original",
+        "Small",
+        "Large"
+      ],
+      "notes": "Exact product and color pictured. Retailer reported at least one variant available when checked. Your size and delivery date must be confirmed on the retailer page."
     }
   ]
 }

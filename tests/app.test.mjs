@@ -9,12 +9,12 @@ test('Shared UI filters, persists a rating, advances, and preserves an open dial
  const dom=new JSDOM('<div id="app"></div>',{url:'http://localhost/'});for(const key of ['document','HTMLElement','Element','KeyboardEvent','HTMLInputElement'])globalThis[key]=dom.window[key];
  dom.window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};dom.window.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new dom.window.Event('close'));};
  const data={...structuredClone(starter),ratings:[],warnings:[]};let notify;const store={load:async()=>structuredClone(data),rate:async r=>{data.ratings.push(r);},savePiece:async()=>{},saveOutfit:async()=>{},saveImage:async()=>'',imageUrl:p=>'/'+p,export:async()=>{},subscribe:callback=>{notify=callback;return()=>{};}};
- const app=new StyleZoneApp(document.getElementById('app'),store);await app.start();assert.equal(document.querySelectorAll('.sz-outfit-card').length,12);
- const plum=document.querySelector('button[aria-label="Filter palette: plum"]');plum.click();assert.equal(document.querySelectorAll('.sz-outfit-card').length,2);
+ const app=new StyleZoneApp(document.getElementById('app'),store);await app.start();assert.equal(document.querySelectorAll('.sz-outfit-card').length,6);
+ const burgundy=document.querySelector('button[aria-label="Filter palette: burgundy"]');burgundy.click();assert.equal(document.querySelectorAll('.sz-outfit-card').length,1);
  [...document.querySelectorAll('button')].find(b=>b.textContent==='Clear').click();
  [...document.querySelectorAll('.sz-nav-button')].find(b=>b.textContent.includes('Quick rate')).click();const first=document.querySelector('article').dataset.outfitId;
  document.querySelector('.sz-rate-button:last-child').click();await pause();assert.equal(data.ratings[0].rating,5);assert.notEqual(document.querySelector('article').dataset.outfitId,first);
- document.querySelector('.sz-picture-button').click();assert(document.querySelector('dialog').open);notify();await new Promise(r=>setTimeout(r,300));assert(document.querySelector('dialog').open);
+ document.querySelector('.sz-gear-slot').click();assert(document.querySelector('dialog').open);notify();await new Promise(r=>setTimeout(r,300));assert(document.querySelector('dialog').open);
  document.querySelector('textarea').value='Love this palette';document.querySelector('.sz-reason').click();document.querySelector('button[aria-label="Save 4 out of 5 with feedback"]').click();await pause();assert.equal(data.ratings.at(-1).note,'Love this palette');assert.equal(data.ratings.at(-1).rating,4);assert.equal(data.ratings.at(-1).reasons[0],'Love the palette');
  [...document.querySelectorAll('dialog button')].find(b=>b.textContent==='Close').click();await pause();
  [...document.querySelectorAll('.sz-nav-button')].find(b=>b.textContent.includes('Your taste')).click();assert(document.querySelector('.sz-profile-summary').textContent.includes('2'));app.dispose();dom.window.close();

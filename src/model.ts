@@ -1,26 +1,39 @@
 import {parse, stringify} from 'yaml';
 
 export const SCHEMA = 1;
+export const GEAR_SLOTS = [
+  {id:'hat',label:'Hat',short:'Hat'}, {id:'glasses',label:'Glasses',short:'Glasses'},
+  {id:'neck',label:'Neck',short:'Neck'}, {id:'base',label:'Layer 0 · under',short:'Layer 0'},
+  {id:'shirt',label:'Layer 1 · shirt',short:'Layer 1'}, {id:'outer',label:'Layer 2 · overshirt / jacket',short:'Layer 2'},
+  {id:'wrist',label:'Wrist',short:'Wrist'}, {id:'lower',label:'Lower body',short:'Lower body'},
+  {id:'accessories',label:'Accessories',short:'Accessory'}, {id:'socks',label:'Socks',short:'Socks'},
+  {id:'shoes',label:'Shoes',short:'Shoes'}
+] as const;
+export type GearSlot = typeof GEAR_SLOTS[number]['id'];
 export const COLORS: Record<string, string> = {
   navy:'#25395b', blue:'#7c9fca', cream:'#ede9d9', brown:'#79543b',
   black:'#22252b', gray:'#8b8e98', olive:'#687354', burgundy:'#863e54',
-  white:'#ffffff', plum:'#76527f', petrol:'#347779', red:'#ca5149', stone:'#bbb5a8'
+  white:'#ffffff', plum:'#76527f', petrol:'#347779', red:'#ca5149', stone:'#bbb5a8', gold:'#c2a054', copper:'#b97e5a'
 };
 export interface Outfit {
   schema:number; type:'outfit'; id:string; title:string; season:string;
   styles:string[]; colors:string[]; occasions:string[]; piece_ids:string[];
   image:string; image_credit:string; source_urls:string[]; notes:string; path?:string; originalText?:string;
+  equipment?:Partial<Record<GearSlot,string>>;
 }
 export interface Piece {
   schema:number; type:'piece'; id:string; title:string; category:string;
   colors:string[]; ownership:'owned'|'wishlist'|'reference'; price:number|null;
   currency:string; store:string; product_url:string; price_checked_at:string;
   price_note:string; image:string; notes:string; path?:string; originalText?:string;
+  slot?:GearSlot; compatible_slots?:GearSlot[]; product_id?:string; sku?:string;
+  image_source_url?:string; image_credit?:string; product_checked_at?:string;
+  availability?:'available'|'unavailable'|'unverified'; available_sizes?:string[];
 }
 export interface Rating {
   schema:number; type:'rating'; id:string; outfit_id:string; rating:number;
   created_at:string; note:string; reasons:string[];
-  snapshot:{title:string; styles:string[]; colors:string[]; occasions:string[]};
+  snapshot:{title:string; styles:string[]; colors:string[]; occasions:string[];piece_ids?:string[];equipment?:Partial<Record<GearSlot,string>>};
 }
 export interface Catalog {outfits:Outfit[]; pieces:Piece[]; ratings:Rating[]; warnings:string[]}
 export interface Store {
@@ -40,6 +53,28 @@ export function safePath(path:string):string {
 }
 export function safeUrl(value:string):string {
   try {const url=new URL(value); return ['https:','http:'].includes(url.protocol)?url.href:'';} catch {return '';}
+}
+export function pieceSlots(piece:Piece):GearSlot[]{
+  const slots=new Set(GEAR_SLOTS.map(s=>s.id));
+  return [...new Set([...(piece.compatible_slots??[]),...(piece.slot?[piece.slot]:[])])].filter(s=>slots.has(s));
+}
+export function isProduct(piece:Piece):boolean {
+  return Boolean(piece.availability==='available'&&piece.product_checked_at&&(piece.product_id||piece.sku)&&safeUrl(piece.product_url)&&(piece.image||safeUrl(piece.image_source_url??''))&&piece.price!==null);
+}
+export function reconcileProductEdit(previous:Piece|undefined,next:Piece):Piece {
+  if(previous&&['title','store','product_url','image'].some(key=>previous[key as keyof Piece]!==next[key as keyof Piece]))return {...next,availability:'unverified',product_checked_at:'',image_source_url:''};
+  return next;
+}
+export function equipmentFor(outfit:Outfit,pieces:Piece[]):Partial<Record<GearSlot,string>> {
+  if(outfit.equipment)return Object.fromEntries(GEAR_SLOTS.filter(s=>typeof outfit.equipment?.[s.id]==='string').map(s=>[s.id,outfit.equipment![s.id]]));
+  const result:Partial<Record<GearSlot,string>>={};for(const id of outfit.piece_ids){const p=pieces.find(x=>x.id===id);if(p?.slot&&!result[p.slot])result[p.slot]=id;}return result;
+}
+export function slotOptions(pieces:Piece[],slot:GearSlot):Piece[]{return pieces.filter(p=>isProduct(p)&&pieceSlots(p).includes(slot)).sort((a,b)=>(a.price??Infinity)-(b.price??Infinity)||a.title.localeCompare(b.title));}
+export function createVariation(outfit:Outfit,equipment:Partial<Record<GearSlot,string>>,pieces:Piece[],title:string):Outfit {
+  const ids=[...new Set(Object.values(equipment).filter((id):id is string=>Boolean(id)))];
+  if(!ids.length)throw Error('Equip at least one product.');
+  for(const slot of GEAR_SLOTS){const id=equipment[slot.id];if(!id)continue;const piece=pieces.find(p=>p.id===id);if(!piece||!isProduct(piece)||!pieceSlots(piece).includes(slot.id))throw Error(`Choose a verified product for ${slot.label}.`);}
+  return {...outfit,id:`outfit-${crypto.randomUUID()}`,path:undefined,originalText:undefined,title:title.trim()||`${outfit.title} / Remix`,piece_ids:ids,equipment:{...equipment},colors:[...new Set(ids.flatMap(id=>pieces.find(p=>p.id===id)?.colors??[]))],image:'',image_credit:'',source_urls:ids.map(id=>pieces.find(p=>p.id===id)!.product_url),notes:`Variation of ${outfit.title}. Exact products are tagged by equipment slot.`};
 }
 const array=(value:unknown):string[]=>Array.isArray(value)?value.filter((x):x is string=>typeof x==='string'):[];
 export function parseRecord(text:string,path=''):Outfit|Piece {
@@ -69,7 +104,7 @@ export function validateRating(raw:unknown):Rating {
 export function serializeRating(event:Rating):string {return `---\n${stringify(validateRating(event),{lineWidth:0}).trim()}\n---\n# Outfit rating\n\n${event.rating} / 5 for ${event.snapshot.title}\n\n${event.note}\n`;}
 export function parseRating(text:string):Rating {const match=text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);if(!match)throw Error('Missing rating frontmatter');return validateRating(parse(match[1]));}
 export function newRating(outfit:Outfit,rating:number,note='',reasons:string[]=[]):Rating {
-  return validateRating({schema:1,type:'rating',id:crypto.randomUUID(),outfit_id:outfit.id,rating,created_at:new Date().toISOString(),note,reasons,snapshot:{title:outfit.title,styles:[...outfit.styles],colors:[...outfit.colors],occasions:[...outfit.occasions]}});
+  return validateRating({schema:1,type:'rating',id:crypto.randomUUID(),outfit_id:outfit.id,rating,created_at:new Date().toISOString(),note,reasons,snapshot:{title:outfit.title,styles:[...outfit.styles],colors:[...outfit.colors],occasions:[...outfit.occasions],piece_ids:[...outfit.piece_ids],...(outfit.equipment?{equipment:{...outfit.equipment}}:{})}});
 }
 export function latestRatings(events:Rating[]):Map<string,Rating> {
   const result=new Map<string,Rating>();

@@ -161,3 +161,92 @@
  .style-zone-app.sz-is-rate .sz-focused .sz-rating{position:fixed;left:0;right:0;bottom:0;z-index:8;width:auto;padding:12px 18px calc(12px + env(safe-area-inset-bottom));background:#111826f5;border-top:1px solid var(--sz-line);box-shadow:0 -5px 20px #0005}
  .style-zone-app.sz-is-rate .sz-content{padding-bottom:120px}
 }
+/* Obsidian locks the outer pane. Keep scrolling inside its bounded view on
+   phones as well as desktop, rather than relying on document/body scrolling. */
+.style-zone-app{position:relative;contain:layout;min-height:0;height:100%;overflow:hidden}
+.style-zone-app .sz-shell{min-height:0;height:100%;overflow:hidden}
+.style-zone-app .sz-rail{min-height:0}
+.style-zone-app .sz-content{min-height:0;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+@media(max-width:760px){
+ .style-zone-app .sz-rail{flex:0 0 auto}
+ .style-zone-app .sz-content{flex:1 1 0;min-height:0;overflow-x:hidden;overflow-y:auto}
+}
+/* Equipment sets use the photographed product as the inventory icon. */
+.style-zone-app{--sz-accent:#c5bcff;--sz-pop:#92ead2;--sz-panel:#192238}
+.style-zone-app .sz-logo{background:var(--sz-accent)}
+.style-zone-app .sz-outfit-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,370px),1fr));gap:24px}
+.style-zone-app .sz-loadout-card{border-color:#48546d;background:linear-gradient(155deg,#202a43,#141e31);box-shadow:0 7px 28px #03071444}
+.style-zone-app .sz-loadout-visual{padding:12px;background:radial-gradient(ellipse at 30% 0,#5c4f8c55,transparent 75%),#10192d;border-bottom:1px solid #46516b}
+.style-zone-app .sz-gear-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-width:0}
+.style-zone-app .sz-gear-slot{position:relative;aspect-ratio:1/1.14;padding:0;overflow:hidden;background:#222c42;border:1px solid #626986;border-radius:9px;min-width:0;color:var(--sz-accent);text-align:left;transition:border-color .15s,box-shadow .15s}
+.style-zone-app .sz-gear-slot:hover,.style-zone-app .sz-gear-slot:focus-visible{border-color:var(--sz-pop);box-shadow:0 0 0 2px #92ead244}
+.style-zone-app .sz-product-photo{width:100%;height:100%;min-height:0;background:#eff0f2;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.style-zone-app .sz-product-photo img{display:block;width:100%;height:100%;object-fit:contain;margin:0!important;max-width:100%}
+.style-zone-app .sz-gear-slot>.sz-product-photo{position:absolute;inset:0;padding:8px 4px 28px}
+.style-zone-app .sz-slot-tag{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:5px;background:#172239f2;padding:6px 7px;color:#f6f2ff;font-size:.75rem;font-weight:600;line-height:1.15}
+.style-zone-app .sz-slot-tag svg{width:15px;height:15px;flex-shrink:0}
+.style-zone-app .sz-slot-price{position:absolute;right:5px;top:5px;background:#172239e8;border-radius:4px;padding:2px 5px;color:#effff8;font-size:.875rem;line-height:1.4}
+.style-zone-app .sz-gear-slot.is-empty{border-style:dashed;border-color:#424e68;background:#152136;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;box-shadow:none}
+.style-zone-app .sz-gear-slot.is-empty>svg{width:30px;height:30px;color:#64738e}
+.style-zone-app .sz-gear-slot.is-empty .sz-slot-tag{background:transparent;color:#a6b3ca}
+.style-zone-app .sz-empty-label{font-size:.75rem;color:#9baac3;padding-bottom:16px}
+.style-zone-app .sz-gear-compact{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.style-zone-app .sz-gear-compact .sz-gear-slot{aspect-ratio:1/1.05}
+.style-zone-app .sz-focused .sz-loadout-visual{display:flex;align-items:center;padding:22px}
+.style-zone-app .sz-focused .sz-gear-board{width:100%}
+.style-zone-app .sz-loadout-summary{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.style-zone-app .sz-loadout-summary>strong{margin-left:auto;font-size:1.7rem;color:var(--sz-pop);letter-spacing:-.04em}
+.style-zone-app .sz-loadout-summary>p{flex-basis:100%}
+.style-zone-app .sz-loadout-pill{padding:7px 12px;border:1px solid #635b91;background:#383154;color:#e3deff;border-radius:20px;font-size:.85rem}
+.style-zone-app .sz-equipment-editor{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:28px;align-items:start}
+.style-zone-app .sz-equipment-visual{position:sticky;top:0;background:#10192d;padding:14px;border:1px solid #3b4964;border-radius:12px}
+.style-zone-app .sz-slot-options>h3{margin:6px 0 14px;font-size:1.3rem}
+.style-zone-app .sz-product-info{display:flex;flex-direction:column;align-items:flex-start;gap:13px;margin:12px 0 24px}
+.style-zone-app .sz-product-info>.sz-product-photo{height:245px;border-radius:9px;max-width:450px;border:1px solid #48546d}
+.style-zone-app .sz-product-info>.sz-product-photo img{padding:12px}
+.style-zone-app .sz-product-info>h3{font-size:1.4rem;font-weight:600}
+.style-zone-app .sz-product-price{font-size:1.4rem}
+.style-zone-app .sz-stock{font-size:.8rem;color:var(--sz-signal)}
+.style-zone-app .sz-available-sizes{font-size:.85rem;color:var(--sz-muted)}
+.style-zone-app .sz-available-sizes>summary{cursor:pointer;padding:7px 0}
+.style-zone-app .sz-available-sizes>p{margin-top:10px}
+.style-zone-app .sz-gear-slot[aria-pressed=true]{border:2px solid var(--sz-pop);box-shadow:0 0 0 2px #92ead233}
+.style-zone-app .sz-options-heading{padding-top:20px;border-top:1px solid var(--sz-line)}
+.style-zone-app .sz-options-list{display:flex;flex-direction:column;gap:10px}
+.style-zone-app .sz-option-row{display:flex;align-items:center;gap:12px;width:100%;padding:9px;border:1px solid var(--sz-line);border-radius:9px;background:var(--sz-panel);color:var(--sz-text);text-align:left;min-width:0}
+.style-zone-app .sz-option-row.is-equipped{border-color:var(--sz-pop);background:#213c3f}
+.style-zone-app .sz-option-row>.sz-product-photo{width:80px;height:80px;flex:0 0 80px;border-radius:6px}
+.style-zone-app .sz-option-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.style-zone-app .sz-option-copy>strong{font-size:.86rem;font-weight:550}
+.style-zone-app .sz-option-copy>.sz-muted{font-size:.78rem}
+.style-zone-app .sz-equip-label{font-size:.75rem;color:var(--sz-pop)}
+.style-zone-app .sz-save-variation{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;position:sticky;bottom:-26px;background:#111826f5;padding:18px 0;border-top:1px solid var(--sz-line);margin:20px 0 0;z-index:1}
+.style-zone-app .sz-save-variation>p{grid-column:1/-1}
+.style-zone-app .sz-slot-tabs{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 24px}
+.style-zone-app .sz-slot-filter{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:8px 12px;font-size:.85rem;background:var(--sz-panel);color:var(--sz-muted);border:1px solid var(--sz-line);border-radius:8px}
+.style-zone-app .sz-slot-filter svg{width:20px;height:20px}
+.style-zone-app .sz-slot-filter.is-active{background:#3a365d;color:#ede9ff;border-color:var(--sz-accent)}
+.style-zone-app .sz-inventory-card{padding:16px;min-width:0}
+.style-zone-app .sz-product-thumb-button{display:block;width:100%;height:220px;padding:0;margin:0 0 18px;background:#edf0f4;border:1px solid #48546d;border-radius:9px;overflow:hidden}
+.style-zone-app .sz-product-thumb-button .sz-product-photo{padding:12px}
+.style-zone-app .sz-inventory-card .sz-piece-row{border-bottom:0;flex-direction:column}
+.style-zone-app .sz-inventory-card .sz-piece-actions{flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.style-zone-app .sz-unverified-items{margin-top:28px;padding:20px;border:1px solid var(--sz-line);border-radius:10px}
+.style-zone-app .sz-unverified-items>summary{cursor:pointer}
+.style-zone-app .sz-unverified-items>p{margin:16px 0}
+.style-zone-app .sz-dialog{touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+@media(max-width:760px){
+ .style-zone-app .sz-outfit-grid{grid-template-columns:1fr}
+ .style-zone-app .sz-loadout-visual{padding:10px}
+ .style-zone-app .sz-gear-compact .sz-gear-slot{aspect-ratio:1/1.1}
+ .style-zone-app .sz-equipment-editor{grid-template-columns:1fr;gap:22px}
+ .style-zone-app .sz-equipment-visual{position:static;padding:10px}
+ .style-zone-app .sz-gear-board{gap:8px}
+ .style-zone-app .sz-gear-slot{aspect-ratio:1/1.1}
+ .style-zone-app .sz-save-variation{grid-template-columns:1fr;bottom:-18px;padding:14px 0}
+ .style-zone-app .sz-save-variation>.sz-button{width:100%}
+ .style-zone-app .sz-slot-filter{font-size:.875rem;padding:8px}
+ .style-zone-app .sz-focused .sz-loadout-visual{padding:12px}
+ .style-zone-app .sz-loadout-summary{gap:10px}
+ .style-zone-app .sz-loadout-summary>strong{font-size:1.35rem}
+}

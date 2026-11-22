@@ -2,16 +2,21 @@
 
 Your outfits, clothing records and ratings live here. Open the Style Zone command or shirt icon in Obsidian to browse them.
 
+This folder is the wardrobe homebase inside the existing Relay shared root: `Sync/Style Zone` in the configured vault. Relay carries its contents between devices; BRAT distributes plugin code. Do not store wardrobe data inside `.obsidian/plugins/system3-relay`.
+
 ## Folders
 
 - `Outfits` contains one Markdown note per suggested outfit.
 - `Pieces` contains one Markdown note per owned piece or shopping idea.
+- Each researched product record has a primary slot and compatible slots, exact buy link, photo source, price, sizes and observation date. The interface filters these records into an option database for each equipment slot.
 - `Ratings` contains one Markdown note per rating event. Every 1–5 rating is preserved; your most recent rating per outfit drives the taste profile.
 - `Inspirations` is a place to drop references you like.
 - `Existing Pieces` is a place to drop photos of clothes you own. Use Add a piece to catalog each photo, or ask your stylist to turn the files into piece records.
 - `Assets/Research` contains the starter research photos. These travel through your vault sync, separately from plugin updates.
 - `Assets/Uploads` contains photos attached through the interface.
 - `Exports` contains explicit exports for your stylist.
+- `Research` contains collected sources, visual indexes and research notes. The workspace `agentresearch` shortcut points here.
+- `Research/Product Research 2026-11-22` contains official retailer observations and the slot option index. Earlier approximate outfit ideas are preserved in `Research/Archived Ideas 2026-11-21`.
 
 ## Working with your stylist
 
