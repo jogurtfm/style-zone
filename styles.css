@@ -163,7 +163,7 @@
 }
 /* Obsidian locks the outer pane. Keep scrolling inside its bounded view on
    phones as well as desktop, rather than relying on document/body scrolling. */
-.style-zone-app{position:relative;contain:layout;min-height:0;height:100%;overflow:hidden}
+.style-zone-app{position:relative;contain:layout;container-type:size;min-height:0;height:100%;overflow:hidden}
 .style-zone-app .sz-shell{min-height:0;height:100%;overflow:hidden}
 .style-zone-app .sz-rail{min-height:0}
 .style-zone-app .sz-content{min-height:0;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
@@ -235,7 +235,54 @@
 .style-zone-app .sz-unverified-items>summary{cursor:pointer}
 .style-zone-app .sz-unverified-items>p{margin:16px 0}
 .style-zone-app .sz-dialog{touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.style-zone-app .sz-dialog-header{position:sticky;top:0;z-index:5;background:#111826;padding:10px 0;box-shadow:0 8px 12px #111826}
+.style-zone-app .sz-slot-options{scroll-margin-top:90px}
+/* Explicit sizes also work in mobile WebViews that collapse an empty button's
+   aspect-ratio when its children are absolutely positioned. */
+.style-zone-app .sz-gear-slot{appearance:none;-webkit-appearance:none;height:150px;min-height:150px;aspect-ratio:auto}
+.style-zone-app .sz-fit-preview{width:100%;min-width:0}
+.style-zone-app .sz-fit-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.style-zone-app .sz-fit-controls .sz-text-button{font-size:.8rem;min-height:34px;padding:4px 8px}
+.style-zone-app .sz-flat-lay{position:relative;height:490px;width:100%;border-radius:10px;background:radial-gradient(ellipse at 50% 40%,#fff,#e9e7e2);overflow:hidden}
+.style-zone-app .sz-fit-preview [hidden]{display:none!important}
+.style-zone-app .sz-fit-item{position:absolute;appearance:none;-webkit-appearance:none;display:block;padding:0;margin:0;border:1px solid #c8c4bc;border-radius:7px;overflow:hidden;background:#f1f0ec;box-shadow:0 3px 10px #3331;min-width:0;min-height:0;color:#29344a}
+.style-zone-app .sz-fit-item:hover,.style-zone-app .sz-fit-item:focus-visible{outline:3px solid #4f7f77;outline-offset:-3px;z-index:2}
+.style-zone-app .sz-fit-item .sz-product-photo{padding:7px 4px 23px;background:#f4f3f0}
+.style-zone-app .sz-fit-item .sz-product-photo img{mix-blend-mode:multiply}
+.style-zone-app .sz-fit-tag{position:absolute;bottom:0;left:0;right:0;text-align:center;background:#e4e1d9eb;font-size:10px;font-weight:650;padding:4px 2px;line-height:1.15;letter-spacing:.02em;color:#38404d}
+.style-zone-app .sz-fit-hat{left:37%;top:2%;width:26%;height:12%}
+.style-zone-app .sz-fit-glasses{left:72%;top:2%;width:26%;height:12%}
+.style-zone-app .sz-fit-neck{left:2%;top:2%;width:27%;height:12%}
+.style-zone-app .sz-fit-shirt{left:21%;top:16%;width:58%;height:29%}
+.style-zone-app .has-layers .sz-fit-shirt{left:34%;width:32%}
+.style-zone-app .has-two-layers .sz-fit-shirt{left:5%;width:43%}
+.style-zone-app .has-two-layers .sz-fit-outer{left:52%;width:43%}
+.style-zone-app .sz-fit-controls .sz-eyebrow{font-size:.73rem;line-height:1.4}
+.style-zone-app .sz-fit-controls>button{flex-shrink:0}
+.style-zone-app .sz-fit-base{left:2%;top:16%;width:29%;height:27%}
+.style-zone-app .sz-fit-outer{left:69%;top:16%;width:29%;height:31%}
+.style-zone-app .sz-fit-lower{left:30%;top:47%;width:40%;height:33%}
+.style-zone-app .sz-fit-wrist{left:2%;top:47%;width:24%;height:14%}
+.style-zone-app .sz-fit-accessories{left:74%;top:50%;width:24%;height:24%}
+.style-zone-app .sz-fit-socks{left:2%;top:64%;width:24%;height:19%}
+.style-zone-app .sz-fit-shoes{left:28%;top:82%;width:49%;height:16%}
+.style-zone-app .sz-fit-caption{font-size:.72rem;text-align:center;color:var(--sz-muted);margin:10px 0 0}
+.style-zone-app .sz-fit-unready{padding:32px 18px;line-height:1.6;color:var(--sz-muted);border:1px dashed var(--sz-line);border-radius:8px}
+.style-zone-app .sz-all-slots{margin-top:18px}
+.style-zone-app .sz-all-slots>summary{cursor:pointer;margin-bottom:12px;color:var(--sz-muted);font-size:.85rem}
+.style-zone-app .sz-idea-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-top:1px solid var(--sz-line);font-size:.85rem}
+.style-zone-app .sz-focused .sz-loadout-visual{align-items:start}
+@media(min-width:761px) and (max-width:1150px){.style-zone-app .sz-focused{display:flex;flex-direction:column}}
 @media(max-width:760px){
+ .style-zone-app .sz-flat-lay{height:440px}
+ .style-zone-app.sz-is-rate .sz-brand{display:none}
+ .style-zone-app.sz-is-rate .sz-rail{padding-top:0;gap:0}
+ .style-zone-app.sz-is-rate .sz-heading{padding:12px 0;gap:5px}
+ .style-zone-app.sz-is-rate h1{font-size:1.5rem}
+ .style-zone-app.sz-is-rate .sz-results{margin:8px 0}
+ .style-zone-app.sz-is-rate .sz-session-filters{padding:8px 12px}
+ .style-zone-app.sz-is-rate .sz-focused .sz-flat-lay{height:clamp(270px,calc(100dvh - 355px),440px)}
+ @supports(height:1cqh){.style-zone-app.sz-is-rate .sz-focused .sz-flat-lay{height:clamp(240px,calc(100cqh - 390px),440px)}}
  .style-zone-app .sz-outfit-grid{grid-template-columns:1fr}
  .style-zone-app .sz-loadout-visual{padding:10px}
  .style-zone-app .sz-gear-compact .sz-gear-slot{aspect-ratio:1/1.1}

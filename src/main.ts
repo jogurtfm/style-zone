@@ -4,8 +4,8 @@ import {parseRecord,parseRating,serializeRating,serializeRecord,safePath,safeUrl
 import starter from '../starter/catalog.json';
 
 const VIEW='style-zone-view';
-interface Settings {folder:string}
-class WardrobeStore implements Store {
+interface Settings {folder:string;starterCatalogVersion?:number;starterFolder?:string}
+export class WardrobeStore implements Store {
   constructor(private plugin:StyleZonePlugin){}
   private full(path:string){return normalizePath(`${this.plugin.settings.folder}/${safePath(path)}`);}
   async ensureDirectory(path:string){const parts=normalizePath(path).split('/');let current='';for(const part of parts){current=current?`${current}/${part}`:part;if(!this.plugin.app.vault.getAbstractFileByPath(current)){try{await this.plugin.app.vault.createFolder(current);}catch(error){if(!this.plugin.app.vault.getAbstractFileByPath(current))throw error;}}}}
@@ -22,6 +22,18 @@ class WardrobeStore implements Store {
       }catch(error){data.warnings.push(`${relative}: ${error instanceof Error?error.message:String(error)}`);}
     }));
     data.outfits.sort((a,b)=>a.title.localeCompare(b.title));data.pieces.sort((a,b)=>a.title.localeCompare(b.title));return data;
+  }
+  async ensureStarter(){
+    const data=await this.load(),ids=new Set([...data.outfits,...data.pieces].map(x=>x.id));
+    for(const record of [...starter.pieces,...starter.outfits] as (Piece|Outfit)[]){
+      if(ids.has(record.id))continue;
+      const path=this.full(`${record.type==='piece'?'Pieces':'Outfits'}/${record.id}.md`);await this.ensureDirectory(path.slice(0,path.lastIndexOf('/')));
+      // Add only: a synced or handwritten note at this path always wins.
+      if(this.plugin.app.vault.getAbstractFileByPath(path))continue;
+      try{await this.plugin.app.vault.create(path,serializeRecord(record));}
+      catch(error){if(!this.plugin.app.vault.getAbstractFileByPath(path))throw error;}
+      ids.add(record.id);
+    }
   }
   async rate(event:Parameters<Store['rate']>[0]){const path=this.full(`Ratings/${event.id}.md`);await this.ensureDirectory(this.full('Ratings'));await this.plugin.app.vault.create(path,serializeRating(event));}
   private async save(record:Piece|Outfit){
@@ -49,7 +61,7 @@ class StyleZoneView extends ItemView {
   getViewType(){return VIEW;}
   getDisplayText(){return 'Style Zone';}
   getIcon(){return 'shirt';}
-  async onOpen(){this.contentEl.empty();this.ui=new StyleZoneApp(this.contentEl,new WardrobeStore(this.plugin));await this.ui.start();}
+  async onOpen(){this.contentEl.empty();const store=new WardrobeStore(this.plugin);try{await this.plugin.prepareStarter(store);}catch(error){new Notice(`Starter items could not be added: ${error instanceof Error?error.message:String(error)}`);}this.ui=new StyleZoneApp(this.contentEl,store);await this.ui.start();}
   async onClose(){this.ui?.dispose();}
 }
 class StyleZoneSettings extends PluginSettingTab {
@@ -59,8 +71,10 @@ class StyleZoneSettings extends PluginSettingTab {
 export default class StyleZonePlugin extends Plugin {
   settings:Settings={folder:'Sync/Style Zone'};
   async onload(){const saved=await this.loadData();if(saved?.folder){try{safePath(saved.folder);this.settings.folder=saved.folder;}catch{new Notice('Style Zone ignored an invalid folder setting.');}}
+    if(saved?.starterCatalogVersion===1&&saved.starterFolder===this.settings.folder){this.settings.starterCatalogVersion=1;this.settings.starterFolder=saved.starterFolder;}
     this.registerView(VIEW,leaf=>new StyleZoneView(leaf,this));this.registerObsidianProtocolHandler('style-zone',()=>void this.open());this.addRibbonIcon('shirt','Open Style Zone',()=>void this.open());this.addCommand({id:'open',name:'Open wardrobe',callback:()=>void this.open()});this.addCommand({id:'initialize',name:'Add starter outfit ideas',callback:()=>void this.initialize()});this.addSettingTab(new StyleZoneSettings(this.app,this));
   }
   async open(){let leaf=this.app.workspace.getLeavesOfType(VIEW)[0];if(!leaf){leaf=this.app.workspace.getLeaf('tab');await leaf.setViewState({type:VIEW,active:true});}await this.app.workspace.revealLeaf(leaf);}
-  async initialize(){try{const store=new WardrobeStore(this);await store.ensureDirectory(this.settings.folder);const data=await store.load();const ids=new Set([...data.outfits,...data.pieces].map(x=>x.id));for(const piece of starter.pieces as Piece[])if(!ids.has(piece.id))await store.savePiece(piece);for(const outfit of starter.outfits as Outfit[])if(!ids.has(outfit.id))await store.saveOutfit(outfit);new Notice('Starter ideas added. Existing notes and ratings preserved.');await this.open();}catch(error){new Notice(`Could not add starter ideas: ${error instanceof Error?error.message:String(error)}`);}}
+  async prepareStarter(store:WardrobeStore){if(this.settings.starterCatalogVersion===1&&this.settings.starterFolder===this.settings.folder)return;await store.ensureStarter();this.settings.starterCatalogVersion=1;this.settings.starterFolder=this.settings.folder;await this.saveData(this.settings);}
+  async initialize(){try{const store=new WardrobeStore(this);await store.ensureStarter();await this.prepareStarter(store);new Notice('Starter ideas added. Existing notes and ratings preserved.');await this.open();}catch(error){new Notice(`Could not add starter ideas: ${error instanceof Error?error.message:String(error)}`);}}
 }

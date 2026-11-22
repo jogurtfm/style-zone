@@ -22,6 +22,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 // src/main.ts
 var main_exports = {};
 __export(main_exports, {
+  WardrobeStore: () => WardrobeStore,
   default: () => StyleZonePlugin
 });
 module.exports = __toCommonJS(main_exports);
@@ -6375,11 +6376,13 @@ function reconcileProductEdit(previous, next) {
   return next;
 }
 function equipmentFor(outfit, pieces) {
-  if (outfit.equipment) return Object.fromEntries(GEAR_SLOTS.filter((s) => typeof outfit.equipment?.[s.id] === "string").map((s) => [s.id, outfit.equipment[s.id]]));
+  const explicit = Object.fromEntries(GEAR_SLOTS.filter((s) => typeof outfit.equipment?.[s.id] === "string" && outfit.equipment[s.id]).map((s) => [s.id, outfit.equipment[s.id]]));
+  if (Object.keys(explicit).length) return explicit;
   const result = {};
   for (const id of outfit.piece_ids) {
     const p = pieces.find((x) => x.id === id);
-    if (p?.slot && !result[p.slot]) result[p.slot] = id;
+    const slot = p && pieceSlots(p).find((s) => !result[s]);
+    if (slot) result[slot] = id;
   }
   return result;
 }
@@ -6528,7 +6531,7 @@ function slotIcon(slot) {
   svg.append(p);
   return svg;
 }
-function productPhoto(piece, store) {
+function productPhoto(piece, store, eager = false) {
   const frame = node("div", "sz-product-photo");
   if (!isProduct(piece)) {
     frame.append(node("span", "sz-muted", "Exact product needed"));
@@ -6536,15 +6539,8 @@ function productPhoto(piece, store) {
   }
   const img = document.createElement("img");
   img.alt = piece.title;
-  img.loading = "lazy";
+  img.loading = eager ? "eager" : "lazy";
   let fallback = safeUrl(piece.image_source_url ?? "");
-  try {
-    if (piece.image) img.src = store.imageUrl(piece.image);
-    else img.src = fallback;
-  } catch {
-    img.src = fallback;
-    fallback = "";
-  }
   img.onerror = () => {
     if (fallback && img.src !== fallback) {
       img.src = fallback;
@@ -6554,8 +6550,58 @@ function productPhoto(piece, store) {
       frame.append(node("span", "sz-muted", "Photo unavailable"));
     }
   };
+  try {
+    if (piece.image) img.src = store.imageUrl(piece.image);
+    else img.src = fallback;
+  } catch {
+    img.src = fallback;
+    fallback = "";
+  }
   frame.append(img);
   return frame;
+}
+function fitPreview(outfit, pieces, store, onSlot) {
+  const eq = equipmentFor(outfit, pieces), box = node("section", "sz-fit-preview");
+  box.setAttribute("aria-label", `Whole fit: ${outfit.title}`);
+  const equipped = GEAR_SLOTS.flatMap((slot) => {
+    const piece = pieces.find((p) => p.id === eq[slot.id]);
+    return piece && isProduct(piece) ? [{ slot, piece }] : [];
+  });
+  if (!equipped.length) {
+    box.append(node("p", "sz-fit-unready", "This inspiration has no verified products equipped yet. Open the set to choose exact items from the slot database."));
+    return box;
+  }
+  const controls = node("div", "sz-fit-controls"), label2 = node("span", "sz-eyebrow", outfit.title), toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "sz-text-button";
+  toggle.textContent = "Show slots";
+  toggle.setAttribute("aria-pressed", "false");
+  controls.append(label2, toggle);
+  box.append(controls);
+  const stage = node("div", `sz-flat-lay ${eq.base || eq.outer ? "has-layers" : ""} ${eq.outer && !eq.base ? "has-two-layers" : ""}`);
+  stage.setAttribute("aria-label", "Head-to-toe flat lay of exact product photos");
+  for (const { slot, piece } of equipped) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = `sz-fit-item sz-fit-${slot.id}`;
+    item.dataset.slot = slot.id;
+    item.setAttribute("aria-label", `${slot.label}: ${piece.title}`);
+    item.title = `${piece.title} \xB7 ${piece.store} \xB7 ${usd(piece.price)}`;
+    item.onclick = () => onSlot(slot.id);
+    item.append(productPhoto(piece, store, true), node("span", "sz-fit-tag", slot.short));
+    stage.append(item);
+  }
+  const grid = gearBoard(outfit, pieces, store, onSlot, true);
+  grid.hidden = true;
+  toggle.onclick = () => {
+    const slots = grid.hidden;
+    grid.hidden = !slots;
+    stage.hidden = slots;
+    toggle.textContent = slots ? "Show whole fit" : "Show slots";
+    toggle.setAttribute("aria-pressed", String(slots));
+  };
+  box.append(stage, grid, node("p", "sz-fit-caption", "Exact product flat lay \xB7 tap an item to inspect or swap"));
+  return box;
 }
 function gearBoard(outfit, pieces, store, onSlot, compact = false) {
   const eq = equipmentFor(outfit, pieces), board = node("div", `sz-gear-board ${compact ? "sz-gear-compact" : ""}`);
@@ -6612,13 +6658,20 @@ function loadoutEditor(parent, outfit, catalog, store, onSave, initialSlot) {
     const header = node("div", "sz-loadout-summary");
     header.append(node("span", "sz-loadout-pill", `${Object.keys(eq).length} / ${GEAR_SLOTS.length} slots equipped`), node("strong", "", summary.unknown ? `${usd(summary.known)} + unpriced` : usd(summary.known)), node("p", "sz-muted", "Exact products shown. Optional slots can stay empty. Prices and stock are dated observations, before tax and shipping."));
     parent.append(header);
-    const columns = node("div", "sz-equipment-editor"), visual = node("div", "sz-equipment-visual");
-    const board = gearBoard(current, catalog.pieces, store, (slot) => {
+    const selectSlot = (slot) => {
       selected = slot;
       draw();
-    });
+      if (typeof matchMedia === "function" && matchMedia("(max-width:760px)").matches) parent.querySelector(".sz-slot-options")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    };
+    const columns = node("div", "sz-equipment-editor"), visual = node("div", "sz-equipment-visual");
+    visual.append(fitPreview(current, catalog.pieces, store, selectSlot));
+    const slots = document.createElement("details");
+    slots.className = "sz-all-slots";
+    slots.append(node("summary", "", "All equipment slots"));
+    const board = gearBoard(current, catalog.pieces, store, selectSlot);
     board.querySelector(`[data-slot="${selected}"]`)?.setAttribute("aria-pressed", "true");
-    visual.append(board);
+    slots.append(board);
+    visual.append(slots);
     const selectedSlot = GEAR_SLOTS.find((s) => s.id === selected);
     const panel = node("section", "sz-slot-options");
     panel.append(node("p", "sz-eyebrow", "EQUIPMENT SLOT"), node("h3", "", selectedSlot.label));
@@ -6799,8 +6852,11 @@ var StyleZoneApp = class {
       this.toast(error instanceof Error ? error.message : String(error), true);
     }
   }
+  hasProducts(outfit) {
+    return Object.values(equipmentFor(outfit, this.data.pieces)).some((id) => this.data.pieces.some((p) => p.id === id && isProduct(p)));
+  }
   visible() {
-    return filterOutfits(this.data, this.filters);
+    return filterOutfits(this.data, this.filters).filter((o) => this.hasProducts(o));
   }
   navigate(page) {
     this.page = page;
@@ -6871,7 +6927,7 @@ var StyleZoneApp = class {
     if (!focused) heading.append(button("Create set", () => this.outfitForm(), "sz-button sz-primary"));
     const stats = el("div", "sz-stats");
     const profile = taste(this.data.ratings);
-    for (const [n, t] of [[this.data.outfits.length, "outfit sets"], [this.data.pieces.filter(isProduct).length, "shop options"], [profile.liked, "sets you love"]]) {
+    for (const [n, t] of [[this.data.outfits.filter((o) => this.hasProducts(o)).length, "visualized sets"], [this.data.pieces.filter(isProduct).length, "shop options"], [profile.liked, "sets you love"]]) {
       const item = el("div");
       item.append(el("strong", "", String(n)), el("span", "", String(t)));
       stats.append(item);
@@ -6884,6 +6940,17 @@ var StyleZoneApp = class {
       parent.append(refine);
     } else this.renderFilters(parent);
     const outfits = this.visible();
+    const ideas = filterOutfits(this.data, this.filters).filter((o) => !this.hasProducts(o));
+    if (ideas.length && (!focused || !outfits.length)) {
+      const research = el("details", "sz-unverified-items");
+      research.append(el("summary", "", `${ideas.length} ideas needing exact products`), el("p", "sz-muted", "These earlier inspiration notes are preserved. Equip researched items before rating them as a complete visual set."));
+      for (const idea of ideas) {
+        const row = el("div", "sz-idea-row");
+        row.append(el("span", "", idea.title), button("Equip exact items", () => this.openOutfit(idea), "sz-text-button"));
+        research.append(row);
+      }
+      parent.append(research);
+    }
     const count = el("div", "sz-results");
     count.append(el("p", "sz-muted", `${outfits.length} look${outfits.length === 1 ? "" : "s"} in this edit`));
     const sort = select("sort", [["recommended", "For you"], ["rating", "Highest rated"], ["price", "Lowest known cost"], ["title", "By name"]], this.filters.sort);
@@ -6896,7 +6963,7 @@ var StyleZoneApp = class {
     parent.append(count);
     if (!outfits.length) {
       const empty = el("div", "sz-empty");
-      empty.append(el("h2", "", this.data.outfits.length ? "No looks match this edit." : "Your outfit collection starts here."), el("p", "sz-muted", this.data.outfits.length ? "Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them." : "Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder."), button("Reset filters", () => {
+      empty.append(el("h2", "", this.data.outfits.length ? "No visualized sets match this edit." : "Your outfit collection starts here."), el("p", "sz-muted", ideas.length ? "Open an idea above, equip exact products and save it as a new set." : this.data.outfits.length ? "Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them." : "Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder."), button("Reset filters", () => {
         this.filters = { ...DEFAULT_FILTERS };
         this.render();
       }));
@@ -7027,7 +7094,7 @@ var StyleZoneApp = class {
     const card = el("article", `sz-outfit-card sz-loadout-card ${focus ? "sz-focused" : ""}`);
     card.dataset.outfitId = outfit.id;
     const visual = el("div", "sz-loadout-visual");
-    visual.append(gearBoard(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot), true));
+    visual.append(fitPreview(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot)));
     card.append(visual);
     const body = el("div", "sz-card-body");
     const meta = el("div", "sz-card-meta");
@@ -7076,7 +7143,7 @@ var StyleZoneApp = class {
     const before = this.visible(), at = before.findIndex((o) => o.id === outfit.id);
     try {
       const prior = latestRatings(this.data.ratings).get(outfit.id);
-      const event = newRating(outfit, value, note ?? prior?.note ?? "", reasons ?? prior?.reasons ?? []);
+      const event = newRating({ ...outfit, equipment: equipmentFor(outfit, this.data.pieces) }, value, note ?? prior?.note ?? "", reasons ?? prior?.reasons ?? []);
       await this.store.rate(event);
       if (!this.data.ratings.some((r) => r.id === event.id)) this.data.ratings.push(event);
       if (advance) this.focusId = before[(at + 1) % before.length]?.id ?? "";
@@ -7123,6 +7190,7 @@ var StyleZoneApp = class {
       this.toast("New set saved. The original stays intact.");
     }, slot);
     dialog.append(editor);
+    if (slot && typeof matchMedia === "function" && matchMedia("(max-width:760px)").matches) editor.querySelector(".sz-slot-options")?.scrollIntoView({ block: "start" });
     const feedback = el("section", "sz-detail-rate");
     feedback.append(el("h3", "", "Would you equip this set?"));
     const latest = latestRatings(this.data.ratings).get(outfit.id);
@@ -8837,6 +8905,21 @@ var WardrobeStore = class {
     data.pieces.sort((a, b) => a.title.localeCompare(b.title));
     return data;
   }
+  async ensureStarter() {
+    const data = await this.load(), ids = new Set([...data.outfits, ...data.pieces].map((x) => x.id));
+    for (const record of [...catalog_default.pieces, ...catalog_default.outfits]) {
+      if (ids.has(record.id)) continue;
+      const path = this.full(`${record.type === "piece" ? "Pieces" : "Outfits"}/${record.id}.md`);
+      await this.ensureDirectory(path.slice(0, path.lastIndexOf("/")));
+      if (this.plugin.app.vault.getAbstractFileByPath(path)) continue;
+      try {
+        await this.plugin.app.vault.create(path, serializeRecord(record));
+      } catch (error) {
+        if (!this.plugin.app.vault.getAbstractFileByPath(path)) throw error;
+      }
+      ids.add(record.id);
+    }
+  }
   async rate(event) {
     const path = this.full(`Ratings/${event.id}.md`);
     await this.ensureDirectory(this.full("Ratings"));
@@ -8915,7 +8998,13 @@ var StyleZoneView = class extends import_obsidian.ItemView {
   }
   async onOpen() {
     this.contentEl.empty();
-    this.ui = new StyleZoneApp(this.contentEl, new WardrobeStore(this.plugin));
+    const store = new WardrobeStore(this.plugin);
+    try {
+      await this.plugin.prepareStarter(store);
+    } catch (error) {
+      new import_obsidian.Notice(`Starter items could not be added: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    this.ui = new StyleZoneApp(this.contentEl, store);
     await this.ui.start();
   }
   async onClose() {
@@ -8964,6 +9053,10 @@ var StyleZonePlugin = class extends import_obsidian.Plugin {
         new import_obsidian.Notice("Style Zone ignored an invalid folder setting.");
       }
     }
+    if (saved?.starterCatalogVersion === 1 && saved.starterFolder === this.settings.folder) {
+      this.settings.starterCatalogVersion = 1;
+      this.settings.starterFolder = saved.starterFolder;
+    }
     this.registerView(VIEW, (leaf) => new StyleZoneView(leaf, this));
     this.registerObsidianProtocolHandler("style-zone", () => void this.open());
     this.addRibbonIcon("shirt", "Open Style Zone", () => void this.open());
@@ -8979,14 +9072,18 @@ var StyleZonePlugin = class extends import_obsidian.Plugin {
     }
     await this.app.workspace.revealLeaf(leaf);
   }
+  async prepareStarter(store) {
+    if (this.settings.starterCatalogVersion === 1 && this.settings.starterFolder === this.settings.folder) return;
+    await store.ensureStarter();
+    this.settings.starterCatalogVersion = 1;
+    this.settings.starterFolder = this.settings.folder;
+    await this.saveData(this.settings);
+  }
   async initialize() {
     try {
       const store = new WardrobeStore(this);
-      await store.ensureDirectory(this.settings.folder);
-      const data = await store.load();
-      const ids = new Set([...data.outfits, ...data.pieces].map((x) => x.id));
-      for (const piece of catalog_default.pieces) if (!ids.has(piece.id)) await store.savePiece(piece);
-      for (const outfit of catalog_default.outfits) if (!ids.has(outfit.id)) await store.saveOutfit(outfit);
+      await store.ensureStarter();
+      await this.prepareStarter(store);
       new import_obsidian.Notice("Starter ideas added. Existing notes and ratings preserved.");
       await this.open();
     } catch (error) {

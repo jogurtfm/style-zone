@@ -1,6 +1,6 @@
 import {COLORS,GEAR_SLOTS,isProduct,reconcileProductEdit,pieceSlots,slotOptions,equipmentFor,DEFAULT_FILTERS,cost,filterOutfits,latestRatings,newRating,recommendation,safeUrl,taste,type Catalog,type Filters,type Outfit,type Piece,type Store,type GearSlot} from './model';
 
-import {gearBoard,productPhoto,productInfo,loadoutEditor,slotIcon} from './equipment';
+import {fitPreview,productPhoto,productInfo,loadoutEditor,slotIcon} from './equipment';
 
 type Page='outfits'|'rate'|'wardrobe'|'profile';
 function el<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',text=''):HTMLElementTagNameMap[K]{const x=document.createElement(tag);x.className=cls;x.textContent=text;return x;}
@@ -34,7 +34,8 @@ export class StyleZoneApp {
   async start(){this.root.classList.add('style-zone-app');this.root.append(el('p','sz-loading','Opening your wardrobe…'));document.addEventListener('keydown',this.keyHandler);await this.reload();this.unsub=this.store.subscribe?.(()=>{clearTimeout(this.refreshTimer);this.refreshTimer=setTimeout(()=>{if(!this.detail?.open)void this.reload();},250);});}
   dispose(){this.disposed=true;this.unsub?.();clearTimeout(this.refreshTimer);document.removeEventListener('keydown',this.keyHandler);this.detail?.remove();this.root.replaceChildren();}
   private async reload(){const sequence=++this.refreshSequence;try{const data=await this.store.load();if(this.disposed||sequence!==this.refreshSequence)return;const unchanged=this.hasLoaded&&JSON.stringify(data)===JSON.stringify(this.data);this.data=data;this.hasLoaded=true;if(unchanged)return;const active=document.activeElement;if(active instanceof Element&&this.root.contains(active)&&active.matches('input,textarea,select'))return;this.render();}catch(error){this.toast(error instanceof Error?error.message:String(error),true);}}
-  private visible(){return filterOutfits(this.data,this.filters);}
+  private hasProducts(outfit:Outfit){return Object.values(equipmentFor(outfit,this.data.pieces)).some(id=>this.data.pieces.some(p=>p.id===id&&isProduct(p)));}
+  private visible(){return filterOutfits(this.data,this.filters).filter(o=>this.hasProducts(o));}
   private navigate(page:Page){this.page=page;const content=this.root.querySelector('.sz-content');if(content)content.scrollTop=0;this.render();}
   private toast(message:string,error=false){const target=el('div',`sz-toast ${error?'sz-error':''}`,message);target.setAttribute('role',error?'alert':'status');this.root.append(target);setTimeout(()=>target.remove(),6500);}
   private render(){
@@ -63,12 +64,14 @@ export class StyleZoneApp {
     const heading=this.heading(parent,focused?'TRUST YOUR FIRST INSTINCT':'YOUR EQUIPMENT SETS',focused?'Would you wear this?':'Build your daily loadout.',focused?'Rate from 1 to 5. The next look follows automatically.':'Real products, tagged by slot. Swap a piece, save a set, find your style.');
     if(!focused)heading.append(button('Create set',()=>this.outfitForm(),'sz-button sz-primary'));
     const stats=el('div','sz-stats');const profile=taste(this.data.ratings);
-    for(const [n,t]of [[this.data.outfits.length,'outfit sets'],[this.data.pieces.filter(isProduct).length,'shop options'],[profile.liked,'sets you love']]){const item=el('div');item.append(el('strong','',String(n)),el('span','',String(t)));stats.append(item);}if(!focused)parent.append(stats);
+    for(const [n,t]of [[this.data.outfits.filter(o=>this.hasProducts(o)).length,'visualized sets'],[this.data.pieces.filter(isProduct).length,'shop options'],[profile.liked,'sets you love']]){const item=el('div');item.append(el('strong','',String(n)),el('span','',String(t)));stats.append(item);}if(!focused)parent.append(stats);
     if(focused){const refine=el('details','sz-session-filters');refine.append(el('summary','','Refine this session'));this.renderFilters(refine);parent.append(refine);}else this.renderFilters(parent);
     const outfits=this.visible();
+    const ideas=filterOutfits(this.data,this.filters).filter(o=>!this.hasProducts(o));
+    if(ideas.length&&(!focused||!outfits.length)){const research=el('details','sz-unverified-items');research.append(el('summary','',`${ideas.length} ideas needing exact products`),el('p','sz-muted','These earlier inspiration notes are preserved. Equip researched items before rating them as a complete visual set.'));for(const idea of ideas){const row=el('div','sz-idea-row');row.append(el('span','',idea.title),button('Equip exact items',()=>this.openOutfit(idea),'sz-text-button'));research.append(row);}parent.append(research);}
     const count=el('div','sz-results');count.append(el('p','sz-muted',`${outfits.length} look${outfits.length===1?'':'s'} in this edit`));
     const sort=select('sort',[['recommended','For you'],['rating','Highest rated'],['price','Lowest known cost'],['title','By name']],this.filters.sort);sort.setAttribute('aria-label','Sort outfits');sort.onchange=()=>{this.filters.sort=sort.value;this.render();};count.append(sort);parent.append(count);
-    if(!outfits.length){const empty=el('div','sz-empty');empty.append(el('h2','',this.data.outfits.length?'No looks match this edit.':'Your outfit collection starts here.'),el('p','sz-muted',this.data.outfits.length?'Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them.':'Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder.'),button('Reset filters',()=>{this.filters={...DEFAULT_FILTERS};this.render();}));parent.append(empty);return;}
+    if(!outfits.length){const empty=el('div','sz-empty');empty.append(el('h2','',this.data.outfits.length?'No visualized sets match this edit.':'Your outfit collection starts here.'),el('p','sz-muted',ideas.length?'Open an idea above, equip exact products and save it as a new set.':this.data.outfits.length?'Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them.':'Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder.'),button('Reset filters',()=>{this.filters={...DEFAULT_FILTERS};this.render();}));parent.append(empty);return;}
     if(focused){
       const latest=latestRatings(this.data.ratings);
       let current=outfits.find(o=>o.id===this.focusId)??outfits.find(o=>!latest.has(o.id))??outfits[0];this.focusId=current.id;
@@ -95,7 +98,7 @@ export class StyleZoneApp {
   }
   private outfitCard(outfit:Outfit,focus=false){
     const card=el('article',`sz-outfit-card sz-loadout-card ${focus?'sz-focused':''}`);card.dataset.outfitId=outfit.id;
-    const visual=el('div','sz-loadout-visual');visual.append(gearBoard(outfit,this.data.pieces,this.store,slot=>this.openOutfit(outfit,slot),true));card.append(visual);
+    const visual=el('div','sz-loadout-visual');visual.append(fitPreview(outfit,this.data.pieces,this.store,slot=>this.openOutfit(outfit,slot)));card.append(visual);
     const body=el('div','sz-card-body');const meta=el('div','sz-card-meta');meta.append(el('span','sz-eyebrow',outfit.styles[0]??'YOUR SET'),this.swatches(outfit.colors));body.append(meta,el('h2','',outfit.title),el('p','sz-card-description',outfit.notes.split('\n')[0]||outfit.season));
     const c=cost(outfit,this.data.pieces),price=el('div','sz-cost');price.append(el('strong','',c.unknown?`${money(c.known)} known`:c.known?`${money(c.known)} to buy`:'Already in your wardrobe'),el('span','sz-muted',c.unknown?`${c.unknown} unpriced · ${c.owned} owned`:`${outfit.piece_ids.length} tagged products · ${c.owned} owned`));body.append(price);
     const latest=latestRatings(this.data.ratings).get(outfit.id);body.append(this.ratingButtons(outfit,latest?.rating,focus));
@@ -107,7 +110,7 @@ export class StyleZoneApp {
   private async rate(outfit:Outfit,value:number,advance=false,note?:string,reasons?:string[]){
     if(this.pending.has(outfit.id))return false;this.pending.add(outfit.id);
     const before=this.visible(),at=before.findIndex(o=>o.id===outfit.id);
-    try{const prior=latestRatings(this.data.ratings).get(outfit.id);const event=newRating(outfit,value,note??prior?.note??'',reasons??prior?.reasons??[]);await this.store.rate(event);if(!this.data.ratings.some(r=>r.id===event.id))this.data.ratings.push(event);if(advance)this.focusId=before[(at+1)%before.length]?.id??'';this.render();this.toast(`Saved ${value}/5 for ${outfit.title}`);return true;}catch(error){this.toast(`Rating not saved: ${error instanceof Error?error.message:String(error)}`,true);return false;}finally{this.pending.delete(outfit.id);this.root.querySelectorAll<HTMLButtonElement>(`article[data-outfit-id="${outfit.id}"] .sz-rate-button`).forEach(b=>b.disabled=false);}
+    try{const prior=latestRatings(this.data.ratings).get(outfit.id);const event=newRating({...outfit,equipment:equipmentFor(outfit,this.data.pieces)},value,note??prior?.note??'',reasons??prior?.reasons??[]);await this.store.rate(event);if(!this.data.ratings.some(r=>r.id===event.id))this.data.ratings.push(event);if(advance)this.focusId=before[(at+1)%before.length]?.id??'';this.render();this.toast(`Saved ${value}/5 for ${outfit.title}`);return true;}catch(error){this.toast(`Rating not saved: ${error instanceof Error?error.message:String(error)}`,true);return false;}finally{this.pending.delete(outfit.id);this.root.querySelectorAll<HTMLButtonElement>(`article[data-outfit-id="${outfit.id}"] .sz-rate-button`).forEach(b=>b.disabled=false);}
   }
   private dialog(title:string){
     const previousFocus=document.activeElement as HTMLElement|null;
@@ -116,7 +119,7 @@ export class StyleZoneApp {
   }
   private openOutfit(outfit:Outfit,slot?:GearSlot){
     const dialog=this.dialog(outfit.title),editor=el('div','sz-loadout-editor-host');
-    loadoutEditor(editor,outfit,this.data,this.store,async variation=>{await this.store.saveOutfit(variation);this.toast('New set saved. The original stays intact.');},slot);dialog.append(editor);
+    loadoutEditor(editor,outfit,this.data,this.store,async variation=>{await this.store.saveOutfit(variation);this.toast('New set saved. The original stays intact.');},slot);dialog.append(editor);if(slot&&typeof matchMedia==='function'&&matchMedia('(max-width:760px)').matches)editor.querySelector('.sz-slot-options')?.scrollIntoView({block:'start'});
     const feedback=el('section','sz-detail-rate');feedback.append(el('h3','','Would you equip this set?'));const latest=latestRatings(this.data.ratings).get(outfit.id);
     const note=el('textarea','sz-input');note.setAttribute('aria-label','Reason for your outfit rating');note.placeholder='What clicks? What would you change?';note.value=latest?.note??'';feedback.append(note);const chosen=new Set(latest?.reasons??[]),tags=el('div','sz-reason-tags');
     for(const reason of ['Love the palette','Love the layers','Too formal','Too busy','Wrong fit']){const b=button(reason,()=>{chosen.has(reason)?chosen.delete(reason):chosen.add(reason);b.setAttribute('aria-pressed',String(chosen.has(reason)));},'sz-reason');b.setAttribute('aria-pressed',String(chosen.has(reason)));tags.append(b);}feedback.append(tags);

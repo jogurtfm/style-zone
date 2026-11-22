@@ -6,11 +6,13 @@ Explore outfit ideas, filter by palette, style, occasion, store and shopping cos
 
 Install with BRAT using **jogurtfm/style-zone**. Open **Style Zone: Open wardrobe** from the command palette or the shirt ribbon icon. The default data folder is `Sync/Style Zone` inside your vault. Point both devices at the same synced vault and let notes and image attachments sync.
 
-Version 0.2.0 introduces tagged, shoppable equipment sets and fixes mobile scrolling in Obsidian's bounded pane. The wardrobe homebase is the `Style Zone` subdirectory of the configured Relay root (`Sync` on this desktop), including research and drop folders. If the same shared root has a different local name on your phone, set the wardrobe folder to that root followed by `/Style Zone` in Style Zone settings.
+Version 0.3.0 adds head-to-toe product flat lays in Loadouts, Quick rate and the set editor. Tap a photographed item to inspect or swap it, or switch to the equipment grid. Earlier inspiration notes without exact products remain in the expandable **Ideas needing exact products** list instead of appearing as empty rating cards. Empty legacy equipment maps recover their slots from referenced items. Mobile tiles have explicit heights and rating photos load eagerly with retailer-CDN fallback.
+
+The wardrobe homebase is the `Style Zone` subdirectory of the configured Relay root (`Sync` on this desktop), including research and drop folders. If the same shared root has a different local name on your phone, set the wardrobe folder to that root followed by `/Style Zone` in Style Zone settings.
 
 The first release supports desktop and mobile through Obsidian APIs, without Node or Electron calls in the plugin. The phone itself still needs a device installation and check. A successful GitHub release does not establish that a phone has installed it.
 
-If you need starting records, run **Style Zone: Add starter outfit ideas**. Existing IDs are preserved. The starter catalog contains 6 equipment sets and 28 exact products with dated retailer observations; it makes no claim that you own them. Product photos are stored as private vault assets, with a fallback to their original retailer CDN URLs. Binary photographs are not bundled into the public release.
+The first open adds missing starter records once per configured wardrobe home. Existing IDs, handwritten notes and rating history are preserved. Subsequent opens respect deleted starter notes. To restore missing starters manually, run **Style Zone: Add starter outfit ideas**. The starter catalog contains 6 equipment sets and 28 exact products with dated retailer observations; it makes no claim that you own them. Product photos are stored as private vault assets, with a fallback to their original retailer CDN URLs. Binary photographs are not bundled into the public release.
 
 ## Browser companion
 

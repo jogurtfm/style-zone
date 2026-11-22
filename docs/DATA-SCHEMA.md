@@ -8,6 +8,10 @@ All records use schema version `1`. Outfit and piece notes have YAML frontmatter
 
 Shoppable equipment sets also contain `equipment`, an object mapping slot IDs to exact piece IDs. Every equipped ID must be in `piece_ids`. The supported slots are `shoes`, `socks`, `lower`, `base`, `shirt`, `outer`, `neck`, `wrist`, `accessories`, `glasses`, and `hat`. `base` is layer 0, `shirt` is layer 1, and `outer` is layer 2. Slots can be empty. The visual board uses product photos from the equipped records, never an unrelated runway photograph. Legacy inspiration notes can be preserved in Research.
 
+A missing or empty equipment map is reconstructed in memory from referenced pieces and their compatible slots. A nonempty explicit map remains authoritative, preserving deliberately empty slots. Recovery does not rewrite the source note. New rating snapshots retain the recovered map. Outfits without any verified equipped products stay readable under Ideas needing exact products and are excluded from Quick rate. No files or rating events are deleted by this display rule.
+
+On first open, the plugin adds missing generic starter records with create-only writes. Existing IDs and occupied paths win, including notes arriving concurrently through sync. Plugin-local settings mark that starter catalog version as prepared for the configured home, so later opens do not resurrect deleted starters. The explicit Add starter outfit ideas command can restore missing records.
+
 ## Piece records
 
 `Pieces/<stable-id>.md` contains `schema`, `type: piece`, `id`, `title`, `category`, `colors` (array), `ownership` (`owned`, `wishlist` or `reference`), `price` (number or null), `currency` (USD for UI editing), `store`, `product_url`, `price_checked_at` (ISO date or empty), `price_note`, and `image`. Body text can record fit and fabric notes. Never infer ownership from an inspiration image.

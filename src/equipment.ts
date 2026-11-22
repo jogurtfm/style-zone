@@ -5,13 +5,22 @@ export function slotIcon(slot:string):SVGSVGElement {
   const paths:Record<string,string>={hat:'M3 16h18M6 16V9a6 6 0 0 1 12 0v7',glasses:'M2 12h3m5 0h4m5 0h3M5 8h5v7H5zM14 8h5v7h-5z',neck:'m6 3 6 8 6-8M6 3l-2 8 7 10 4-3-3-7',base:'m8 4-6 4 3 5 3-2v10h8V11l3 2 3-5-6-4-4 3z',shirt:'m8 4-6 4 3 5 3-2v10h8V11l3 2 3-5-6-4-4 3zM12 8v13',outer:'M8 3 3 7v14h5V10l4 4 4-4v11h5V7l-5-4-4 7z',wrist:'M9 2h6v5H9zM9 17h6v5H9zM7 7h10v10H7z',lower:'M6 3h12l2 18h-6l-2-10-2 10H4zM6 7h12',accessories:'M5 8h14v13H5zM8 8V5a4 4 0 0 1 8 0v3',socks:'M8 3h8v11l-7 7H4v-6l4-4zM8 7h8',shoes:'M3 10h5l3 5 9 2 1 4H3zM3 17h10'};
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');const p=document.createElementNS(svg.namespaceURI,'path');p.setAttribute('d',paths[slot]??paths.accessories);p.setAttribute('fill','none');p.setAttribute('stroke','currentColor');p.setAttribute('stroke-width','1.5');p.setAttribute('stroke-linejoin','round');svg.append(p);return svg;
 }
-export function productPhoto(piece:Piece,store:Store):HTMLElement {
+export function productPhoto(piece:Piece,store:Store,eager=false):HTMLElement {
   const frame=node('div','sz-product-photo');
   if(!isProduct(piece)){frame.append(node('span','sz-muted','Exact product needed'));return frame;}
-  const img=document.createElement('img');img.alt=piece.title;img.loading='lazy';let fallback=safeUrl(piece.image_source_url??'');
-  try{if(piece.image)img.src=store.imageUrl(piece.image);else img.src=fallback;}catch{img.src=fallback;fallback='';}
+  const img=document.createElement('img');img.alt=piece.title;img.loading=eager?'eager':'lazy';let fallback=safeUrl(piece.image_source_url??'');
   img.onerror=()=>{if(fallback&&img.src!==fallback){img.src=fallback;fallback='';}else{img.remove();frame.append(node('span','sz-muted','Photo unavailable'));}};
+  try{if(piece.image)img.src=store.imageUrl(piece.image);else img.src=fallback;}catch{img.src=fallback;fallback='';}
   frame.append(img);return frame;
+}
+export function fitPreview(outfit:Outfit,pieces:Piece[],store:Store,onSlot:(slot:GearSlot)=>void):HTMLElement {
+  const eq=equipmentFor(outfit,pieces),box=node('section','sz-fit-preview');box.setAttribute('aria-label',`Whole fit: ${outfit.title}`);
+  const equipped=GEAR_SLOTS.flatMap(slot=>{const piece=pieces.find(p=>p.id===eq[slot.id]);return piece&&isProduct(piece)?[{slot,piece}]:[];});
+  if(!equipped.length){box.append(node('p','sz-fit-unready','This inspiration has no verified products equipped yet. Open the set to choose exact items from the slot database.'));return box;}
+  const controls=node('div','sz-fit-controls'),label=node('span','sz-eyebrow',outfit.title),toggle=document.createElement('button');toggle.type='button';toggle.className='sz-text-button';toggle.textContent='Show slots';toggle.setAttribute('aria-pressed','false');controls.append(label,toggle);box.append(controls);
+  const stage=node('div',`sz-flat-lay ${eq.base||eq.outer?'has-layers':''} ${eq.outer&&!eq.base?'has-two-layers':''}`);stage.setAttribute('aria-label','Head-to-toe flat lay of exact product photos');
+  for(const {slot,piece}of equipped){const item=document.createElement('button');item.type='button';item.className=`sz-fit-item sz-fit-${slot.id}`;item.dataset.slot=slot.id;item.setAttribute('aria-label',`${slot.label}: ${piece.title}`);item.title=`${piece.title} · ${piece.store} · ${usd(piece.price!)}`;item.onclick=()=>onSlot(slot.id);item.append(productPhoto(piece,store,true),node('span','sz-fit-tag',slot.short));stage.append(item);}
+  const grid=gearBoard(outfit,pieces,store,onSlot,true);grid.hidden=true;toggle.onclick=()=>{const slots=grid.hidden;grid.hidden=!slots;stage.hidden=slots;toggle.textContent=slots?'Show whole fit':'Show slots';toggle.setAttribute('aria-pressed',String(slots));};box.append(stage,grid,node('p','sz-fit-caption','Exact product flat lay · tap an item to inspect or swap'));return box;
 }
 export function gearBoard(outfit:Outfit,pieces:Piece[],store:Store,onSlot:(slot:GearSlot)=>void,compact=false):HTMLElement {
   const eq=equipmentFor(outfit,pieces),board=node('div',`sz-gear-board ${compact?'sz-gear-compact':''}`);board.setAttribute('aria-label',`Tagged products in ${outfit.title}`);
@@ -38,7 +47,8 @@ export function loadoutEditor(parent:HTMLElement,outfit:Outfit,catalog:Catalog,s
   const draw=()=>{
     parent.replaceChildren();const current={...outfit,equipment:eq,piece_ids:[...new Set(Object.values(eq).filter((x):x is string=>Boolean(x)))]};const summary=cost(current,catalog.pieces);
     const header=node('div','sz-loadout-summary');header.append(node('span','sz-loadout-pill',`${Object.keys(eq).length} / ${GEAR_SLOTS.length} slots equipped`),node('strong','',summary.unknown?`${usd(summary.known)} + unpriced`:usd(summary.known)),node('p','sz-muted','Exact products shown. Optional slots can stay empty. Prices and stock are dated observations, before tax and shipping.'));parent.append(header);
-    const columns=node('div','sz-equipment-editor'),visual=node('div','sz-equipment-visual');const board=gearBoard(current,catalog.pieces,store,slot=>{selected=slot;draw();});board.querySelector(`[data-slot="${selected}"]`)?.setAttribute('aria-pressed','true');visual.append(board);
+    const selectSlot=(slot:GearSlot)=>{selected=slot;draw();if(typeof matchMedia==='function'&&matchMedia('(max-width:760px)').matches)parent.querySelector('.sz-slot-options')?.scrollIntoView({block:'start',behavior:'smooth'});};
+    const columns=node('div','sz-equipment-editor'),visual=node('div','sz-equipment-visual');visual.append(fitPreview(current,catalog.pieces,store,selectSlot));const slots=document.createElement('details');slots.className='sz-all-slots';slots.append(node('summary','','All equipment slots'));const board=gearBoard(current,catalog.pieces,store,selectSlot);board.querySelector(`[data-slot="${selected}"]`)?.setAttribute('aria-pressed','true');slots.append(board);visual.append(slots);
     const selectedSlot=GEAR_SLOTS.find(s=>s.id===selected)!;const panel=node('section','sz-slot-options');panel.append(node('p','sz-eyebrow','EQUIPMENT SLOT'),node('h3','',selectedSlot.label));const equipped=catalog.pieces.find(p=>p.id===eq[selected]);
     if(equipped){panel.append(productInfo(equipped,store));const remove=document.createElement('button');remove.type='button';remove.className='sz-text-button';remove.textContent='Leave this slot empty';remove.onclick=()=>{delete eq[selected];dirty=true;draw();};panel.append(remove);}else panel.append(node('p','sz-muted','No item equipped. Choose a product below or keep this slot empty.'));
     const options=slotOptions(catalog.pieces,selected);panel.append(node('h3','sz-options-heading',`${options.length} researched options`));const list=node('div','sz-options-list');

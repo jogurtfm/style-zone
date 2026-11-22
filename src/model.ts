@@ -66,8 +66,11 @@ export function reconcileProductEdit(previous:Piece|undefined,next:Piece):Piece 
   return next;
 }
 export function equipmentFor(outfit:Outfit,pieces:Piece[]):Partial<Record<GearSlot,string>> {
-  if(outfit.equipment)return Object.fromEntries(GEAR_SLOTS.filter(s=>typeof outfit.equipment?.[s.id]==='string').map(s=>[s.id,outfit.equipment![s.id]]));
-  const result:Partial<Record<GearSlot,string>>={};for(const id of outfit.piece_ids){const p=pieces.find(x=>x.id===id);if(p?.slot&&!result[p.slot])result[p.slot]=id;}return result;
+  const explicit=Object.fromEntries(GEAR_SLOTS.filter(s=>typeof outfit.equipment?.[s.id]==='string'&&outfit.equipment[s.id]).map(s=>[s.id,outfit.equipment![s.id]]));
+  // Older notes can contain an empty map. Recover from exact item references,
+  // but keep nonempty maps authoritative so intentionally empty slots stay empty.
+  if(Object.keys(explicit).length)return explicit;
+  const result:Partial<Record<GearSlot,string>>={};for(const id of outfit.piece_ids){const p=pieces.find(x=>x.id===id);const slot=p&&pieceSlots(p).find(s=>!result[s]);if(slot)result[slot]=id;}return result;
 }
 export function slotOptions(pieces:Piece[],slot:GearSlot):Piece[]{return pieces.filter(p=>isProduct(p)&&pieceSlots(p).includes(slot)).sort((a,b)=>(a.price??Infinity)-(b.price??Infinity)||a.title.localeCompare(b.title));}
 export function createVariation(outfit:Outfit,equipment:Partial<Record<GearSlot,string>>,pieces:Piece[],title:string):Outfit {

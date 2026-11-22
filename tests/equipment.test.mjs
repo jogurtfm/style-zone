@@ -22,3 +22,9 @@ test('Ratings preserve exact equipped item IDs so later research can learn slot 
 test('Changing a product link or photo clears the previous verification',()=>{
  const original=catalog.pieces[0];assert(isProduct(reconcileProductEdit(original,{...original,ownership:'owned'})));assert(!isProduct(reconcileProductEdit(original,{...original,product_url:'https://example.com/another-product'})));assert(!isProduct(reconcileProductEdit(original,{...original,image:'Assets/different.jpg'})));
 });
+test('Empty legacy equipment maps recover slots without overriding intentional choices',()=>{
+ const set=catalog.outfits.find(o=>o.title==='Everyday Blue');assert.deepEqual(equipmentFor({...set,equipment:{}},catalog.pieces),set.equipment);
+ assert.deepEqual(equipmentFor({...set,equipment:undefined},catalog.pieces),set.equipment);
+ assert.deepEqual(equipmentFor({...set,equipment:{shirt:set.equipment.shirt}},catalog.pieces),{shirt:set.equipment.shirt});
+ const piece={...catalog.pieces[0],slot:undefined,compatible_slots:['shirt']};assert.equal(equipmentFor({...set,equipment:{},piece_ids:[piece.id]},[piece]).shirt,piece.id);
+});
