@@ -6350,7 +6350,13 @@ var COLORS = {
   red: "#ca5149",
   stone: "#bbb5a8",
   gold: "#c2a054",
-  copper: "#b97e5a"
+  copper: "#b97e5a",
+  yellow: "#d7a126",
+  mustard: "#b2934c",
+  green: "#315b45",
+  teal: "#269fa6",
+  coral: "#dd8c7b",
+  pink: "#ce94b2"
 };
 function safePath(path) {
   if (!path || path.includes("\\") || path.startsWith("/") || path.includes(":") || path.split("/").some((p) => p === ".." || p === "." || !p)) throw Error("Use a relative path inside the wardrobe folder.");
@@ -6372,7 +6378,7 @@ function isProduct(piece) {
   return Boolean(piece.availability === "available" && piece.product_checked_at && (piece.product_id || piece.sku) && safeUrl(piece.product_url) && (piece.image || safeUrl(piece.image_source_url ?? "")) && piece.price !== null);
 }
 function reconcileProductEdit(previous, next) {
-  if (previous && ["title", "store", "product_url", "image"].some((key) => previous[key] !== next[key])) return { ...next, availability: "unverified", product_checked_at: "", image_source_url: "" };
+  if (previous && ["title", "store", "product_url", "image", "image_source_url", "product_id", "sku", "variant_color"].some((key) => previous[key] !== next[key])) return { ...next, availability: "unverified", product_checked_at: "", image_source_url: "" };
   return next;
 }
 function equipmentFor(outfit, pieces) {
@@ -6389,6 +6395,27 @@ function equipmentFor(outfit, pieces) {
 function slotOptions(pieces, slot) {
   return pieces.filter((p) => isProduct(p) && pieceSlots(p).includes(slot)).sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity) || a.title.localeCompare(b.title));
 }
+function equipmentSignature(outfit, pieces) {
+  const eq = equipmentFor(outfit, pieces);
+  return JSON.stringify(GEAR_SLOTS.flatMap((slot) => {
+    const id = eq[slot.id];
+    if (!id) return [];
+    const p = pieces.find((p2) => p2.id === id);
+    return [[slot.id, id, p?.title ?? "", p?.product_id ?? "", p?.sku ?? "", p?.variant_color ?? "", p?.product_url ?? "", p?.image_source_url ?? "", p?.image ?? "", p?.colors ?? []]];
+  }));
+}
+function currentPreview(outfit, pieces) {
+  const p = outfit.style_preview;
+  if (!p || p.kind !== "ai-styling-preview" || typeof p.image !== "string" || !p.image || p.signature !== equipmentSignature(outfit, pieces) || !Number.isFinite(Date.parse(p.generated_at))) return;
+  try {
+    safePath(p.image);
+  } catch {
+    return;
+  }
+  const ids = Object.values(equipmentFor(outfit, pieces));
+  if (!ids.length || ids.some((id) => !outfit.piece_ids.includes(id) || !pieces.some((piece) => piece.id === id && isProduct(piece)))) return;
+  return p;
+}
 function createVariation(outfit, equipment, pieces, title) {
   const ids = [...new Set(Object.values(equipment).filter((id) => Boolean(id)))];
   if (!ids.length) throw Error("Equip at least one product.");
@@ -6398,7 +6425,7 @@ function createVariation(outfit, equipment, pieces, title) {
     const piece = pieces.find((p) => p.id === id);
     if (!piece || !isProduct(piece) || !pieceSlots(piece).includes(slot.id)) throw Error(`Choose a verified product for ${slot.label}.`);
   }
-  return { ...outfit, id: `outfit-${crypto.randomUUID()}`, path: void 0, originalText: void 0, title: title.trim() || `${outfit.title} / Remix`, piece_ids: ids, equipment: { ...equipment }, colors: [...new Set(ids.flatMap((id) => pieces.find((p) => p.id === id)?.colors ?? []))], image: "", image_credit: "", source_urls: ids.map((id) => pieces.find((p) => p.id === id).product_url), notes: `Variation of ${outfit.title}. Exact products are tagged by equipment slot.` };
+  return { ...outfit, id: `outfit-${crypto.randomUUID()}`, path: void 0, originalText: void 0, style_preview: void 0, title: title.trim() || `${outfit.title} / Remix`, piece_ids: ids, equipment: { ...equipment }, colors: [...new Set(ids.flatMap((id) => pieces.find((p) => p.id === id)?.colors ?? []))], image: "", image_credit: "", source_urls: ids.map((id) => pieces.find((p) => p.id === id).product_url), notes: `Variation of ${outfit.title}. Exact products are tagged by equipment slot.` };
 }
 var array = (value) => Array.isArray(value) ? value.filter((x) => typeof x === "string") : [];
 function parseRecord(text, path = "") {
@@ -6475,7 +6502,7 @@ function cost(outfit, pieces) {
   }
   return { known: Math.round(known * 100) / 100, unknown, owned, stale, complete: unknown === 0 };
 }
-var DEFAULT_FILTERS = { search: "", style: "", color: "", store: "", occasion: "", rating: "", maxPrice: "", includeUnknown: false, ownedOnly: false, sort: "recommended" };
+var DEFAULT_FILTERS = { search: "", style: "", color: "", store: "", occasion: "", rating: "", maxPrice: "", includeUnknown: false, ownedOnly: false, sort: "recommended", collection: "" };
 function taste(events) {
   const latest = [...latestRatings(events).values()];
   const features = /* @__PURE__ */ new Map();
@@ -6497,7 +6524,7 @@ function filterOutfits(catalog, filters) {
   const latest = latestRatings(catalog.ratings), byId = new Map(catalog.pieces.map((p) => [p.id, p]));
   return catalog.outfits.filter((o) => {
     const c = cost(o, catalog.pieces), r = latest.get(o.id)?.rating;
-    return (!filters.search || `${o.title} ${o.notes} ${o.styles.join(" ")}`.toLowerCase().includes(filters.search.toLowerCase())) && (!filters.style || o.styles.includes(filters.style)) && (!filters.color || o.colors.includes(filters.color)) && (!filters.occasion || o.occasions.includes(filters.occasion)) && (!filters.store || o.piece_ids.some((id) => byId.get(id)?.store === filters.store)) && (!filters.rating || (filters.rating === "unrated" ? !r : filters.rating === "liked" ? (r ?? 0) >= 4 : r === Number(filters.rating))) && (!filters.ownedOnly || o.piece_ids.length > 0 && o.piece_ids.every((id) => byId.get(id)?.ownership === "owned")) && (filters.maxPrice === "" || (c.complete || filters.includeUnknown) && c.known <= Number(filters.maxPrice));
+    return (!filters.search || `${o.title} ${o.notes} ${o.styles.join(" ")}`.toLowerCase().includes(filters.search.toLowerCase())) && (!filters.style || o.styles.includes(filters.style)) && (!filters.color || o.colors.includes(filters.color)) && (!filters.collection || o.collection === filters.collection) && (!filters.occasion || o.occasions.includes(filters.occasion)) && (!filters.store || o.piece_ids.some((id) => byId.get(id)?.store === filters.store)) && (!filters.rating || (filters.rating === "unrated" ? !r : filters.rating === "liked" ? (r ?? 0) >= 4 : r === Number(filters.rating))) && (!filters.ownedOnly || o.piece_ids.length > 0 && o.piece_ids.every((id) => byId.get(id)?.ownership === "owned")) && (filters.maxPrice === "" || (c.complete || filters.includeUnknown) && c.known <= Number(filters.maxPrice));
   }).sort((a, b) => {
     if (filters.sort === "price") {
       const ac = cost(a, catalog.pieces), bc = cost(b, catalog.pieces);
@@ -6505,7 +6532,7 @@ function filterOutfits(catalog, filters) {
     }
     if (filters.sort === "rating") return (latest.get(b.id)?.rating ?? 0) - (latest.get(a.id)?.rating ?? 0) || a.title.localeCompare(b.title);
     if (filters.sort === "title") return a.title.localeCompare(b.title);
-    return recommendation(b, catalog.ratings).score - recommendation(a, catalog.ratings).score || a.title.localeCompare(b.title);
+    return recommendation(b, catalog.ratings).score - recommendation(a, catalog.ratings).score || Number(Boolean(currentPreview(b, catalog.pieces))) - Number(Boolean(currentPreview(a, catalog.pieces))) || a.title.localeCompare(b.title);
   });
 }
 
@@ -6571,12 +6598,14 @@ function fitPreview(outfit, pieces, store, onSlot) {
     box.append(node("p", "sz-fit-unready", "This inspiration has no verified products equipped yet. Open the set to choose exact items from the slot database."));
     return box;
   }
-  const controls = node("div", "sz-fit-controls"), label2 = node("span", "sz-eyebrow", outfit.title), toggle = document.createElement("button");
-  toggle.type = "button";
-  toggle.className = "sz-text-button";
-  toggle.textContent = "Show slots";
-  toggle.setAttribute("aria-pressed", "false");
-  controls.append(label2, toggle);
+  const preview = currentPreview(outfit, pieces);
+  box.classList.toggle("sz-has-preview", Boolean(preview));
+  const controls = node("div", "sz-fit-controls"), label2 = node("span", "sz-eyebrow", outfit.title);
+  if (preview) {
+    const total = cost(outfit, pieces);
+    label2.append(node("span", "sz-preview-cost", `${usd(total.known)}${total.unknown ? " + unpriced" : " to buy"}`));
+  }
+  controls.append(label2);
   box.append(controls);
   const stage = node("div", `sz-flat-lay ${eq.base || eq.outer ? "has-layers" : ""} ${eq.outer && !eq.base ? "has-two-layers" : ""}`);
   stage.setAttribute("aria-label", "Head-to-toe flat lay of exact product photos");
@@ -6591,16 +6620,57 @@ function fitPreview(outfit, pieces, store, onSlot) {
     item.append(productPhoto(piece, store, true), node("span", "sz-fit-tag", slot.short));
     stage.append(item);
   }
-  const grid = gearBoard(outfit, pieces, store, onSlot, true);
-  grid.hidden = true;
-  toggle.onclick = () => {
-    const slots = grid.hidden;
-    grid.hidden = !slots;
-    stage.hidden = slots;
-    toggle.textContent = slots ? "Show whole fit" : "Show slots";
-    toggle.setAttribute("aria-pressed", String(slots));
+  const grid = gearBoard(outfit, pieces, store, onSlot, true), render = node("div", "sz-render-stage"), tags = node("div", "sz-render-products"), caption = node("p", "sz-fit-caption");
+  for (const { slot, piece } of equipped) {
+    const tag = document.createElement("button");
+    tag.type = "button";
+    tag.className = "sz-render-product";
+    tag.setAttribute("aria-label", `Inspect exact ${slot.label}: ${piece.title}`);
+    tag.onclick = () => onSlot(slot.id);
+    tag.append(productPhoto(piece, store, true), node("span", "", slot.short));
+    tags.append(tag);
+  }
+  let mode = preview ? "render" : "flat";
+  const buttons = /* @__PURE__ */ new Map();
+  const show = (next) => {
+    mode = next;
+    render.hidden = mode !== "render";
+    tags.hidden = mode !== "render";
+    stage.hidden = mode !== "flat";
+    grid.hidden = mode !== "slots";
+    for (const [id, b] of buttons) b.setAttribute("aria-pressed", String(id === mode));
+    caption.textContent = mode === "render" ? "AI styling preview \xB7 fit and details may differ. Exact products below." : "Exact product photos \xB7 tap an item to inspect or swap";
+    if (mode === "render" && preview) {
+      const img = document.createElement("img");
+      img.alt = `AI styling preview of ${outfit.title}. See exact photos for product details.`;
+      img.loading = "eager";
+      img.onerror = () => {
+        show("flat");
+        caption.textContent = "Preview image is unavailable. Exact photos shown; retry Render after vault assets sync.";
+      };
+      render.replaceChildren(img, node("span", "sz-render-badge", "AI styling preview"));
+      try {
+        img.src = store.imageUrl(preview.image);
+      } catch {
+        img.onerror(new Event("error"));
+      }
+    }
   };
-  box.append(stage, grid, node("p", "sz-fit-caption", "Exact product flat lay \xB7 tap an item to inspect or swap"));
+  const tabs = node("div", "sz-view-tabs");
+  tabs.setAttribute("role", "group");
+  tabs.setAttribute("aria-label", `View ${outfit.title}`);
+  for (const [id, title] of [...preview ? [["render", "Render"]] : [], ["flat", "Exact photos"], ["slots", "Slots"]]) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sz-view-tab";
+    b.textContent = title;
+    b.onclick = () => show(id);
+    buttons.set(id, b);
+    tabs.append(b);
+  }
+  controls.append(tabs);
+  box.append(render, stage, grid, tags, caption);
+  show(mode);
   return box;
 }
 function gearBoard(outfit, pieces, store, onSlot, compact = false) {
@@ -7018,6 +7088,16 @@ var StyleZoneApp = class {
       s.setAttribute("aria-label", title);
       s.onchange = () => {
         this.filters[key] = s.value;
+        this.render();
+      };
+      row.append(s);
+    }
+    const collections = unique(this.data.outfits.map((o) => o.collection ?? "").filter(Boolean));
+    if (collections.length) {
+      const s = select("collection", [["", "All collections"], ...collections.map((x) => [x, x])], this.filters.collection);
+      s.setAttribute("aria-label", "Outfit collection");
+      s.onchange = () => {
+        this.filters.collection = s.value;
         this.render();
       };
       row.append(s);

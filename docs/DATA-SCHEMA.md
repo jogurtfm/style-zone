@@ -12,11 +12,17 @@ A missing or empty equipment map is reconstructed in memory from referenced piec
 
 On first open, the plugin adds missing generic starter records with create-only writes. Existing IDs and occupied paths win, including notes arriving concurrently through sync. Plugin-local settings mark that starter catalog version as prepared for the configured home, so later opens do not resurrect deleted starters. The explicit Add starter outfit ideas command can restore missing records.
 
+`collection` optionally groups curated outfits without changing their IDs or taste tags. A collection filter combines with palette, price and the other filters. With equal preference scores, outfits with a valid current styling preview sort before unrendered outfits; explicit price, rating and title sorts retain their meaning.
+
+`style_preview` optionally contains `kind: ai-styling-preview`, `image` (a relative vault asset path), `signature`, `generated_at` and `prompt_path`. The signature is a deterministic JSON description of the exact equipped item identities, color variants and photo sources. It binds the illustration to those products. A render displays only when its signature matches current equipment and all referenced pieces remain verified. A swap falls back to exact photos; saving a variation clears its inherited render. This does not delete the original image or alter earlier ratings. Renders are approximate styling illustrations and visibly labeled; they never replace product photographs as purchase evidence. Prompts, source photographs and outputs remain private vault assets.
+
 ## Piece records
 
 `Pieces/<stable-id>.md` contains `schema`, `type: piece`, `id`, `title`, `category`, `colors` (array), `ownership` (`owned`, `wishlist` or `reference`), `price` (number or null), `currency` (USD for UI editing), `store`, `product_url`, `price_checked_at` (ISO date or empty), `price_note`, and `image`. Body text can record fit and fabric notes. Never infer ownership from an inspiration image.
 
 Product option records add `slot`, `compatible_slots` (array), `product_id`, `sku` (an observed available variant SKU, not a user size selection), `image_source_url`, `image_credit`, `product_checked_at`, `availability` (`available`, `unavailable` or `unverified`) and `available_sizes`. A verified option requires an exact product URL, photo, price, product identifier and dated available status. Category pages and approximate equivalents cannot become shoppable visual items. Editing the identity, retailer link or photo clears verification until researched again.
+
+`variant_color` optionally identifies an exact retailer Color option. Refreshes then consider only available variants of that color and use its variant photo and price range. Another color being available cannot make this color shoppable. A variant parameter in a buy link is an observed option reference, not the user's chosen size.
 
 To research a set, read all piece notes for each compatible slot before adding products. Collect options across slots rather than duplicating a product per outfit. Save price and available variant evidence from official retailers in Research; retain product photo provenance. Exclude unavailable leads from the selectable slot options. Stock is observed at the recorded time, not monitored live.
 

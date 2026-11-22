@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {GEAR_SLOTS,slotOptions,isProduct,createVariation,newRating,equipmentFor,cost,reconcileProductEdit} from '../src/model.ts';
+import {GEAR_SLOTS,slotOptions,isProduct,createVariation,newRating,equipmentFor,cost,reconcileProductEdit,equipmentSignature,currentPreview,filterOutfits,DEFAULT_FILTERS} from '../src/model.ts';
 const catalog=JSON.parse(await readFile(new URL('../starter/catalog.json',import.meta.url),'utf8'));
 test('Every equipment slot has multiple exact researched product options',()=>{
  assert.equal(GEAR_SLOTS.length,11);for(const slot of GEAR_SLOTS)assert(slotOptions(catalog.pieces,slot.id).length>=2,slot.label);
@@ -27,4 +27,15 @@ test('Empty legacy equipment maps recover slots without overriding intentional c
  assert.deepEqual(equipmentFor({...set,equipment:undefined},catalog.pieces),set.equipment);
  assert.deepEqual(equipmentFor({...set,equipment:{shirt:set.equipment.shirt}},catalog.pieces),{shirt:set.equipment.shirt});
  const piece={...catalog.pieces[0],slot:undefined,compatible_slots:['shirt']};assert.equal(equipmentFor({...set,equipment:{},piece_ids:[piece.id]},[piece]).shirt,piece.id);
+});
+test('Styling previews are bound to exact current items and are cleared by remixes',()=>{
+ const original=structuredClone(catalog.outfits[0]);original.style_preview={kind:'ai-styling-preview',image:'Assets/Renders/look.png',generated_at:'2026-11-22T12:00:00Z',signature:equipmentSignature(original,catalog.pieces)};
+ assert(currentPreview(original,catalog.pieces));const changed=structuredClone(catalog.pieces);changed.find(p=>p.id===original.piece_ids[0]).image_source_url='https://cdn.shopify.com/different-color.jpg';assert.equal(currentPreview(original,changed),undefined);
+ assert.equal(currentPreview({...original,style_preview:{...original.style_preview,image:'../outside.png'}},catalog.pieces),undefined);
+ assert.equal(currentPreview({...original,equipment:{shirt:'unknown-id'}},catalog.pieces),undefined);
+ const remix=createVariation(original,{...original.equipment,shoes:'product-brown-captain'},catalog.pieces,'New shoes');assert.equal(remix.style_preview,undefined);assert(original.style_preview);
+});
+test('Collections filter independently and current renders break neutral recommendation ties',()=>{
+ const a=structuredClone(catalog.outfits[0]),b=structuredClone(catalog.outfits[1]);a.collection='Character Casual';a.title='Z Rendered';b.title='A Unrendered';a.style_preview={kind:'ai-styling-preview',image:'Assets/Renders/look.png',generated_at:'2026-11-22T12:00:00Z',signature:equipmentSignature(a,catalog.pieces)};
+ const data={outfits:[a,b],pieces:catalog.pieces,ratings:[],warnings:[]};assert.equal(filterOutfits(data,{...DEFAULT_FILTERS})[0].id,a.id);assert.deepEqual(filterOutfits(data,{...DEFAULT_FILTERS,collection:'Character Casual'}).map(o=>o.id),[a.id]);assert.equal(filterOutfits(data,{...DEFAULT_FILTERS,sort:'title'})[0].id,b.id);
 });

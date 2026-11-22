@@ -13,13 +13,16 @@ export type GearSlot = typeof GEAR_SLOTS[number]['id'];
 export const COLORS: Record<string, string> = {
   navy:'#25395b', blue:'#7c9fca', cream:'#ede9d9', brown:'#79543b',
   black:'#22252b', gray:'#8b8e98', olive:'#687354', burgundy:'#863e54',
-  white:'#ffffff', plum:'#76527f', petrol:'#347779', red:'#ca5149', stone:'#bbb5a8', gold:'#c2a054', copper:'#b97e5a'
+  white:'#ffffff', plum:'#76527f', petrol:'#347779', red:'#ca5149', stone:'#bbb5a8', gold:'#c2a054', copper:'#b97e5a',
+  yellow:'#d7a126', mustard:'#b2934c', green:'#315b45', teal:'#269fa6', coral:'#dd8c7b', pink:'#ce94b2'
 };
 export interface Outfit {
   schema:number; type:'outfit'; id:string; title:string; season:string;
   styles:string[]; colors:string[]; occasions:string[]; piece_ids:string[];
   image:string; image_credit:string; source_urls:string[]; notes:string; path?:string; originalText?:string;
   equipment?:Partial<Record<GearSlot,string>>;
+  collection?:string;
+  style_preview?:{kind:'ai-styling-preview';image:string;signature:string;generated_at:string;prompt_path?:string};
 }
 export interface Piece {
   schema:number; type:'piece'; id:string; title:string; category:string;
@@ -29,6 +32,7 @@ export interface Piece {
   slot?:GearSlot; compatible_slots?:GearSlot[]; product_id?:string; sku?:string;
   image_source_url?:string; image_credit?:string; product_checked_at?:string;
   availability?:'available'|'unavailable'|'unverified'; available_sizes?:string[];
+  variant_color?:string;
 }
 export interface Rating {
   schema:number; type:'rating'; id:string; outfit_id:string; rating:number;
@@ -62,7 +66,7 @@ export function isProduct(piece:Piece):boolean {
   return Boolean(piece.availability==='available'&&piece.product_checked_at&&(piece.product_id||piece.sku)&&safeUrl(piece.product_url)&&(piece.image||safeUrl(piece.image_source_url??''))&&piece.price!==null);
 }
 export function reconcileProductEdit(previous:Piece|undefined,next:Piece):Piece {
-  if(previous&&['title','store','product_url','image'].some(key=>previous[key as keyof Piece]!==next[key as keyof Piece]))return {...next,availability:'unverified',product_checked_at:'',image_source_url:''};
+  if(previous&&['title','store','product_url','image','image_source_url','product_id','sku','variant_color'].some(key=>previous[key as keyof Piece]!==next[key as keyof Piece]))return {...next,availability:'unverified',product_checked_at:'',image_source_url:''};
   return next;
 }
 export function equipmentFor(outfit:Outfit,pieces:Piece[]):Partial<Record<GearSlot,string>> {
@@ -73,11 +77,19 @@ export function equipmentFor(outfit:Outfit,pieces:Piece[]):Partial<Record<GearSl
   const result:Partial<Record<GearSlot,string>>={};for(const id of outfit.piece_ids){const p=pieces.find(x=>x.id===id);const slot=p&&pieceSlots(p).find(s=>!result[s]);if(slot)result[slot]=id;}return result;
 }
 export function slotOptions(pieces:Piece[],slot:GearSlot):Piece[]{return pieces.filter(p=>isProduct(p)&&pieceSlots(p).includes(slot)).sort((a,b)=>(a.price??Infinity)-(b.price??Infinity)||a.title.localeCompare(b.title));}
+export function equipmentSignature(outfit:Outfit,pieces:Piece[]):string {
+  const eq=equipmentFor(outfit,pieces);return JSON.stringify(GEAR_SLOTS.flatMap(slot=>{const id=eq[slot.id];if(!id)return [];const p=pieces.find(p=>p.id===id);return [[slot.id,id,p?.title??'',p?.product_id??'',p?.sku??'',p?.variant_color??'',p?.product_url??'',p?.image_source_url??'',p?.image??'',p?.colors??[]]];}));
+}
+export function currentPreview(outfit:Outfit,pieces:Piece[]):Outfit['style_preview']|undefined {
+  const p=outfit.style_preview;if(!p||p.kind!=='ai-styling-preview'||typeof p.image!=='string'||!p.image||p.signature!==equipmentSignature(outfit,pieces)||!Number.isFinite(Date.parse(p.generated_at)))return;
+  try{safePath(p.image);}catch{return;}
+  const ids=Object.values(equipmentFor(outfit,pieces));if(!ids.length||ids.some(id=>!outfit.piece_ids.includes(id)||!pieces.some(piece=>piece.id===id&&isProduct(piece))))return;return p;
+}
 export function createVariation(outfit:Outfit,equipment:Partial<Record<GearSlot,string>>,pieces:Piece[],title:string):Outfit {
   const ids=[...new Set(Object.values(equipment).filter((id):id is string=>Boolean(id)))];
   if(!ids.length)throw Error('Equip at least one product.');
   for(const slot of GEAR_SLOTS){const id=equipment[slot.id];if(!id)continue;const piece=pieces.find(p=>p.id===id);if(!piece||!isProduct(piece)||!pieceSlots(piece).includes(slot.id))throw Error(`Choose a verified product for ${slot.label}.`);}
-  return {...outfit,id:`outfit-${crypto.randomUUID()}`,path:undefined,originalText:undefined,title:title.trim()||`${outfit.title} / Remix`,piece_ids:ids,equipment:{...equipment},colors:[...new Set(ids.flatMap(id=>pieces.find(p=>p.id===id)?.colors??[]))],image:'',image_credit:'',source_urls:ids.map(id=>pieces.find(p=>p.id===id)!.product_url),notes:`Variation of ${outfit.title}. Exact products are tagged by equipment slot.`};
+  return {...outfit,id:`outfit-${crypto.randomUUID()}`,path:undefined,originalText:undefined,style_preview:undefined,title:title.trim()||`${outfit.title} / Remix`,piece_ids:ids,equipment:{...equipment},colors:[...new Set(ids.flatMap(id=>pieces.find(p=>p.id===id)?.colors??[]))],image:'',image_credit:'',source_urls:ids.map(id=>pieces.find(p=>p.id===id)!.product_url),notes:`Variation of ${outfit.title}. Exact products are tagged by equipment slot.`};
 }
 const array=(value:unknown):string[]=>Array.isArray(value)?value.filter((x):x is string=>typeof x==='string'):[];
 export function parseRecord(text:string,path=''):Outfit|Piece {
@@ -126,8 +138,8 @@ export function cost(outfit:Outfit,pieces:Piece[]){
   }
   return {known:Math.round(known*100)/100,unknown,owned,stale,complete:unknown===0};
 }
-export interface Filters {search:string;style:string;color:string;store:string;occasion:string;rating:string;maxPrice:string;includeUnknown:boolean;ownedOnly:boolean;sort:string}
-export const DEFAULT_FILTERS:Filters={search:'',style:'',color:'',store:'',occasion:'',rating:'',maxPrice:'',includeUnknown:false,ownedOnly:false,sort:'recommended'};
+export interface Filters {search:string;style:string;color:string;store:string;occasion:string;rating:string;maxPrice:string;includeUnknown:boolean;ownedOnly:boolean;sort:string;collection?:string}
+export const DEFAULT_FILTERS:Filters={search:'',style:'',color:'',store:'',occasion:'',rating:'',maxPrice:'',includeUnknown:false,ownedOnly:false,sort:'recommended',collection:''};
 export function taste(events:Rating[]){
   const latest=[...latestRatings(events).values()];
   const features=new Map<string,{sum:number;count:number;label:string;kind:string}>();
@@ -149,6 +161,7 @@ export function filterOutfits(catalog:Catalog,filters:Filters):Outfit[]{
     const c=cost(o,catalog.pieces),r=latest.get(o.id)?.rating;
     return (!filters.search||`${o.title} ${o.notes} ${o.styles.join(' ')}`.toLowerCase().includes(filters.search.toLowerCase()))
       &&(!filters.style||o.styles.includes(filters.style))&&(!filters.color||o.colors.includes(filters.color))
+      &&(!filters.collection||o.collection===filters.collection)
       &&(!filters.occasion||o.occasions.includes(filters.occasion))&&(!filters.store||o.piece_ids.some(id=>byId.get(id)?.store===filters.store))
       &&(!filters.rating||(filters.rating==='unrated'?!r:filters.rating==='liked'?(r??0)>=4:r===Number(filters.rating)))
       &&(!filters.ownedOnly||o.piece_ids.length>0&&o.piece_ids.every(id=>byId.get(id)?.ownership==='owned'))
@@ -157,6 +170,6 @@ export function filterOutfits(catalog:Catalog,filters:Filters):Outfit[]{
     if(filters.sort==='price') {const ac=cost(a,catalog.pieces),bc=cost(b,catalog.pieces);return Number(!ac.complete)-Number(!bc.complete)||ac.known-bc.known;}
     if(filters.sort==='rating')return (latest.get(b.id)?.rating??0)-(latest.get(a.id)?.rating??0)||a.title.localeCompare(b.title);
     if(filters.sort==='title')return a.title.localeCompare(b.title);
-    return recommendation(b,catalog.ratings).score-recommendation(a,catalog.ratings).score||a.title.localeCompare(b.title);
+    return recommendation(b,catalog.ratings).score-recommendation(a,catalog.ratings).score||Number(Boolean(currentPreview(b,catalog.pieces)))-Number(Boolean(currentPreview(a,catalog.pieces)))||a.title.localeCompare(b.title);
   });
 }

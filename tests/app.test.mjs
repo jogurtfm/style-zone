@@ -12,7 +12,7 @@ test('Shared UI filters, persists a rating, advances, and preserves an open dial
  const app=new StyleZoneApp(document.getElementById('app'),store);await app.start();assert.equal(document.querySelectorAll('.sz-outfit-card').length,6);
  assert(document.querySelector('.sz-unverified-items').textContent.includes('A legacy idea'));assert.equal(data.outfits.length,7);
  assert.equal(document.querySelectorAll('.sz-flat-lay:not([hidden])').length,6);assert(document.querySelector('.sz-fit-item img').alt);assert.equal(document.querySelector('.sz-fit-item img').loading,'eager');
- document.querySelector('.sz-fit-controls button').click();assert.equal(document.querySelector('.sz-flat-lay').hidden,true);assert.equal(document.querySelector('.sz-gear-board').hidden,false);document.querySelector('.sz-fit-controls button').click();
+ [...document.querySelectorAll('.sz-fit-controls button')].find(b=>b.textContent==='Slots').click();assert.equal(document.querySelector('.sz-flat-lay').hidden,true);assert.equal(document.querySelector('.sz-gear-board').hidden,false);[...document.querySelectorAll('.sz-fit-controls button')].find(b=>b.textContent==='Exact photos').click();
  const burgundy=document.querySelector('button[aria-label="Filter palette: burgundy"]');burgundy.click();assert.equal(document.querySelectorAll('.sz-outfit-card').length,1);
  [...document.querySelectorAll('button')].find(b=>b.textContent==='Clear').click();
  [...document.querySelectorAll('.sz-nav-button')].find(b=>b.textContent.includes('Quick rate')).click();const first=document.querySelector('article').dataset.outfitId;
