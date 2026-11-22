@@ -99,7 +99,7 @@ export class StyleZoneApp {
   }
   private outfitCard(outfit:Outfit,focus=false){
     const card=el('article',`sz-outfit-card sz-loadout-card ${focus?'sz-focused':''}`);card.dataset.outfitId=outfit.id;
-    const visual=el('div','sz-loadout-visual');visual.append(fitPreview(outfit,this.data.pieces,this.store,slot=>this.openOutfit(outfit,slot)));card.append(visual);
+    const visual=el('div','sz-loadout-visual');visual.append(fitPreview(outfit,this.data.pieces,this.store,slot=>this.openOutfit(outfit,slot),focus));card.append(visual);
     const body=el('div','sz-card-body');const meta=el('div','sz-card-meta');meta.append(el('span','sz-eyebrow',outfit.styles[0]??'YOUR SET'),this.swatches(outfit.colors));body.append(meta,el('h2','',outfit.title),el('p','sz-card-description',outfit.notes.split('\n')[0]||outfit.season));
     const c=cost(outfit,this.data.pieces),price=el('div','sz-cost');price.append(el('strong','',c.unknown?`${money(c.known)} known`:c.known?`${money(c.known)} to buy`:'Already in your wardrobe'),el('span','sz-muted',c.unknown?`${c.unknown} unpriced · ${c.owned} owned`:`${outfit.piece_ids.length} tagged products · ${c.owned} owned`));body.append(price);
     const latest=latestRatings(this.data.ratings).get(outfit.id);body.append(this.ratingButtons(outfit,latest?.rating,focus));

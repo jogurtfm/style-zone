@@ -6567,6 +6567,7 @@ function productPhoto(piece, store, eager = false) {
   const img = document.createElement("img");
   img.alt = piece.title;
   img.loading = eager ? "eager" : "lazy";
+  img.decoding = "async";
   let fallback = safeUrl(piece.image_source_url ?? "");
   img.onerror = () => {
     if (fallback && img.src !== fallback) {
@@ -6587,7 +6588,7 @@ function productPhoto(piece, store, eager = false) {
   frame.append(img);
   return frame;
 }
-function fitPreview(outfit, pieces, store, onSlot) {
+function fitPreview(outfit, pieces, store, onSlot, eager = false) {
   const eq = equipmentFor(outfit, pieces), box = node("section", "sz-fit-preview");
   box.setAttribute("aria-label", `Whole fit: ${outfit.title}`);
   const equipped = GEAR_SLOTS.flatMap((slot) => {
@@ -6601,10 +6602,8 @@ function fitPreview(outfit, pieces, store, onSlot) {
   const preview = currentPreview(outfit, pieces);
   box.classList.toggle("sz-has-preview", Boolean(preview));
   const controls = node("div", "sz-fit-controls"), label2 = node("span", "sz-eyebrow", outfit.title);
-  if (preview) {
-    const total = cost(outfit, pieces);
-    label2.append(node("span", "sz-preview-cost", `${usd(total.known)}${total.unknown ? " + unpriced" : " to buy"}`));
-  }
+  const total = cost(outfit, pieces);
+  label2.append(node("span", "sz-preview-cost", `${usd(total.known)}${total.unknown ? " + unpriced" : " to buy"}`));
   controls.append(label2);
   box.append(controls);
   const stage = node("div", `sz-flat-lay ${eq.base || eq.outer ? "has-layers" : ""} ${eq.outer && !eq.base ? "has-two-layers" : ""}`);
@@ -6617,7 +6616,7 @@ function fitPreview(outfit, pieces, store, onSlot) {
     item.setAttribute("aria-label", `${slot.label}: ${piece.title}`);
     item.title = `${piece.title} \xB7 ${piece.store} \xB7 ${usd(piece.price)}`;
     item.onclick = () => onSlot(slot.id);
-    item.append(productPhoto(piece, store, true), node("span", "sz-fit-tag", slot.short));
+    item.append(productPhoto(piece, store, eager), node("span", "sz-fit-tag", slot.short));
     stage.append(item);
   }
   const grid = gearBoard(outfit, pieces, store, onSlot, true), render = node("div", "sz-render-stage"), tags = node("div", "sz-render-products"), caption = node("p", "sz-fit-caption");
@@ -6627,7 +6626,7 @@ function fitPreview(outfit, pieces, store, onSlot) {
     tag.className = "sz-render-product";
     tag.setAttribute("aria-label", `Inspect exact ${slot.label}: ${piece.title}`);
     tag.onclick = () => onSlot(slot.id);
-    tag.append(productPhoto(piece, store, true), node("span", "", slot.short));
+    tag.append(productPhoto(piece, store), node("span", "", slot.short));
     tags.append(tag);
   }
   let mode = preview ? "render" : "flat";
@@ -6643,7 +6642,8 @@ function fitPreview(outfit, pieces, store, onSlot) {
     if (mode === "render" && preview) {
       const img = document.createElement("img");
       img.alt = `AI styling preview of ${outfit.title}. See exact photos for product details.`;
-      img.loading = "eager";
+      img.loading = eager ? "eager" : "lazy";
+      img.decoding = "async";
       img.onerror = () => {
         show("flat");
         caption.textContent = "Preview image is unavailable. Exact photos shown; retry Render after vault assets sync.";
@@ -6734,7 +6734,7 @@ function loadoutEditor(parent, outfit, catalog, store, onSave, initialSlot) {
       if (typeof matchMedia === "function" && matchMedia("(max-width:760px)").matches) parent.querySelector(".sz-slot-options")?.scrollIntoView({ block: "start", behavior: "smooth" });
     };
     const columns = node("div", "sz-equipment-editor"), visual = node("div", "sz-equipment-visual");
-    visual.append(fitPreview(current, catalog.pieces, store, selectSlot));
+    visual.append(fitPreview(current, catalog.pieces, store, selectSlot, true));
     const slots = document.createElement("details");
     slots.className = "sz-all-slots";
     slots.append(node("summary", "", "All equipment slots"));
@@ -7174,7 +7174,7 @@ var StyleZoneApp = class {
     const card = el("article", `sz-outfit-card sz-loadout-card ${focus ? "sz-focused" : ""}`);
     card.dataset.outfitId = outfit.id;
     const visual = el("div", "sz-loadout-visual");
-    visual.append(fitPreview(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot)));
+    visual.append(fitPreview(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot), focus));
     card.append(visual);
     const body = el("div", "sz-card-body");
     const meta = el("div", "sz-card-meta");

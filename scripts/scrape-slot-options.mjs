@@ -2,7 +2,7 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-const supported=new Set(['www.taylorstitch.com','thursdayboots.com','goodr.com','bronsonshop.com','mokuyobi.com','losangelesapparel.net','martialartsmart.com','teddyfresh.com']);
+const supported=new Set(['www.taylorstitch.com','thursdayboots.com','goodr.com','bronsonshop.com','mokuyobi.com','losangelesapparel.net','martialartsmart.com','teddyfresh.com','heatersvintage.com','recollect.ltd','basementvintage.com','upthriftshop.com','cndvintage.com']);
 export async function scrapeSlotOptions(catalog,{request=fetch,date=new Date().toISOString().slice(0,10)}={}){
   const products=[],errors=[];
   for(const piece of catalog.pieces){
