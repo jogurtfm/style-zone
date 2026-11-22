@@ -1,0 +1,13 @@
+node_modules/
+dist/
+release/
+.local/
+private/
+agentresearch/
+Existing Pieces/
+Inspirations/
+Outfit Combos/
+*.log
+*.zip
+*.tmp
+.env*

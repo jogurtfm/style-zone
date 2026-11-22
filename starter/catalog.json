@@ -1,0 +1,951 @@
+{
+  "schema": 1,
+  "outfits": [
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "rugby-denim",
+      "title": "The weekend stripe",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "retro sport"
+      ],
+      "colors": [
+        "navy",
+        "cream",
+        "brown"
+      ],
+      "occasions": [
+        "everyday",
+        "weekend"
+      ],
+      "piece_ids": [
+        "rugby",
+        "dark-jeans",
+        "tan-loafers"
+      ],
+      "image": "Assets/Research/01-S01.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
+      ],
+      "notes": "A strong stripe, straight denim and tan loafers. Try a relaxed top with a clean break at the ankle. The photograph shows inspiration; the linked pieces are proposed equivalents."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "track-tailoring",
+      "title": "Off duty, dialed in",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "retro sport"
+      ],
+      "colors": [
+        "navy",
+        "cream",
+        "gray"
+      ],
+      "occasions": [
+        "everyday",
+        "creative work"
+      ],
+      "piece_ids": [
+        "track-jacket",
+        "cream-tee",
+        "gray-trousers",
+        "white-trainers"
+      ],
+      "image": "Assets/Research/02-S01.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
+        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
+      ],
+      "notes": "Let a track jacket loosen up the trousers. Keep the tee plain so the silhouette and stripe do the work."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "heritage-knit",
+      "title": "A little mountain air",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "heritage prep"
+      ],
+      "colors": [
+        "olive",
+        "cream",
+        "burgundy",
+        "blue"
+      ],
+      "occasions": [
+        "weekend",
+        "outdoors"
+      ],
+      "piece_ids": [
+        "fair-isle",
+        "dark-jeans",
+        "brown-boots"
+      ],
+      "image": "Assets/Research/04-S01.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.gq-magazine.co.uk/article/autumn-winter-2026-menswear-trends",
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren"
+      ],
+      "notes": "Make the sweater the interesting part. Add dark jeans and simple brown boots; skip extra patterns at first."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "oxford-cardigan",
+      "title": "The easy collegiate",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "heritage prep"
+      ],
+      "colors": [
+        "blue",
+        "cream",
+        "olive",
+        "brown"
+      ],
+      "occasions": [
+        "everyday",
+        "creative work"
+      ],
+      "piece_ids": [
+        "oxford",
+        "cardigan",
+        "olive-chinos",
+        "tan-loafers"
+      ],
+      "image": "Assets/Research/07-S03.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/ralph-lauren",
+        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
+      ],
+      "notes": "A pale oxford under a cotton cardigan, grounded by olive chinos. Leave a little collar showing."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "brown-leather",
+      "title": "After the last set",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "leather and denim"
+      ],
+      "colors": [
+        "brown",
+        "cream",
+        "black"
+      ],
+      "occasions": [
+        "evening",
+        "everyday"
+      ],
+      "piece_ids": [
+        "leather-jacket",
+        "cream-tee",
+        "black-jeans",
+        "black-boots"
+      ],
+      "image": "Assets/Research/09-S04.jpg",
+      "image_credit": "Christina Fragkou",
+      "source_urls": [
+        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
+        "https://blog.trendalytics.co/the-top-10-menswear-runway-trends-fall/winter-2026"
+      ],
+      "notes": "Brown leather and faded black denim with a cream tee. The pictured dark layers suggest proportion, rather than an exact copy."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "denim-trousers",
+      "title": "Denim, dressed a little",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "leather and denim"
+      ],
+      "colors": [
+        "navy",
+        "cream",
+        "gray",
+        "black"
+      ],
+      "occasions": [
+        "creative work",
+        "evening"
+      ],
+      "piece_ids": [
+        "denim-jacket",
+        "knit-polo",
+        "gray-trousers",
+        "derbies"
+      ],
+      "image": "Assets/Research/08-S04.jpg",
+      "image_credit": "Christina Fragkou",
+      "source_urls": [
+        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows",
+        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
+      ],
+      "notes": "Pair a denim jacket with a fine knit polo and proper trousers. Keep the shoes quiet."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "soft-tailoring",
+      "title": "A softer kind of sharp",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "relaxed tailoring"
+      ],
+      "colors": [
+        "brown",
+        "blue",
+        "gray"
+      ],
+      "occasions": [
+        "creative work",
+        "dinner"
+      ],
+      "piece_ids": [
+        "soft-blazer",
+        "oxford",
+        "gray-trousers",
+        "tan-loafers"
+      ],
+      "image": "Assets/Research/05-S03.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/",
+        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908"
+      ],
+      "notes": "Soft shoulders, a pale blue shirt and straight charcoal trousers. Try the shirt open at the neck."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "crew-pleats",
+      "title": "No meeting required",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "relaxed tailoring"
+      ],
+      "colors": [
+        "gray",
+        "navy",
+        "black"
+      ],
+      "occasions": [
+        "creative work",
+        "everyday"
+      ],
+      "piece_ids": [
+        "crewneck",
+        "gray-trousers",
+        "wool-jacket",
+        "derbies"
+      ],
+      "image": "Assets/Research/11-S04.jpg",
+      "image_credit": "Christina Fragkou",
+      "source_urls": [
+        "https://fashionunited.uk/news/fashion/street-style-focus-aw26-calm-returns-to-the-streets-of-milan/2026012385908",
+        "https://www.gq.com/gallery/jackets-street-style-milan-mfw-fall-2026-menswear-shows"
+      ],
+      "notes": "A fine crewneck and short wool jacket make tailoring feel easy. Use the street reference to compare length and drape."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "suede-stone",
+      "title": "Quiet texture",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "textured minimalism"
+      ],
+      "colors": [
+        "blue",
+        "stone",
+        "brown"
+      ],
+      "occasions": [
+        "everyday",
+        "dinner"
+      ],
+      "piece_ids": [
+        "oxford",
+        "stone-trousers",
+        "suede-jacket",
+        "white-trainers"
+      ],
+      "image": "Assets/Research/17-S08.jpg",
+      "image_credit": "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
+      "source_urls": [
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee"
+      ],
+      "notes": "Pale blue and stone under a soft brown jacket. Texture carries the interest, with simple sneakers below."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "cocoa-charcoal",
+      "title": "Cocoa after hours",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "textured minimalism"
+      ],
+      "colors": [
+        "brown",
+        "gray",
+        "navy",
+        "black"
+      ],
+      "occasions": [
+        "creative work",
+        "evening"
+      ],
+      "piece_ids": [
+        "brown-knit",
+        "gray-trousers",
+        "light-mac",
+        "derbies"
+      ],
+      "image": "Assets/Research/16-S08.jpg",
+      "image_credit": "Daniele Oberrauch / Gorunway.com, via Vogue Runway",
+      "source_urls": [
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/auralee",
+        "https://www.pradagroup.com/content/dam/pradagroup/documents/2026/Gennaio/Inglese/Prada-Fall-Winter-2026-Menswear-show-PR.pdf"
+      ],
+      "notes": "Keep the color shifts close and let the long outer layer change the shape. A lightweight mac works on milder days."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "plum-night",
+      "title": "One good going out shirt",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "expressive evening"
+      ],
+      "colors": [
+        "plum",
+        "black"
+      ],
+      "occasions": [
+        "evening",
+        "dinner"
+      ],
+      "piece_ids": [
+        "plum-shirt",
+        "black-jeans",
+        "black-boots"
+      ],
+      "image": "Assets/Research/06-S03.jpg",
+      "image_credit": "Credits on original article; runway images credited there to Launchmetrics Spotlight",
+      "source_urls": [
+        "https://www.gq.com/story/the-9-fall-winter-2026-menswear-trends-to-try-right-now",
+        "https://www.harpersbazaar.com/fashion/a70114007/fall-2026-menswear-fashion-show-takeaways/"
+      ],
+      "notes": "A textured plum shirt and black denim. Try sheen, a subtle weave or an open collar before a more decorative top."
+    },
+    {
+      "schema": 1,
+      "type": "outfit",
+      "id": "striped-layer",
+      "title": "Color, with an anchor",
+      "season": "Fall Winter 2026",
+      "styles": [
+        "expressive evening"
+      ],
+      "colors": [
+        "plum",
+        "petrol",
+        "cream",
+        "black",
+        "gray"
+      ],
+      "occasions": [
+        "evening",
+        "creative work"
+      ],
+      "piece_ids": [
+        "striped-knit",
+        "black-trousers",
+        "plain-coat",
+        "derbies"
+      ],
+      "image": "Assets/Research/12-S11.jpg",
+      "image_credit": "Courtesy of Dries Van Noten; see official show page for full credits",
+      "source_urls": [
+        "https://www.driesvannoten.com/en-eu/pages/show-aw-26-27-men",
+        "https://www.vogue.com/fashion-shows/fall-2026-menswear/dries-van-noten"
+      ],
+      "notes": "Anchor a colorful striped knit with black trousers and a plain coat. Start with one expressive piece."
+    }
+  ],
+  "pieces": [
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "rugby",
+      "title": "Union rugby polo · choose a stripe",
+      "category": "top",
+      "colors": [
+        "navy",
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": 55,
+      "currency": "USD",
+      "store": "Levi’s",
+      "product_url": "https://www.levi.com/US/en_US/clothing/men/shirts/c/levi_clothing_men_shirts/facets/feature-style/rugby",
+      "price_checked_at": "2026-11-21",
+      "price_note": "Union Rugby Polo listed at $55. Choose a color and size at the retailer. Member discounts excluded.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "dark-jeans",
+      "title": "501 Original · Clean Rigid dark wash",
+      "category": "bottom",
+      "colors": [
+        "navy",
+        "blue"
+      ],
+      "ownership": "reference",
+      "price": 50.97,
+      "currency": "USD",
+      "store": "Levi’s",
+      "product_url": "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-mens-jeans/p/005010536",
+      "price_checked_at": "2026-11-21",
+      "price_note": "Displayed sale price on November 21. Size availability and later promotions may differ.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "tan-loafers",
+      "title": "Brantin Loafer · tan leather",
+      "category": "shoes",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": 110,
+      "currency": "USD",
+      "store": "Clarks",
+      "product_url": "https://www.clarks.com/en-us/brantin-loafer/26187662-p",
+      "price_checked_at": "2026-11-21",
+      "price_note": "Base price $110; page also advertises $66 applied in cart. Budget uses the base price until checkout terms are confirmed.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "track-jacket",
+      "title": "Retro track jacket",
+      "category": "outerwear",
+      "colors": [
+        "navy",
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "adidas",
+      "product_url": "https://www.adidas.com/us",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "cream-tee",
+      "title": "Plain cream cotton tee",
+      "category": "top",
+      "colors": [
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "UNIQLO",
+      "product_url": "https://www.uniqlo.com/us/en/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "gray-trousers",
+      "title": "Straight charcoal trousers",
+      "category": "bottom",
+      "colors": [
+        "gray"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Abercrombie & Fitch",
+      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "white-trainers",
+      "title": "Low leather trainers",
+      "category": "shoes",
+      "colors": [
+        "white",
+        "gray"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "adidas",
+      "product_url": "https://www.adidas.com/us",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "fair-isle",
+      "title": "Patterned heritage sweater",
+      "category": "knitwear",
+      "colors": [
+        "olive",
+        "cream",
+        "burgundy"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "J.Crew",
+      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/sweaters",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "brown-boots",
+      "title": "Brown leather boots",
+      "category": "shoes",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Clarks",
+      "product_url": "https://www.clarks.com/en-us",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "oxford",
+      "title": "Pale blue oxford shirt",
+      "category": "top",
+      "colors": [
+        "blue"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "J.Crew",
+      "product_url": "https://www.jcrew.com/p/BE996",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "cardigan",
+      "title": "Oatmeal cotton cardigan",
+      "category": "knitwear",
+      "colors": [
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "UNIQLO",
+      "product_url": "https://www.uniqlo.com/us/en/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "olive-chinos",
+      "title": "Straight olive chinos",
+      "category": "bottom",
+      "colors": [
+        "olive"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "J.Crew",
+      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/pants-and-chinos",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "leather-jacket",
+      "title": "Brown leather jacket",
+      "category": "outerwear",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Vintage / secondhand",
+      "product_url": "https://www.ebay.com/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "black-jeans",
+      "title": "Straight faded black jeans",
+      "category": "bottom",
+      "colors": [
+        "black"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Levi’s",
+      "product_url": "https://www.levi.com/US/en_US/clothing/men/jeans/c/levi_clothing_men_jeans",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "black-boots",
+      "title": "Black leather boots",
+      "category": "shoes",
+      "colors": [
+        "black"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Clarks",
+      "product_url": "https://www.clarks.com/en-us",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "denim-jacket",
+      "title": "Dark denim jacket",
+      "category": "outerwear",
+      "colors": [
+        "navy"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Levi’s",
+      "product_url": "https://www.levi.com/US/en_US/clothing/men/outerwear/c/levi_clothing_men_outerwear",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "knit-polo",
+      "title": "Fine knit polo",
+      "category": "knitwear",
+      "colors": [
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "COS",
+      "product_url": "https://www.cos.com/en-us/men",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "soft-blazer",
+      "title": "Soft tobacco blazer",
+      "category": "outerwear",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "J.Crew",
+      "product_url": "https://www.jcrew.com/plp/mens/categories/clothing/blazers",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "crewneck",
+      "title": "Fine gray crewneck",
+      "category": "knitwear",
+      "colors": [
+        "gray"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "UNIQLO",
+      "product_url": "https://www.uniqlo.com/us/en/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "wool-jacket",
+      "title": "Short navy wool jacket",
+      "category": "outerwear",
+      "colors": [
+        "navy"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "COS",
+      "product_url": "https://www.cos.com/en-us/men",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "derbies",
+      "title": "Black leather derbies",
+      "category": "shoes",
+      "colors": [
+        "black"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Clarks",
+      "product_url": "https://www.clarks.com/en-us",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "stone-trousers",
+      "title": "Straight stone trousers",
+      "category": "bottom",
+      "colors": [
+        "stone"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Abercrombie & Fitch",
+      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "suede-jacket",
+      "title": "Brown suede jacket",
+      "category": "outerwear",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Vintage / secondhand",
+      "product_url": "https://www.ebay.com/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "brown-knit",
+      "title": "Fine cocoa knit",
+      "category": "knitwear",
+      "colors": [
+        "brown"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "UNIQLO",
+      "product_url": "https://www.uniqlo.com/us/en/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "light-mac",
+      "title": "Lightweight navy mac",
+      "category": "outerwear",
+      "colors": [
+        "navy"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "COS",
+      "product_url": "https://www.cos.com/en-us/men",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "plum-shirt",
+      "title": "Textured plum evening shirt",
+      "category": "top",
+      "colors": [
+        "plum"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Vintage / secondhand",
+      "product_url": "https://www.ebay.com/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "striped-knit",
+      "title": "Fitted multicolor striped knit",
+      "category": "knitwear",
+      "colors": [
+        "plum",
+        "petrol",
+        "cream"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Vintage / secondhand",
+      "product_url": "https://www.ebay.com/",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "black-trousers",
+      "title": "Relaxed black trousers",
+      "category": "bottom",
+      "colors": [
+        "black"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "Abercrombie & Fitch",
+      "product_url": "https://www.abercrombie.com/shop/us/mens-pants-bottoms",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    },
+    {
+      "schema": 1,
+      "type": "piece",
+      "id": "plain-coat",
+      "title": "Plain charcoal coat",
+      "category": "outerwear",
+      "colors": [
+        "gray"
+      ],
+      "ownership": "reference",
+      "price": null,
+      "currency": "USD",
+      "store": "COS",
+      "product_url": "https://www.cos.com/en-us/men",
+      "price_checked_at": "",
+      "price_note": "Browse the retailer; an exact product and price have not been selected.",
+      "image": "",
+      "notes": "Suggested equivalent for outfit planning. Ownership has not been confirmed."
+    }
+  ]
+}
