@@ -6507,14 +6507,14 @@ function cost(outfit, pieces) {
 var DEFAULT_FILTERS = { search: "", style: "", color: "", store: "", occasion: "", rating: "", maxPrice: "", includeUnknown: false, ownedOnly: false, sort: "recommended", collection: "" };
 function taste(events) {
   const latest = [...latestRatings(events).values()];
-  const features = /* @__PURE__ */ new Map();
+  const features2 = /* @__PURE__ */ new Map();
   for (const e of latest) for (const kind of ["styles", "colors", "occasions"]) for (const label2 of new Set(e.snapshot[kind])) {
-    const key = `${kind}:${label2}`, f = features.get(key) ?? { sum: 0, count: 0, label: label2, kind };
+    const key = `${kind}:${label2}`, f = features2.get(key) ?? { sum: 0, count: 0, label: label2, kind };
     f.sum += e.rating - 3;
     f.count++;
-    features.set(key, f);
+    features2.set(key, f);
   }
-  const list = [...features.values()].map((f) => ({ ...f, score: f.sum / (f.count + 3), average: 3 + f.sum / f.count })).sort((a, b) => b.score - a.score || b.count - a.count || a.label.localeCompare(b.label));
+  const list = [...features2.values()].map((f) => ({ ...f, score: f.sum / (f.count + 3), average: 3 + f.sum / f.count })).sort((a, b) => b.score - a.score || b.count - a.count || a.label.localeCompare(b.label));
   return { rated: latest.length, events: events.length, liked: latest.filter((e) => e.rating >= 4).length, features: list };
 }
 function recommendation(outfit, events) {
@@ -6681,22 +6681,22 @@ function gearBoard(outfit, pieces, store, onSlot, compact = false) {
   for (const slot of GEAR_SLOTS) {
     const id = eq[slot.id], piece = pieces.find((p) => p.id === id);
     if (compact && !piece) continue;
-    const button2 = document.createElement("button");
-    button2.type = "button";
-    button2.className = `sz-gear-slot ${piece && isProduct(piece) ? "is-equipped" : "is-empty"}`;
-    button2.dataset.slot = slot.id;
-    button2.setAttribute("aria-label", `${slot.label}: ${piece?.title ?? "Empty slot"}`);
-    button2.onclick = () => onSlot(slot.id);
-    if (piece && isProduct(piece)) button2.append(productPhoto(piece, store));
-    else button2.append(slotIcon(slot.id));
+    const button3 = document.createElement("button");
+    button3.type = "button";
+    button3.className = `sz-gear-slot ${piece && isProduct(piece) ? "is-equipped" : "is-empty"}`;
+    button3.dataset.slot = slot.id;
+    button3.setAttribute("aria-label", `${slot.label}: ${piece?.title ?? "Empty slot"}`);
+    button3.onclick = () => onSlot(slot.id);
+    if (piece && isProduct(piece)) button3.append(productPhoto(piece, store));
+    else button3.append(slotIcon(slot.id));
     const tag = node("span", "sz-slot-tag", slot.short);
     tag.prepend(slotIcon(slot.id));
-    button2.append(tag);
+    button3.append(tag);
     if (piece && isProduct(piece)) {
-      button2.append(node("span", "sz-slot-price", usd(piece.price)));
-      button2.title = `${slot.label} \xB7 ${piece.title} \xB7 ${usd(piece.price)} \xB7 ${piece.store}`;
-    } else button2.append(node("span", "sz-empty-label", piece ? "Product link needed" : "Optional"));
-    board.append(button2);
+      button3.append(node("span", "sz-slot-price", usd(piece.price)));
+      button3.title = `${slot.label} \xB7 ${piece.title} \xB7 ${usd(piece.price)} \xB7 ${piece.store}`;
+    } else button3.append(node("span", "sz-empty-label", piece ? "Product link needed" : "Optional"));
+    board.append(button3);
   }
   return board;
 }
@@ -6816,21 +6816,351 @@ function loadoutEditor(parent, outfit, catalog, store, onSave, initialSlot) {
   draw();
 }
 
+// src/item-model.ts
+var strings = (x) => Array.isArray(x) && x.every((v) => typeof v === "string");
+var itemStyleTags = (p) => Array.isArray(p.style_tags) ? p.style_tags.filter((v) => typeof v === "string") : [];
+var textField = (v) => typeof v === "string" ? v : "";
+function validateItemRating(value) {
+  const x = value, slots = new Set(GEAR_SLOTS.map((s2) => s2.id)), s = x?.snapshot;
+  if (!x || x.schema !== 1 || x.type !== "item-rating" || typeof x.id !== "string" || !/^[a-zA-Z0-9-]{10,100}$/.test(x.id) || typeof x.piece_id !== "string" || !/^[a-z0-9][a-z0-9-]{0,100}$/.test(x.piece_id) || !Number.isInteger(x.rating) || x.rating < 1 || x.rating > 5 || typeof x.created_at !== "string" || !Number.isFinite(Date.parse(x.created_at)) || typeof x.note !== "string" || !strings(x.reasons) || x.rated_slot !== void 0 && !slots.has(x.rated_slot) || !s || typeof s.title !== "string" || !strings(s.colors) || !strings(s.slots) || s.slots.some((v) => !slots.has(v)) || !strings(s.style_tags) || ![s.pattern, s.silhouette, s.source_type, s.product_url, s.variant_color].every((v) => typeof v === "string")) throw Error("Invalid item rating event");
+  return x;
+}
+function newItemRating(piece, rating, rated_slot, note = "", reasons = []) {
+  if (rated_slot && !pieceSlots(piece).includes(rated_slot)) throw Error("This item does not belong in that slot.");
+  return validateItemRating({ schema: 1, type: "item-rating", id: crypto.randomUUID(), piece_id: piece.id, rating, created_at: (/* @__PURE__ */ new Date()).toISOString(), note, reasons, rated_slot, snapshot: { title: piece.title, colors: [...piece.colors], slots: pieceSlots(piece), style_tags: [...itemStyleTags(piece)], pattern: textField(piece.stylist_features?.pattern), silhouette: textField(piece.stylist_features?.silhouette), source_type: textField(piece.source_type), product_url: piece.product_url, variant_color: piece.variant_color ?? "" } });
+}
+function serializeItemRating(event) {
+  return `---
+${stringify3(validateItemRating(event), { lineWidth: 0 }).trim()}
+---
+# Item rating
+
+${event.rating} / 5 for ${event.snapshot.title}
+
+${event.note}
+`;
+}
+function parseItemRating(text) {
+  const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  if (!m) throw Error("Missing item rating frontmatter");
+  return validateItemRating(parse(m[1]));
+}
+function latestItemRatings(events) {
+  const map2 = /* @__PURE__ */ new Map();
+  for (const e of events) {
+    const old = map2.get(e.piece_id);
+    if (!old || Date.parse(e.created_at) > Date.parse(old.created_at) || Date.parse(e.created_at) === Date.parse(old.created_at) && e.id > old.id) map2.set(e.piece_id, e);
+  }
+  return map2;
+}
+function libraryOptions(pieces, slot, curatedOnly = true) {
+  const selected = (p) => pieceSlots(p).filter((s) => Array.isArray(p.library_slots) && p.library_slots.includes(s));
+  const curated = curatedOnly && pieces.some((p) => isProduct(p) && selected(p).length);
+  return pieces.filter((p) => isProduct(p) && (curated ? slot ? selected(p).includes(slot) : selected(p).length > 0 : slot ? pieceSlots(p).includes(slot) : true));
+}
+function features(snapshot, rated_slot) {
+  return [.../* @__PURE__ */ new Set([...snapshot.colors.map((c) => "color:" + c), ...snapshot.style_tags.map((s) => "style:" + s), ...snapshot.pattern ? ["pattern:" + snapshot.pattern] : [], ...snapshot.silhouette ? ["shape:" + snapshot.silhouette] : [], ...snapshot.source_type ? ["source:" + snapshot.source_type] : [], ...rated_slot ? ["slot:" + rated_slot] : []])];
+}
+function itemTaste(events) {
+  const latest = [...latestItemRatings(events).values()], map2 = /* @__PURE__ */ new Map();
+  for (const e of latest) for (const key of features(e.snapshot, e.rated_slot)) {
+    const [kind, ...name] = key.split(":"), f = map2.get(key) ?? { key, label: name.join(":"), kind, sum: 0, count: 0 };
+    f.sum += e.rating - 3;
+    f.count++;
+    map2.set(key, f);
+  }
+  return { rated: latest.length, events: events.length, liked: latest.filter((e) => e.rating >= 4).length, features: [...map2.values()].map((f) => ({ ...f, average: 3 + f.sum / f.count, score: f.sum / (f.count + 3) })).sort((a, b) => b.score - a.score || b.count - a.count || a.key.localeCompare(b.key)) };
+}
+function itemRecommendation(piece, events, summary = itemTaste(events)) {
+  const snapshot = { colors: piece.colors, style_tags: itemStyleTags(piece), pattern: textField(piece.stylist_features?.pattern), silhouette: textField(piece.stylist_features?.silhouette), source_type: textField(piece.source_type) }, keys = new Set(features(snapshot));
+  const matches = summary.features.filter((f) => keys.has(f.key));
+  return { score: matches.reduce((n, f) => n + f.score, 0) / Math.sqrt(Math.max(1, matches.length)), evidence: matches.reduce((n, f) => n + f.count, 0) };
+}
+
+// src/library.ts
+var el = (tag, cls = "", text = "") => {
+  const e = document.createElement(tag);
+  e.className = cls;
+  e.textContent = text;
+  return e;
+};
+var button = (text, run, cls = "sz-button sz-subtle") => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = cls;
+  b.textContent = text;
+  b.onclick = run;
+  return b;
+};
+var select = (label2, options, value, change) => {
+  const s = document.createElement("select");
+  s.className = "sz-select";
+  s.setAttribute("aria-label", label2);
+  for (const [v, t] of options) {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = t;
+    s.append(o);
+  }
+  s.value = value;
+  s.onchange = () => change(s.value);
+  return s;
+};
+var unique = (values) => [...new Set(values)].sort();
+var ItemLibrary = class {
+  constructor() {
+    __publicField(this, "slot", "");
+    __publicField(this, "ratingMode", false);
+    __publicField(this, "focus", "");
+    __publicField(this, "search", "");
+    __publicField(this, "color", "");
+    __publicField(this, "storeFilter", "");
+    __publicField(this, "budget", "");
+    __publicField(this, "ratingFilter", "");
+    __publicField(this, "sort", "recommended");
+    __publicField(this, "curatedOnly", true);
+    __publicField(this, "shown", 24);
+    __publicField(this, "pending", /* @__PURE__ */ new Set());
+    __publicField(this, "notes", /* @__PURE__ */ new Map());
+    __publicField(this, "data");
+    __publicField(this, "store");
+    __publicField(this, "redraw", () => {
+    });
+    __publicField(this, "notify", (message, error = false) => {
+    });
+  }
+  choices() {
+    if (!this.data) return [];
+    const events = this.data.item_ratings ?? [], latest = latestItemRatings(events), result = libraryOptions(this.data.pieces, this.slot, this.curatedOnly).filter((p) => (!this.search || `${p.title} ${p.store} ${p.colors.join(" ")} ${itemStyleTags(p).join(" ")}`.toLowerCase().includes(this.search.toLowerCase())) && (!this.color || p.colors.includes(this.color)) && (!this.storeFilter || p.store === this.storeFilter) && (!this.budget || p.currency === "USD" && p.price !== null && p.price <= Number(this.budget)) && (!this.ratingFilter || (this.ratingFilter === "unrated" ? !latest.has(p.id) : this.ratingFilter === "liked" ? (latest.get(p.id)?.rating ?? 0) >= 4 : latest.get(p.id)?.rating === Number(this.ratingFilter))));
+    const summary = itemTaste(events), scores = new Map(result.map((p) => [p.id, itemRecommendation(p, events, summary).score]));
+    return result.sort((a, b) => this.sort === "price" ? (a.price ?? Infinity) - (b.price ?? Infinity) || a.title.localeCompare(b.title) : this.sort === "title" ? a.title.localeCompare(b.title) : this.sort === "rating" ? (latest.get(b.id)?.rating ?? 0) - (latest.get(a.id)?.rating ?? 0) || a.title.localeCompare(b.title) : scores.get(b.id) - scores.get(a.id) || a.title.localeCompare(b.title));
+  }
+  change(run) {
+    run();
+    this.shown = 24;
+    this.redraw();
+  }
+  handleKey(event) {
+    if (!this.ratingMode || event.ctrlKey || event.altKey || event.metaKey || event.target instanceof Element && event.target.closest("input,textarea,select,[contenteditable=true]")) return false;
+    const p = this.choices().find((p2) => p2.id === this.focus);
+    if (p && /^[1-5]$/.test(event.key)) {
+      event.preventDefault();
+      void this.vote(p, Number(event.key));
+      return true;
+    }
+    return false;
+  }
+  async vote(piece, rating) {
+    var _a;
+    if (!this.data || !this.store?.rateItem || this.pending.has(piece.id)) return;
+    this.pending.add(piece.id);
+    const before = this.choices(), at = before.findIndex((p) => p.id === piece.id), prior = latestItemRatings(this.data.item_ratings ?? []).get(piece.id);
+    try {
+      const event = newItemRating(piece, rating, this.slot || piece.slot, this.notes.get(piece.id) ?? prior?.note ?? "");
+      await this.store.rateItem(event);
+      (_a = this.data).item_ratings ?? (_a.item_ratings = []);
+      if (!this.data.item_ratings.some((e) => e.id === event.id)) this.data.item_ratings.push(event);
+      if (this.ratingMode) this.focus = before[(at + 1) % before.length]?.id ?? "";
+      this.pending.delete(piece.id);
+      this.redraw();
+      this.notify(`Saved ${rating}/5 for ${piece.title}`);
+    } catch (e) {
+      this.notify(`Item rating not saved: ${e instanceof Error ? e.message : String(e)}`, true);
+    } finally {
+      this.pending.delete(piece.id);
+    }
+  }
+  render(parent, data, store, redraw, notify, onInspect, onEdit) {
+    this.data = data;
+    this.store = store;
+    this.redraw = redraw;
+    this.notify = notify;
+    const root = el("section", `sz-library ${this.ratingMode ? "is-rating" : ""}`);
+    root.setAttribute("aria-label", "Item libraries");
+    parent.append(root);
+    const curated = data.pieces.some((p) => p.library_slots?.length), rated = itemTaste(data.item_ratings ?? []), header = el("header", "sz-heading");
+    header.append(el("p", "sz-eyebrow", "YOUR REUSABLE ITEM LIBRARIES"), el("h1", "", this.ratingMode ? "Would you wear this piece?" : "Find your next signature piece."), el("p", "sz-intro", this.ratingMode ? "Rate 1\u20135. The next item follows automatically." : `${rated.rated} individual items rated \xB7 outfit ratings stay separate.`));
+    const actions = el("div", "sz-library-actions");
+    actions.append(button(this.ratingMode ? "Browse the libraries" : "Rate items one at a time", () => this.change(() => {
+      this.ratingMode = !this.ratingMode;
+    }), "sz-button sz-primary"));
+    header.append(actions);
+    root.append(header);
+    const slots = el("div", "sz-slot-tabs");
+    slots.append(button("All slots", () => this.change(() => {
+      this.slot = "";
+    }), `sz-slot-filter ${!this.slot ? "is-active" : ""}`));
+    for (const s of GEAR_SLOTS) {
+      const n = libraryOptions(data.pieces, s.id, this.curatedOnly).length, b = button(`${s.short} \xB7 ${n}`, () => this.change(() => {
+        this.slot = s.id;
+      }), `sz-slot-filter ${this.slot === s.id ? "is-active" : ""}`);
+      b.prepend(slotIcon(s.id));
+      b.setAttribute("aria-label", `Item library slot: ${s.label}`);
+      slots.append(b);
+    }
+    root.append(slots);
+    const controls = el(this.ratingMode ? "details" : "div", "sz-library-filters");
+    if (this.ratingMode) controls.append(el("summary", "", "Refine item session"));
+    const pool = libraryOptions(data.pieces, this.slot, this.curatedOnly), row = el("div", "sz-filter-row");
+    const search = document.createElement("input");
+    search.type = "search";
+    search.className = "sz-input";
+    search.placeholder = "Search items";
+    search.setAttribute("aria-label", "Search items");
+    search.value = this.search;
+    search.onchange = () => this.change(() => {
+      this.search = search.value;
+    });
+    row.append(search, select("Item color", [["", "All item colors"], ...unique(pool.flatMap((p) => p.colors)).map((c) => [c, c])], this.color, (v) => this.change(() => {
+      this.color = v;
+    })), select("Item store", [["", "All item stores"], ...unique(pool.map((p) => p.store)).map((c) => [c, c])], this.storeFilter, (v) => this.change(() => {
+      this.storeFilter = v;
+    })), select("Item rating filter", [["", "All item ratings"], ["unrated", "Not rated"], ["liked", "Loved \xB7 4\u20135"], ...Array.from({ length: 5 }, (_, i) => [String(i + 1), `${i + 1} / 5`])], this.ratingFilter, (v) => this.change(() => {
+      this.ratingFilter = v;
+    })));
+    const budget = document.createElement("input");
+    budget.type = "number";
+    budget.min = "0";
+    budget.step = "1";
+    budget.className = "sz-input";
+    budget.placeholder = "Max item price \xB7 USD";
+    budget.setAttribute("aria-label", "Maximum item price in USD");
+    budget.value = this.budget;
+    budget.onchange = () => this.change(() => {
+      this.budget = budget.value;
+    });
+    row.append(budget, select("Sort items", [["recommended", "For you"], ["price", "Lowest price"], ["rating", "Highest rated"], ["title", "By name"]], this.sort, (v) => this.change(() => {
+      this.sort = v;
+    })));
+    controls.append(row);
+    if (curated) {
+      const label2 = el("label", "sz-checkbox"), check = document.createElement("input");
+      check.type = "checkbox";
+      check.checked = this.curatedOnly;
+      check.setAttribute("aria-label", "Curated library only");
+      check.onchange = () => this.change(() => {
+        this.curatedOnly = check.checked;
+      });
+      label2.append(check, el("span", "", "Curated library only"));
+      controls.append(label2);
+    }
+    controls.append(button("Reset item filters", () => this.change(() => {
+      this.search = "";
+      this.color = "";
+      this.storeFilter = "";
+      this.budget = "";
+      this.ratingFilter = "";
+    })));
+    root.append(controls);
+    const visible = this.choices(), latest = latestItemRatings(data.item_ratings ?? []);
+    root.append(el("p", "sz-muted sz-library-count", `${visible.length} items \xB7 ${GEAR_SLOTS.find((s) => s.id === this.slot)?.short ?? "All slots"} \xB7 ${visible.filter((p) => latest.has(p.id)).length} rated${curated ? "" : " \xB7 researched options; curated lists have not synced yet"}`));
+    if (!visible.length) {
+      root.append(el("p", "sz-empty", "No items match these filters. Try another slot or reset the item filters."));
+      return;
+    }
+    if (this.ratingMode) {
+      const p = visible.find((p2) => p2.id === this.focus) ?? visible[0];
+      this.focus = p.id;
+      root.append(this.card(p, true, latest.get(p.id), onInspect, onEdit), button("Skip this item", () => {
+        const at = visible.findIndex((p2) => p2.id === this.focus);
+        this.focus = visible[(at + 1) % visible.length].id;
+        this.redraw();
+      }));
+    } else {
+      const grid = el("div", "sz-pieces-grid");
+      for (const p of visible.slice(0, this.shown)) grid.append(this.card(p, false, latest.get(p.id), onInspect, onEdit));
+      root.append(grid);
+      if (visible.length > this.shown) root.append(button(`Show more items (${visible.length - this.shown} remaining)`, () => {
+        this.shown += 24;
+        this.redraw();
+      }));
+    }
+  }
+  card(piece, focus, latest, onInspect, onEdit) {
+    const card = el("article", `sz-piece-card sz-inventory-card ${focus ? "sz-item-focused" : ""}`);
+    card.dataset.pieceId = piece.id;
+    if (focus) card.append(el("h2", "", piece.title), el("p", "sz-muted", `${piece.store} \xB7 ${piece.currency} ${piece.price.toFixed(2)}`));
+    const photo = button("", () => onInspect(piece), "sz-product-thumb-button");
+    photo.setAttribute("aria-label", `Inspect product: ${piece.title}`);
+    photo.append(productPhoto(piece, this.store, focus));
+    card.append(photo);
+    if (!focus) card.append(el("h2", "", piece.title), el("p", "sz-muted", `${piece.store} \xB7 ${piece.currency} ${piece.price.toFixed(2)}`));
+    const swatches = el("div", "sz-mini-swatches");
+    swatches.setAttribute("aria-label", piece.colors.join(", "));
+    for (const c of piece.colors) {
+      const s = el("span");
+      s.title = c;
+      s.style.background = COLORS[c] ?? "#888";
+      swatches.append(s);
+    }
+    card.append(swatches);
+    if (piece.library_note && !focus) card.append(el("p", "sz-muted sz-library-note", piece.library_note));
+    const votes = el("div", "sz-rating sz-item-rating");
+    votes.setAttribute("role", "group");
+    votes.setAttribute("aria-label", `Rate item ${piece.title}`);
+    for (let n = 1; n <= 5; n++) {
+      const b = button(String(n), () => void this.vote(piece, n), `sz-rate-button ${latest?.rating === n ? "is-selected" : ""}`);
+      b.setAttribute("aria-label", `Rate item ${piece.title} ${n} out of 5`);
+      b.setAttribute("aria-pressed", String(latest?.rating === n));
+      b.disabled = this.pending.has(piece.id) || !this.store?.rateItem;
+      votes.append(b);
+    }
+    card.append(votes, el("p", "sz-muted", latest ? `Rated ${latest.rating}/5` : "Not rated"));
+    const note = el("details", "sz-item-note");
+    note.append(el("summary", "", "Add a note about this item"));
+    const text = document.createElement("textarea");
+    text.className = "sz-input";
+    text.setAttribute("aria-label", `Feedback for item ${piece.title}`);
+    text.placeholder = "Color, shape, texture, or what puts you off\u2026";
+    text.value = this.notes.get(piece.id) ?? latest?.note ?? "";
+    text.oninput = () => this.notes.set(piece.id, text.value);
+    note.append(text, el("p", "sz-muted", "Choose a rating to save this feedback."));
+    card.append(note);
+    const actions = el("div", "sz-library-actions");
+    const url = safeUrl(piece.product_url);
+    if (url) {
+      const a = document.createElement("a");
+      a.className = "sz-link";
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = "Shop / view";
+      actions.append(a);
+    }
+    actions.append(button("Inspect details", () => onInspect(piece)), button("Edit item", () => onEdit(piece)));
+    card.append(actions);
+    if (piece.price_checked_at) card.append(el("p", "sz-price-note", `Price and stock observed ${piece.price_checked_at}. Fit unconfirmed.`));
+    return card;
+  }
+  profile(parent, data) {
+    const profile = itemTaste(data.item_ratings ?? []), box = el("section", "sz-profile-card");
+    box.append(el("h2", "", "Your individual item taste"), el("p", "", `${profile.rated} items rated \xB7 ${profile.events} rating events \xB7 ${profile.liked} rated 4 or 5`));
+    if (!profile.rated) box.append(el("p", "sz-muted", "Rate shoes, layers and other pieces in Item libraries to build separate item preferences."));
+    for (const f of profile.features.filter((f2) => f2.kind !== "slot" && f2.score !== 0).slice(0, 8)) {
+      const row = el("div", "sz-feature");
+      row.append(el("strong", "", f.label), el("span", "sz-muted", `${f.average.toFixed(1)}/5 \xB7 ${f.count} items`));
+      box.append(row);
+    }
+    box.append(el("p", "sz-muted", "These are associations from your latest vote per item. Few examples stay close to neutral; they do not establish why you liked something."));
+    parent.append(box);
+  }
+};
+
 // src/app.ts
-function el(tag, cls = "", text = "") {
+function el2(tag, cls = "", text = "") {
   const x = document.createElement(tag);
   x.className = cls;
   x.textContent = text;
   return x;
 }
-function button(text, action, cls = "sz-button") {
-  const b = el("button", cls, text);
+function button2(text, action, cls = "sz-button") {
+  const b = el2("button", cls, text);
   b.type = "button";
   b.addEventListener("click", action);
   return b;
 }
 function link(text, url) {
-  const a = el("a", "sz-link", text);
+  const a = el2("a", "sz-link", text);
   a.href = safeUrl(url);
   a.target = "_blank";
   a.rel = "noopener noreferrer";
@@ -6839,24 +7169,24 @@ function link(text, url) {
 function money(value) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(value);
 }
-var unique = (values) => [...new Set(values)].sort();
+var unique2 = (values) => [...new Set(values)].sort();
 function label(text, control) {
-  const l = el("label", "sz-field");
-  l.append(el("span", "sz-label", text), control);
+  const l = el2("label", "sz-field");
+  l.append(el2("span", "sz-label", text), control);
   return l;
 }
 function input(name, value = "", type = "text") {
-  const x = el("input", "sz-input");
+  const x = el2("input", "sz-input");
   x.name = name;
   x.value = value;
   x.type = type;
   return x;
 }
-function select(name, options, value = "") {
-  const s = el("select", "sz-select");
+function select2(name, options, value = "") {
+  const s = el2("select", "sz-select");
   s.name = name;
   for (const [v, t] of options) {
-    const o = el("option", "", t);
+    const o = el2("option", "", t);
     o.value = v;
     s.append(o);
   }
@@ -6867,11 +7197,11 @@ var StyleZoneApp = class {
   constructor(root, store) {
     this.root = root;
     this.store = store;
+    __publicField(this, "itemLibrary", new ItemLibrary());
     __publicField(this, "data", { outfits: [], pieces: [], ratings: [], warnings: [] });
     __publicField(this, "filters", { ...DEFAULT_FILTERS });
     __publicField(this, "page", "outfits");
     __publicField(this, "focusId", "");
-    __publicField(this, "inventorySlot", "");
     __publicField(this, "detail", null);
     __publicField(this, "unsub");
     __publicField(this, "disposed", false);
@@ -6880,6 +7210,7 @@ var StyleZoneApp = class {
     __publicField(this, "refreshSequence", 0);
     __publicField(this, "hasLoaded", false);
     __publicField(this, "keyHandler", (event) => {
+      if (this.page === "wardrobe" && !this.detail?.open && this.itemLibrary.handleKey(event)) return;
       if (this.page !== "rate" || this.detail?.open || event.ctrlKey || event.altKey || event.metaKey || event.target instanceof Element && event.target.closest("input,textarea,select,[contenteditable=true]")) return;
       const outfit = this.visible().find((o) => o.id === this.focusId);
       if (outfit && /^[1-5]$/.test(event.key)) {
@@ -6890,7 +7221,7 @@ var StyleZoneApp = class {
   }
   async start() {
     this.root.classList.add("style-zone-app");
-    this.root.append(el("p", "sz-loading", "Opening your wardrobe\u2026"));
+    this.root.append(el2("p", "sz-loading", "Opening your wardrobe\u2026"));
     document.addEventListener("keydown", this.keyHandler);
     await this.reload();
     this.unsub = this.store.subscribe?.(() => {
@@ -6937,7 +7268,7 @@ var StyleZoneApp = class {
     this.render();
   }
   toast(message, error = false) {
-    const target = el("div", `sz-toast ${error ? "sz-error" : ""}`, message);
+    const target = el2("div", `sz-toast ${error ? "sz-error" : ""}`, message);
     target.setAttribute("role", error ? "alert" : "status");
     this.root.append(target);
     setTimeout(() => target.remove(), 6500);
@@ -6945,42 +7276,43 @@ var StyleZoneApp = class {
   render() {
     if (this.disposed || this.detail?.open) return;
     this.root.classList.toggle("sz-is-rate", this.page === "rate");
+    this.root.classList.toggle("sz-is-item-rate", this.page === "wardrobe" && this.itemLibrary.ratingMode);
     const scroll = this.root.querySelector(".sz-content")?.scrollTop ?? 0;
     this.root.replaceChildren();
-    const shell = el("div", "sz-shell");
-    const rail = el("aside", "sz-rail");
-    const brand = el("div", "sz-brand");
-    brand.append(el("span", "sz-logo", "SZ"), el("div", "", "STYLE ZONE"));
-    rail.append(brand, el("p", "sz-rail-caption", "A wardrobe that gets you."));
-    const nav = el("nav", "sz-nav");
+    const shell = el2("div", "sz-shell");
+    const rail = el2("aside", "sz-rail");
+    const brand = el2("div", "sz-brand");
+    brand.append(el2("span", "sz-logo", "SZ"), el2("div", "", "STYLE ZONE"));
+    rail.append(brand, el2("p", "sz-rail-caption", "A wardrobe that gets you."));
+    const nav = el2("nav", "sz-nav");
     nav.setAttribute("aria-label", "Style Zone");
-    for (const [id, icon, title] of [["outfits", "\u25EB", "Loadouts"], ["rate", "\u2726", "Quick rate"], ["wardrobe", "\u25A4", "Item database"], ["profile", "\u25C9", "Your taste"]]) {
-      const b = button(title, () => this.navigate(id), `sz-nav-button ${this.page === id ? "is-active" : ""}`);
-      b.prepend(el("span", "sz-nav-icon", icon));
+    for (const [id, icon, title] of [["outfits", "\u25EB", "Loadouts"], ["rate", "\u2726", "Quick rate"], ["wardrobe", "\u25A4", "Item libraries"], ["profile", "\u25C9", "Your taste"]]) {
+      const b = button2(title, () => this.navigate(id), `sz-nav-button ${this.page === id ? "is-active" : ""}`);
+      b.prepend(el2("span", "sz-nav-icon", icon));
       b.setAttribute("aria-current", this.page === id ? "page" : "false");
       nav.append(b);
     }
     rail.append(nav);
     const progress = taste(this.data.ratings);
-    const railFoot = el("div", "sz-rail-foot");
-    railFoot.append(el("span", "sz-eyebrow", "GETTING TO KNOW YOU"), el("strong", "", `${progress.rated} looks rated`), el("p", "sz-muted", progress.rated ? "Every rating makes the next edit more personal." : "Start with five looks. Go with your first instinct."));
-    const bar = el("div", "sz-progress");
-    const fill = el("span");
+    const railFoot = el2("div", "sz-rail-foot");
+    railFoot.append(el2("span", "sz-eyebrow", "GETTING TO KNOW YOU"), el2("strong", "", `${progress.rated} looks rated`), el2("p", "sz-muted", progress.rated ? "Every rating makes the next edit more personal." : "Start with five looks. Go with your first instinct."));
+    const bar = el2("div", "sz-progress");
+    const fill = el2("span");
     fill.style.width = `${Math.min(100, progress.rated / 5 * 100)}%`;
     bar.append(fill);
-    railFoot.append(bar, button("Export for stylist", () => void this.export(), "sz-button sz-subtle"));
+    railFoot.append(bar, button2("Export for stylist", () => void this.export(), "sz-button sz-subtle"));
     rail.append(railFoot);
-    const content = el("main", "sz-content");
-    const top = el("div", "sz-topbar");
-    top.append(el("span", "sz-eyebrow", "YOUR PERSONAL STYLE WORKSPACE"), el("span", "sz-season", "FALL / WINTER 2026"));
+    const content = el2("main", "sz-content");
+    const top = el2("div", "sz-topbar");
+    top.append(el2("span", "sz-eyebrow", "YOUR PERSONAL STYLE WORKSPACE"), el2("span", "sz-season", "FALL / WINTER 2026"));
     content.append(top);
     if (this.page === "outfits" || this.page === "rate") this.renderOutfits(content);
     if (this.page === "wardrobe") this.renderPieces(content);
     if (this.page === "profile") this.renderProfile(content);
     if (this.data.warnings.length) {
-      const warning = el("details", "sz-warning");
-      warning.append(el("summary", "", `${this.data.warnings.length} data issue${this.data.warnings.length === 1 ? "" : "s"} to review`));
-      for (const text of this.data.warnings) warning.append(el("p", "", text));
+      const warning = el2("details", "sz-warning");
+      warning.append(el2("summary", "", `${this.data.warnings.length} data issue${this.data.warnings.length === 1 ? "" : "s"} to review`));
+      for (const text of this.data.warnings) warning.append(el2("p", "", text));
       content.append(warning);
     }
     shell.append(rail, content);
@@ -6988,44 +7320,44 @@ var StyleZoneApp = class {
     content.scrollTop = scroll;
   }
   heading(parent, eyebrow, title, description) {
-    const h = el("header", "sz-heading");
-    h.append(el("p", "sz-eyebrow", eyebrow), el("h1", "", title), el("p", "sz-intro", description));
+    const h = el2("header", "sz-heading");
+    h.append(el2("p", "sz-eyebrow", eyebrow), el2("h1", "", title), el2("p", "sz-intro", description));
     parent.append(h);
     return h;
   }
   renderOutfits(parent) {
     const focused = this.page === "rate";
     const heading = this.heading(parent, focused ? "TRUST YOUR FIRST INSTINCT" : "YOUR EQUIPMENT SETS", focused ? "Would you wear this?" : "Build your daily loadout.", focused ? "Rate from 1 to 5. The next look follows automatically." : "Real products, tagged by slot. Swap a piece, save a set, find your style.");
-    if (!focused) heading.append(button("Create set", () => this.outfitForm(), "sz-button sz-primary"));
-    const stats = el("div", "sz-stats");
+    if (!focused) heading.append(button2("Create set", () => this.outfitForm(), "sz-button sz-primary"));
+    const stats = el2("div", "sz-stats");
     const profile = taste(this.data.ratings);
     for (const [n, t] of [[this.data.outfits.filter((o) => this.hasProducts(o)).length, "visualized sets"], [this.data.pieces.filter(isProduct).length, "shop options"], [profile.liked, "sets you love"]]) {
-      const item = el("div");
-      item.append(el("strong", "", String(n)), el("span", "", String(t)));
+      const item = el2("div");
+      item.append(el2("strong", "", String(n)), el2("span", "", String(t)));
       stats.append(item);
     }
     if (!focused) parent.append(stats);
     if (focused) {
-      const refine = el("details", "sz-session-filters");
-      refine.append(el("summary", "", "Refine this session"));
+      const refine = el2("details", "sz-session-filters");
+      refine.append(el2("summary", "", "Refine this session"));
       this.renderFilters(refine);
       parent.append(refine);
     } else this.renderFilters(parent);
     const outfits = this.visible();
     const ideas = filterOutfits(this.data, this.filters).filter((o) => !this.hasProducts(o));
     if (ideas.length && (!focused || !outfits.length)) {
-      const research = el("details", "sz-unverified-items");
-      research.append(el("summary", "", `${ideas.length} ideas needing exact products`), el("p", "sz-muted", "These earlier inspiration notes are preserved. Equip researched items before rating them as a complete visual set."));
+      const research = el2("details", "sz-unverified-items");
+      research.append(el2("summary", "", `${ideas.length} ideas needing exact products`), el2("p", "sz-muted", "These earlier inspiration notes are preserved. Equip researched items before rating them as a complete visual set."));
       for (const idea of ideas) {
-        const row = el("div", "sz-idea-row");
-        row.append(el("span", "", idea.title), button("Equip exact items", () => this.openOutfit(idea), "sz-text-button"));
+        const row = el2("div", "sz-idea-row");
+        row.append(el2("span", "", idea.title), button2("Equip exact items", () => this.openOutfit(idea), "sz-text-button"));
         research.append(row);
       }
       parent.append(research);
     }
-    const count = el("div", "sz-results");
-    count.append(el("p", "sz-muted", `${outfits.length} look${outfits.length === 1 ? "" : "s"} in this edit`));
-    const sort = select("sort", [["recommended", "For you"], ["rating", "Highest rated"], ["price", "Lowest known cost"], ["title", "By name"]], this.filters.sort);
+    const count = el2("div", "sz-results");
+    count.append(el2("p", "sz-muted", `${outfits.length} look${outfits.length === 1 ? "" : "s"} in this edit`));
+    const sort = select2("sort", [["recommended", "For you"], ["rating", "Highest rated"], ["price", "Lowest known cost"], ["title", "By name"]], this.filters.sort);
     sort.setAttribute("aria-label", "Sort outfits");
     sort.onchange = () => {
       this.filters.sort = sort.value;
@@ -7034,8 +7366,8 @@ var StyleZoneApp = class {
     count.append(sort);
     parent.append(count);
     if (!outfits.length) {
-      const empty = el("div", "sz-empty");
-      empty.append(el("h2", "", this.data.outfits.length ? "No visualized sets match this edit." : "Your outfit collection starts here."), el("p", "sz-muted", ideas.length ? "Open an idea above, equip exact products and save it as a new set." : this.data.outfits.length ? "Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them." : "Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder."), button("Reset filters", () => {
+      const empty = el2("div", "sz-empty");
+      empty.append(el2("h2", "", this.data.outfits.length ? "No visualized sets match this edit." : "Your outfit collection starts here."), el2("p", "sz-muted", ideas.length ? "Open an idea above, equip exact products and save it as a new set." : this.data.outfits.length ? "Try a different palette or relax a filter. Unpriced looks stay out of a budget filter unless you include them." : "Create an outfit from your pieces, or add Markdown suggestions to the wardrobe folder."), button2("Reset filters", () => {
         this.filters = { ...DEFAULT_FILTERS };
         this.render();
       }));
@@ -7046,23 +7378,23 @@ var StyleZoneApp = class {
       const latest = latestRatings(this.data.ratings);
       let current = outfits.find((o) => o.id === this.focusId) ?? outfits.find((o) => !latest.has(o.id)) ?? outfits[0];
       this.focusId = current.id;
-      const stage = el("div", "sz-rate-stage");
+      const stage = el2("div", "sz-rate-stage");
       stage.append(this.outfitCard(current, true));
-      const controls = el("div", "sz-rate-footer");
-      controls.append(el("p", "sz-muted", latest.has(current.id) ? `Current rating: ${latest.get(current.id).rating}/5. You can change it.` : "Not rated yet. Keyboard: 1\u20135."), button("Skip this look", () => {
+      const controls = el2("div", "sz-rate-footer");
+      controls.append(el2("p", "sz-muted", latest.has(current.id) ? `Current rating: ${latest.get(current.id).rating}/5. You can change it.` : "Not rated yet. Keyboard: 1\u20135."), button2("Skip this look", () => {
         this.focusId = outfits[(outfits.indexOf(current) + 1) % outfits.length].id;
         this.render();
       }, "sz-button sz-subtle"));
       stage.append(controls);
       parent.append(stage);
     } else {
-      const grid = el("div", "sz-outfit-grid");
+      const grid = el2("div", "sz-outfit-grid");
       for (const o of outfits) grid.append(this.outfitCard(o));
       parent.append(grid);
     }
   }
   renderFilters(parent) {
-    const panel = el("section", "sz-filters");
+    const panel = el2("section", "sz-filters");
     panel.setAttribute("aria-label", "Outfit filters");
     const search = input("search", this.filters.search, "search");
     search.placeholder = "Search looks, textures, ideas\u2026";
@@ -7080,13 +7412,13 @@ var StyleZoneApp = class {
       }, 350);
     };
     panel.append(search);
-    const row = el("div", "sz-filter-row");
+    const row = el2("div", "sz-filter-row");
     for (const [key, title, values] of [
-      ["style", "All directions", unique(this.data.outfits.flatMap((o) => o.styles))],
-      ["store", "All stores", unique(this.data.pieces.map((p) => p.store).filter(Boolean))],
-      ["occasion", "Any occasion", unique(this.data.outfits.flatMap((o) => o.occasions))]
+      ["style", "All directions", unique2(this.data.outfits.flatMap((o) => o.styles))],
+      ["store", "All stores", unique2(this.data.pieces.map((p) => p.store).filter(Boolean))],
+      ["occasion", "Any occasion", unique2(this.data.outfits.flatMap((o) => o.occasions))]
     ]) {
-      const s = select(key, [["", title], ...values.map((x) => [x, x])], this.filters[key]);
+      const s = select2(key, [["", title], ...values.map((x) => [x, x])], this.filters[key]);
       s.setAttribute("aria-label", title);
       s.onchange = () => {
         this.filters[key] = s.value;
@@ -7094,9 +7426,9 @@ var StyleZoneApp = class {
       };
       row.append(s);
     }
-    const collections = unique(this.data.outfits.map((o) => o.collection ?? "").filter(Boolean));
+    const collections = unique2(this.data.outfits.map((o) => o.collection ?? "").filter(Boolean));
     if (collections.length) {
-      const s = select("collection", [["", "All collections"], ...collections.map((x) => [x, x])], this.filters.collection);
+      const s = select2("collection", [["", "All collections"], ...collections.map((x) => [x, x])], this.filters.collection);
       s.setAttribute("aria-label", "Outfit collection");
       s.onchange = () => {
         this.filters.collection = s.value;
@@ -7104,7 +7436,7 @@ var StyleZoneApp = class {
       };
       row.append(s);
     }
-    const rating = select("rating", [["", "All ratings"], ["unrated", "Not rated"], ["liked", "Loved \xB7 4\u20135"], ...Array.from({ length: 5 }, (_, i) => [String(i + 1), `${i + 1} / 5`])], this.filters.rating);
+    const rating = select2("rating", [["", "All ratings"], ["unrated", "Not rated"], ["liked", "Loved \xB7 4\u20135"], ...Array.from({ length: 5 }, (_, i) => [String(i + 1), `${i + 1} / 5`])], this.filters.rating);
     rating.setAttribute("aria-label", "Rating filter");
     rating.onchange = () => {
       this.filters.rating = rating.value;
@@ -7133,16 +7465,16 @@ var StyleZoneApp = class {
     };
     row.append(budget);
     panel.append(row);
-    const palette = el("div", "sz-palettes");
-    palette.append(el("span", "sz-label", "PALETTE"));
-    const all = button("All", () => {
+    const palette = el2("div", "sz-palettes");
+    palette.append(el2("span", "sz-label", "PALETTE"));
+    const all = button2("All", () => {
       this.filters.color = "";
       this.render();
     }, `sz-color-all ${!this.filters.color ? "is-active" : ""}`);
     all.setAttribute("aria-pressed", String(!this.filters.color));
     palette.append(all);
-    for (const color of unique(this.data.outfits.flatMap((o) => o.colors))) {
-      const sw = button("", () => {
+    for (const color of unique2(this.data.outfits.flatMap((o) => o.colors))) {
+      const sw = button2("", () => {
         this.filters.color = this.filters.color === color ? "" : color;
         this.render();
       }, `sz-swatch ${this.filters.color === color ? "is-active" : ""}`);
@@ -7153,7 +7485,7 @@ var StyleZoneApp = class {
       palette.append(sw);
     }
     panel.append(palette);
-    const toggles = el("div", "sz-filter-toggles");
+    const toggles = el2("div", "sz-filter-toggles");
     for (const [key, title] of [["includeUnknown", "Include unpriced looks in budget"], ["ownedOnly", "Only pieces I own"]]) {
       const box = input(key, "", "checkbox");
       box.checked = this.filters[key];
@@ -7161,11 +7493,11 @@ var StyleZoneApp = class {
         this.filters[key] = box.checked;
         this.render();
       };
-      const l = el("label", "sz-checkbox");
-      l.append(box, el("span", "", title));
+      const l = el2("label", "sz-checkbox");
+      l.append(box, el2("span", "", title));
       toggles.append(l);
     }
-    toggles.append(button("Clear", () => {
+    toggles.append(button2("Clear", () => {
       this.filters = { ...DEFAULT_FILTERS };
       this.render();
     }, "sz-clear"));
@@ -7173,32 +7505,32 @@ var StyleZoneApp = class {
     parent.append(panel);
   }
   outfitCard(outfit, focus = false) {
-    const card = el("article", `sz-outfit-card sz-loadout-card ${focus ? "sz-focused" : ""}`);
+    const card = el2("article", `sz-outfit-card sz-loadout-card ${focus ? "sz-focused" : ""}`);
     card.dataset.outfitId = outfit.id;
-    const visual = el("div", "sz-loadout-visual");
+    const visual = el2("div", "sz-loadout-visual");
     visual.append(fitPreview(outfit, this.data.pieces, this.store, (slot) => this.openOutfit(outfit, slot), focus));
     card.append(visual);
-    const body = el("div", "sz-card-body");
-    const meta = el("div", "sz-card-meta");
-    meta.append(el("span", "sz-eyebrow", outfit.styles[0] ?? "YOUR SET"), this.swatches(outfit.colors));
-    body.append(meta, el("h2", "", outfit.title), el("p", "sz-card-description", outfit.notes.split("\n")[0] || outfit.season));
-    const c = cost(outfit, this.data.pieces), price = el("div", "sz-cost");
-    price.append(el("strong", "", c.unknown ? `${money(c.known)} known` : c.known ? `${money(c.known)} to buy` : "Already in your wardrobe"), el("span", "sz-muted", c.unknown ? `${c.unknown} unpriced \xB7 ${c.owned} owned` : `${outfit.piece_ids.length} tagged products \xB7 ${c.owned} owned`));
+    const body = el2("div", "sz-card-body");
+    const meta = el2("div", "sz-card-meta");
+    meta.append(el2("span", "sz-eyebrow", outfit.styles[0] ?? "YOUR SET"), this.swatches(outfit.colors));
+    body.append(meta, el2("h2", "", outfit.title), el2("p", "sz-card-description", outfit.notes.split("\n")[0] || outfit.season));
+    const c = cost(outfit, this.data.pieces), price = el2("div", "sz-cost");
+    price.append(el2("strong", "", c.unknown ? `${money(c.known)} known` : c.known ? `${money(c.known)} to buy` : "Already in your wardrobe"), el2("span", "sz-muted", c.unknown ? `${c.unknown} unpriced \xB7 ${c.owned} owned` : `${outfit.piece_ids.length} tagged products \xB7 ${c.owned} owned`));
     body.append(price);
     const latest = latestRatings(this.data.ratings).get(outfit.id);
     body.append(this.ratingButtons(outfit, latest?.rating, focus));
-    const footer = el("div", "sz-card-footer");
-    footer.append(button("Inspect / swap gear", () => this.openOutfit(outfit), "sz-text-button"), el("span", "sz-muted", latest ? `Rated ${latest.rating}/5` : "Not rated"));
+    const footer = el2("div", "sz-card-footer");
+    footer.append(button2("Inspect / swap gear", () => this.openOutfit(outfit), "sz-text-button"), el2("span", "sz-muted", latest ? `Rated ${latest.rating}/5` : "Not rated"));
     body.append(footer);
     const match = recommendation(outfit, this.data.ratings);
-    if (match.reasons.length) body.append(el("p", "sz-match", `Fits your interest in ${match.reasons.join(" + ")}`));
+    if (match.reasons.length) body.append(el2("p", "sz-match", `Fits your interest in ${match.reasons.join(" + ")}`));
     card.append(body);
     return card;
   }
   swatches(colors) {
-    const row = el("span", "sz-mini-swatches");
+    const row = el2("span", "sz-mini-swatches");
     for (const color of colors) {
-      const s = el("span");
+      const s = el2("span");
       s.style.background = COLORS[color] ?? "#888";
       s.title = color;
       row.append(s);
@@ -7207,11 +7539,11 @@ var StyleZoneApp = class {
     return row;
   }
   ratingButtons(outfit, rating, advance = false) {
-    const group = el("div", "sz-rating");
+    const group = el2("div", "sz-rating");
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", `Rate ${outfit.title}`);
     for (let n = 1; n <= 5; n++) {
-      const b = button(String(n), () => void this.rate(outfit, n, advance), `sz-rate-button ${rating === n ? "is-selected" : ""}`);
+      const b = button2(String(n), () => void this.rate(outfit, n, advance), `sz-rate-button ${rating === n ? "is-selected" : ""}`);
       b.setAttribute("aria-label", `Rate ${outfit.title} ${n} out of 5`);
       b.setAttribute("aria-pressed", String(rating === n));
       b.disabled = this.pending.has(outfit.id);
@@ -7244,12 +7576,12 @@ var StyleZoneApp = class {
     const previousFocus = document.activeElement;
     this.detail?.close();
     this.detail?.remove();
-    const dialog = el("dialog", "sz-dialog");
-    const top = el("div", "sz-dialog-header");
-    const heading = el("h2", "", title);
+    const dialog = el2("dialog", "sz-dialog");
+    const top = el2("div", "sz-dialog-header");
+    const heading = el2("h2", "", title);
     heading.id = "sz-dialog-title";
     dialog.setAttribute("aria-labelledby", heading.id);
-    top.append(heading, button("Close", () => dialog.close(), "sz-button sz-subtle"));
+    top.append(heading, button2("Close", () => dialog.close(), "sz-button sz-subtle"));
     dialog.append(top);
     this.root.append(dialog);
     this.detail = dialog;
@@ -7266,24 +7598,24 @@ var StyleZoneApp = class {
     return dialog;
   }
   openOutfit(outfit, slot) {
-    const dialog = this.dialog(outfit.title), editor = el("div", "sz-loadout-editor-host");
+    const dialog = this.dialog(outfit.title), editor = el2("div", "sz-loadout-editor-host");
     loadoutEditor(editor, outfit, this.data, this.store, async (variation) => {
       await this.store.saveOutfit(variation);
       this.toast("New set saved. The original stays intact.");
     }, slot);
     dialog.append(editor);
     if (slot && typeof matchMedia === "function" && matchMedia("(max-width:760px)").matches) editor.querySelector(".sz-slot-options")?.scrollIntoView({ block: "start" });
-    const feedback = el("section", "sz-detail-rate");
-    feedback.append(el("h3", "", "Would you equip this set?"));
+    const feedback = el2("section", "sz-detail-rate");
+    feedback.append(el2("h3", "", "Would you equip this set?"));
     const latest = latestRatings(this.data.ratings).get(outfit.id);
-    const note = el("textarea", "sz-input");
+    const note = el2("textarea", "sz-input");
     note.setAttribute("aria-label", "Reason for your outfit rating");
     note.placeholder = "What clicks? What would you change?";
     note.value = latest?.note ?? "";
     feedback.append(note);
-    const chosen = new Set(latest?.reasons ?? []), tags = el("div", "sz-reason-tags");
+    const chosen = new Set(latest?.reasons ?? []), tags = el2("div", "sz-reason-tags");
     for (const reason of ["Love the palette", "Love the layers", "Too formal", "Too busy", "Wrong fit"]) {
-      const b = button(reason, () => {
+      const b = button2(reason, () => {
         chosen.has(reason) ? chosen.delete(reason) : chosen.add(reason);
         b.setAttribute("aria-pressed", String(chosen.has(reason)));
       }, "sz-reason");
@@ -7291,9 +7623,9 @@ var StyleZoneApp = class {
       tags.append(b);
     }
     feedback.append(tags);
-    const ratings = el("div", "sz-rating");
+    const ratings = el2("div", "sz-rating");
     for (let n = 1; n <= 5; n++) {
-      const b = button(String(n), () => {
+      const b = button2(String(n), () => {
         void this.rate(outfit, n, false, note.value, [...chosen]).then((saved) => {
           if (saved) ratings.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === n)));
         });
@@ -7304,7 +7636,7 @@ var StyleZoneApp = class {
     }
     feedback.append(ratings);
     dialog.append(feedback);
-    if (outfit.path && this.store.openNote) dialog.append(button("Open set note", () => {
+    if (outfit.path && this.store.openNote) dialog.append(button2("Open set note", () => {
       dialog.close();
       this.store.openNote(outfit.path);
     }, "sz-text-button"));
@@ -7312,69 +7644,40 @@ var StyleZoneApp = class {
   openProduct(piece) {
     const dialog = this.dialog(piece.title);
     dialog.append(productInfo(piece, this.store));
-    dialog.append(button("Edit item record", () => this.pieceForm(piece), "sz-button sz-subtle"));
+    dialog.append(button2("Edit item record", () => this.pieceForm(piece), "sz-button sz-subtle"));
   }
   pieceRow(piece) {
-    const row = el("div", "sz-piece-row");
-    const text = el("div");
-    text.append(el("strong", "", piece.title), el("p", "sz-muted", `${piece.store || "Store not selected"} \xB7 ${piece.ownership}${piece.price_checked_at ? ` \xB7 checked ${piece.price_checked_at}` : ""}`));
-    if (piece.price_note) text.append(el("p", "sz-price-note", piece.price_note));
-    const actions = el("div", "sz-piece-actions");
-    actions.append(el("span", "", piece.ownership === "owned" ? "Owned" : piece.price === null ? "Price needed" : `${piece.currency} ${piece.price.toFixed(2)}`));
+    const row = el2("div", "sz-piece-row");
+    const text = el2("div");
+    text.append(el2("strong", "", piece.title), el2("p", "sz-muted", `${piece.store || "Store not selected"} \xB7 ${piece.ownership}${piece.price_checked_at ? ` \xB7 checked ${piece.price_checked_at}` : ""}`));
+    if (piece.price_note) text.append(el2("p", "sz-price-note", piece.price_note));
+    const actions = el2("div", "sz-piece-actions");
+    actions.append(el2("span", "", piece.ownership === "owned" ? "Owned" : piece.price === null ? "Price needed" : `${piece.currency} ${piece.price.toFixed(2)}`));
     if (safeUrl(piece.product_url)) actions.append(link("Shop / view", piece.product_url));
-    actions.append(button("Edit item", () => this.pieceForm(piece), "sz-text-button"));
+    actions.append(button2("Edit item", () => this.pieceForm(piece), "sz-text-button"));
     row.append(text, actions);
     return row;
   }
   renderPieces(parent) {
-    const h = this.heading(parent, "YOUR RESEARCHED ITEM DATABASE", "A good option for every slot.", "Exact products, colors, prices and buy links. Each slot keeps its own pool of alternatives.");
-    h.append(button("Add a piece", () => this.pieceForm(), "sz-button sz-primary"));
-    const slots = el("div", "sz-slot-tabs");
-    const all = button("All slots", () => {
-      this.inventorySlot = "";
-      this.render();
-    }, `sz-slot-filter ${!this.inventorySlot ? "is-active" : ""}`);
-    slots.append(all);
-    for (const slot of GEAR_SLOTS) {
-      const n = slotOptions(this.data.pieces, slot.id).length;
-      const b = button(`${slot.short} \xB7 ${n}`, () => {
-        this.inventorySlot = slot.id;
-        this.render();
-      }, `sz-slot-filter ${this.inventorySlot === slot.id ? "is-active" : ""}`);
-      b.prepend(slotIcon(slot.id));
-      b.setAttribute("aria-label", `Item database slot: ${slot.label}`);
-      slots.append(b);
-    }
-    parent.append(slots);
-    const visible = this.inventorySlot ? slotOptions(this.data.pieces, this.inventorySlot) : this.data.pieces.filter(isProduct);
-    parent.append(el("p", "sz-muted", `${visible.length} exact products \xB7 availability checked on each item record`));
-    const grid = el("div", "sz-pieces-grid");
-    for (const p of visible) {
-      const card = el("article", "sz-piece-card sz-inventory-card");
-      const photo = button("", () => this.openProduct(p), "sz-product-thumb-button");
-      photo.setAttribute("aria-label", `Inspect product: ${p.title}`);
-      photo.append(productPhoto(p, this.store));
-      card.append(photo, this.swatches(p.colors), el("span", "sz-eyebrow", `${p.store} / ${pieceSlots(p).map((id) => GEAR_SLOTS.find((s) => s.id === id)?.short).join(" + ")}`), this.pieceRow(p));
-      grid.append(card);
-    }
-    parent.append(grid);
+    parent.append(button2("Add a piece", () => this.pieceForm(), "sz-button sz-subtle"));
+    this.itemLibrary.render(parent, this.data, this.store, () => this.render(), (message, error) => this.toast(message, error), (p) => this.openProduct(p), (p) => this.pieceForm(p));
     const pending = this.data.pieces.filter((p) => !isProduct(p));
-    if (pending.length) {
-      const more = el("details", "sz-unverified-items");
-      more.append(el("summary", "", `${pending.length} personal / unverified records`), el("p", "sz-muted", "These records are preserved. They need an exact product link and verification before appearing in the shoppable item database."));
+    if (pending.length && !this.itemLibrary.ratingMode) {
+      const more = el2("details", "sz-unverified-items");
+      more.append(el2("summary", "", `${pending.length} personal / unverified records`), el2("p", "sz-muted", "These records are preserved. They need an exact product link and verification before appearing in the shoppable libraries."));
       for (const p of pending) more.append(this.pieceRow(p));
       parent.append(more);
     }
   }
   pieceForm(piece) {
-    const dialog = this.dialog(piece ? "Edit your piece" : "Add a piece"), form = el("form", "sz-form");
+    const dialog = this.dialog(piece ? "Edit your piece" : "Add a piece"), form = el2("form", "sz-form");
     const title = input("title", piece?.title ?? "");
     title.required = true;
     form.append(label("Name", title));
-    const category = select("category", ["top", "knitwear", "outerwear", "bottom", "shoes", "accessory", "other"].map((x) => [x, x]), piece?.category ?? "top");
-    const ownership = select("ownership", [["owned", "I own this"], ["wishlist", "On my wishlist"], ["reference", "An idea / equivalent"]], piece?.ownership ?? "owned");
+    const category = select2("category", ["top", "knitwear", "outerwear", "bottom", "shoes", "accessory", "other"].map((x) => [x, x]), piece?.category ?? "top");
+    const ownership = select2("ownership", [["owned", "I own this"], ["wishlist", "On my wishlist"], ["reference", "An idea / equivalent"]], piece?.ownership ?? "owned");
     form.append(label("Category", category), label("Status", ownership));
-    const gearSlot = select("slot", GEAR_SLOTS.map((s) => [s.id, s.label]), piece?.slot ?? "shirt");
+    const gearSlot = select2("slot", GEAR_SLOTS.map((s) => [s.id, s.label]), piece?.slot ?? "shirt");
     form.append(label("Equipment slot", gearSlot));
     const colors = input("colors", piece?.colors.join(", ") ?? "");
     colors.placeholder = "navy, cream, brown";
@@ -7396,13 +7699,13 @@ var StyleZoneApp = class {
     const upload = input("photo", "", "file");
     upload.accept = "image/jpeg,image/png,image/webp,image/gif";
     form.append(label("Or attach a photo", upload));
-    const notes = el("textarea", "sz-input");
+    const notes = el2("textarea", "sz-input");
     notes.placeholder = "Fit, fabric, or other details";
     if (!piece) form.append(label("Notes", notes));
-    else form.append(el("p", "sz-muted", "Existing handwritten notes are preserved. Edit the Markdown note for longer details."));
-    const error = el("p", "sz-form-error");
+    else form.append(el2("p", "sz-muted", "Existing handwritten notes are preserved. Edit the Markdown note for longer details."));
+    const error = el2("p", "sz-form-error");
     error.setAttribute("role", "alert");
-    const save = el("button", "sz-button sz-primary", "Save piece");
+    const save = el2("button", "sz-button sz-primary", "Save piece");
     save.type = "submit";
     form.append(error, save);
     form.onsubmit = (event) => {
@@ -7426,7 +7729,7 @@ var StyleZoneApp = class {
     dialog.append(form);
   }
   outfitForm() {
-    const dialog = this.dialog("Create an equipment set"), form = el("form", "sz-form");
+    const dialog = this.dialog("Create an equipment set"), form = el2("form", "sz-form");
     const title = input("title");
     title.required = true;
     form.append(label("Set name", title));
@@ -7436,20 +7739,20 @@ var StyleZoneApp = class {
     const occasions = input("occasions");
     occasions.placeholder = "everyday, evening";
     form.append(label("Occasions separated by commas", occasions));
-    const items = el("fieldset", "sz-piece-choices");
-    items.append(el("legend", "", "Choose exact products"));
+    const items = el2("fieldset", "sz-piece-choices");
+    items.append(el2("legend", "", "Choose exact products"));
     for (const p of this.data.pieces.filter(isProduct)) {
       const checkbox = input("piece_ids", p.id, "checkbox");
-      const l = el("label", "sz-checkbox");
-      l.append(checkbox, el("span", "", `${p.title} \xB7 ${p.slot ?? "slot needed"} \xB7 ${money(p.price)}`));
+      const l = el2("label", "sz-checkbox");
+      l.append(checkbox, el2("span", "", `${p.title} \xB7 ${p.slot ?? "slot needed"} \xB7 ${money(p.price)}`));
       items.append(l);
     }
     form.append(items);
-    const notes = el("textarea", "sz-input");
+    const notes = el2("textarea", "sz-input");
     form.append(label("Styling notes", notes));
-    const error = el("p", "sz-form-error");
+    const error = el2("p", "sz-form-error");
     error.setAttribute("role", "alert");
-    const save = el("button", "sz-button sz-primary", "Save set");
+    const save = el2("button", "sz-button sz-primary", "Save set");
     save.type = "submit";
     form.append(error, save);
     form.onsubmit = (e) => {
@@ -7467,7 +7770,7 @@ var StyleZoneApp = class {
             equipment[slot] = id;
           }
           const list = (text) => text.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
-          const o = { schema: 1, type: "outfit", id: `outfit-${crypto.randomUUID()}`, title: title.value.trim(), season: "Fall Winter 2026", styles: list(styles.value), colors: unique(pieceIds.flatMap((id) => this.data.pieces.find((p) => p.id === id).colors)), occasions: list(occasions.value), piece_ids: pieceIds, equipment, image: "", image_credit: "", source_urls: pieceIds.map((id) => this.data.pieces.find((p) => p.id === id).product_url), notes: notes.value.trim() };
+          const o = { schema: 1, type: "outfit", id: `outfit-${crypto.randomUUID()}`, title: title.value.trim(), season: "Fall Winter 2026", styles: list(styles.value), colors: unique2(pieceIds.flatMap((id) => this.data.pieces.find((p) => p.id === id).colors)), occasions: list(occasions.value), piece_ids: pieceIds, equipment, image: "", image_credit: "", source_urls: pieceIds.map((id) => this.data.pieces.find((p) => p.id === id).product_url), notes: notes.value.trim() };
           await this.store.saveOutfit(o);
           dialog.close();
           this.page = "outfits";
@@ -7482,45 +7785,46 @@ var StyleZoneApp = class {
     dialog.append(form);
   }
   renderProfile(parent) {
+    this.itemLibrary.profile(parent, this.data);
     const profile = taste(this.data.ratings);
     this.heading(parent, "A STYLE THAT EVOLVES WITH YOU", "A little more you, every time.", "Your ratings reveal patterns in the looks you enjoy. These are starting points for your next suggestions.");
-    const overview = el("div", "sz-profile-summary");
-    overview.append(el("strong", "", `${profile.rated}`), el("div", "", `distinct outfits rated \xB7 ${profile.events} rating events \xB7 ${profile.liked} rated 4 or 5`));
+    const overview = el2("div", "sz-profile-summary");
+    overview.append(el2("strong", "", `${profile.rated}`), el2("div", "", `distinct outfits rated \xB7 ${profile.events} rating events \xB7 ${profile.liked} rated 4 or 5`));
     parent.append(overview);
     if (!profile.rated) {
-      const empty = el("div", "sz-empty");
-      empty.append(el("h2", "", "Let\u2019s find what clicks."), el("p", "sz-muted", "Rate a few different outfits. A 1 or 2 is as useful as a 5."), button("Start quick rating", () => this.navigate("rate"), "sz-button sz-primary"));
+      const empty = el2("div", "sz-empty");
+      empty.append(el2("h2", "", "Let\u2019s find what clicks."), el2("p", "sz-muted", "Rate a few different outfits. A 1 or 2 is as useful as a 5."), button2("Start quick rating", () => this.navigate("rate"), "sz-button sz-primary"));
       parent.append(empty);
       return;
     }
-    parent.append(el("p", "sz-tip", profile.rated < 5 ? "Early impressions: a few ratings can suggest a direction, but don\u2019t define your style." : "Your latest rating for each outfit is used once. Changing a rating updates the signals without counting the same look twice."));
-    const columns = el("div", "sz-profile-columns");
-    for (const [title, features] of [["Leaning toward", profile.features.filter((f) => f.score > 0).slice(0, 8)], ["Less your thing", profile.features.filter((f) => f.score < 0).reverse().slice(0, 8)]]) {
-      const section = el("section", "sz-profile-card");
-      section.append(el("h2", "", title));
-      if (!features.length) section.append(el("p", "sz-muted", "No clear signal yet."));
-      for (const f of features) {
-        const row = el("div", "sz-feature");
-        row.append(el("strong", "", f.label), el("span", "sz-muted", `${f.average.toFixed(1)}/5 \xB7 ${f.count} look${f.count === 1 ? "" : "s"}`));
+    parent.append(el2("p", "sz-tip", profile.rated < 5 ? "Early impressions: a few ratings can suggest a direction, but don\u2019t define your style." : "Your latest rating for each outfit is used once. Changing a rating updates the signals without counting the same look twice."));
+    const columns = el2("div", "sz-profile-columns");
+    for (const [title, features2] of [["Leaning toward", profile.features.filter((f) => f.score > 0).slice(0, 8)], ["Less your thing", profile.features.filter((f) => f.score < 0).reverse().slice(0, 8)]]) {
+      const section = el2("section", "sz-profile-card");
+      section.append(el2("h2", "", title));
+      if (!features2.length) section.append(el2("p", "sz-muted", "No clear signal yet."));
+      for (const f of features2) {
+        const row = el2("div", "sz-feature");
+        row.append(el2("strong", "", f.label), el2("span", "sz-muted", `${f.average.toFixed(1)}/5 \xB7 ${f.count} look${f.count === 1 ? "" : "s"}`));
         section.append(row);
       }
       columns.append(section);
     }
     parent.append(columns);
-    parent.append(el("p", "sz-muted", "Signals compare ratings with the neutral midpoint of 3 and soften patterns supported by few examples. Colors and styles appear together, so these are associations rather than proof of why you liked an outfit."));
-    const history = el("section", "sz-profile-card");
-    history.append(el("h2", "", "Your latest calls"));
+    parent.append(el2("p", "sz-muted", "Signals compare ratings with the neutral midpoint of 3 and soften patterns supported by few examples. Colors and styles appear together, so these are associations rather than proof of why you liked an outfit."));
+    const history = el2("section", "sz-profile-card");
+    history.append(el2("h2", "", "Your latest calls"));
     const latest = [...latestRatings(this.data.ratings).values()].sort((a, b) => b.created_at.localeCompare(a.created_at));
     for (const r of latest.slice(0, 30)) {
-      const row = el("div", "sz-history");
-      row.append(el("strong", "", `${r.rating}/5`), el("div", "", r.snapshot.title), el("span", "sz-muted", r.note || r.reasons.join(", ") || new Date(r.created_at).toLocaleDateString()));
+      const row = el2("div", "sz-history");
+      row.append(el2("strong", "", `${r.rating}/5`), el2("div", "", r.snapshot.title), el2("span", "sz-muted", r.note || r.reasons.join(", ") || new Date(r.created_at).toLocaleDateString()));
       history.append(row);
     }
-    parent.append(history, button("Export for stylist", () => void this.export(), "sz-button sz-primary"));
+    parent.append(history, button2("Export for stylist", () => void this.export(), "sz-button sz-primary"));
   }
   async export() {
     try {
-      await this.store.export({ schema: 1, exported_at: (/* @__PURE__ */ new Date()).toISOString(), ...this.data, preference_summary: taste(this.data.ratings), latest_ratings: [...latestRatings(this.data.ratings).values()] });
+      await this.store.export({ schema: 1, exported_at: (/* @__PURE__ */ new Date()).toISOString(), ...this.data, preference_summary: taste(this.data.ratings), item_preference_summary: itemTaste(this.data.item_ratings ?? []), latest_item_ratings: [...latestItemRatings(this.data.item_ratings ?? []).values()], latest_ratings: [...latestRatings(this.data.ratings).values()] });
       this.toast("Export saved with outfits, pieces, rating history and taste signals.");
     } catch (e) {
       this.toast(`Export failed: ${e instanceof Error ? e.message : String(e)}`, true);
@@ -8963,7 +9267,7 @@ var WardrobeStore = class {
     }
   }
   async load() {
-    const data = { outfits: [], pieces: [], ratings: [], warnings: [] }, base = `${this.plugin.settings.folder}/`;
+    const data = { outfits: [], pieces: [], ratings: [], item_ratings: [], warnings: [] }, base = `${this.plugin.settings.folder}/`;
     const files = this.plugin.app.vault.getFiles().filter((f) => f.path.startsWith(base) && f.extension === "md").sort((a, b) => a.path.localeCompare(b.path));
     const ids = /* @__PURE__ */ new Set();
     await Promise.all(files.map(async (file) => {
@@ -8971,6 +9275,10 @@ var WardrobeStore = class {
       try {
         if (relative.startsWith("Ratings/")) {
           data.ratings.push(parseRating(await this.plugin.app.vault.read(file)));
+          return;
+        }
+        if (relative.startsWith("ItemRatings/")) {
+          data.item_ratings.push(parseItemRating(await this.plugin.app.vault.read(file)));
           return;
         }
         if (!relative.startsWith("Outfits/") && !relative.startsWith("Pieces/")) return;
@@ -9006,6 +9314,12 @@ var WardrobeStore = class {
     const path = this.full(`Ratings/${event.id}.md`);
     await this.ensureDirectory(this.full("Ratings"));
     await this.plugin.app.vault.create(path, serializeRating(event));
+  }
+  async rateItem(event) {
+    const text = serializeItemRating(event), data = await this.load();
+    if (!data.pieces.some((p) => p.id === event.piece_id)) throw Error("Item no longer exists.");
+    await this.ensureDirectory(this.full("ItemRatings"));
+    await this.plugin.app.vault.create(this.full(`ItemRatings/${event.id}.md`), text);
   }
   async save(record) {
     const directory = record.type === "piece" ? "Pieces" : "Outfits";
@@ -9108,7 +9422,7 @@ var StyleZoneSettings = class extends import_obsidian.PluginSettingTab {
       } catch {
       }
     }));
-    new import_obsidian.Setting(this.containerEl).setName("Save folder").setDesc("Close and reopen Style Zone after changing folders.").addButton((button2) => button2.setButtonText("Save").onClick(async () => {
+    new import_obsidian.Setting(this.containerEl).setName("Save folder").setDesc("Close and reopen Style Zone after changing folders.").addButton((button3) => button3.setButtonText("Save").onClick(async () => {
       try {
         safePath(this.plugin.settings.folder);
         await this.plugin.saveData(this.plugin.settings);
@@ -9117,7 +9431,7 @@ var StyleZoneSettings = class extends import_obsidian.PluginSettingTab {
         new import_obsidian.Notice("Enter a relative vault folder, such as Sync/Style Zone.");
       }
     }));
-    new import_obsidian.Setting(this.containerEl).setName("Starter outfit ideas").setDesc("Adds missing Fall 2026 outfit and item notes. Existing records and ratings are preserved. Research photos arrive through your vault sync.").addButton((button2) => button2.setButtonText("Add starter ideas").onClick(() => void this.plugin.initialize()));
+    new import_obsidian.Setting(this.containerEl).setName("Starter outfit ideas").setDesc("Adds missing Fall 2026 outfit and item notes. Existing records and ratings are preserved. Research photos arrive through your vault sync.").addButton((button3) => button3.setButtonText("Add starter ideas").onClick(() => void this.plugin.initialize()));
   }
 };
 var StyleZonePlugin = class extends import_obsidian.Plugin {

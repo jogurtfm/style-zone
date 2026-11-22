@@ -2,6 +2,7 @@ import {Plugin,ItemView,Notice,PluginSettingTab,Setting,TFile,normalizePath,type
 import {StyleZoneApp} from './app';
 import {parseRecord,parseRating,serializeRating,serializeRecord,safePath,safeUrl,type Catalog,type Store,type Piece,type Outfit} from './model';
 import starter from '../starter/catalog.json';
+import {parseItemRating,serializeItemRating,type ItemRating} from './item-model';
 
 const VIEW='style-zone-view';
 interface Settings {folder:string;starterCatalogVersion?:number;starterFolder?:string}
@@ -10,12 +11,13 @@ export class WardrobeStore implements Store {
   private full(path:string){return normalizePath(`${this.plugin.settings.folder}/${safePath(path)}`);}
   async ensureDirectory(path:string){const parts=normalizePath(path).split('/');let current='';for(const part of parts){current=current?`${current}/${part}`:part;if(!this.plugin.app.vault.getAbstractFileByPath(current)){try{await this.plugin.app.vault.createFolder(current);}catch(error){if(!this.plugin.app.vault.getAbstractFileByPath(current))throw error;}}}}
   async load():Promise<Catalog>{
-    const data:Catalog={outfits:[],pieces:[],ratings:[],warnings:[]},base=`${this.plugin.settings.folder}/`;
+    const data:Catalog={outfits:[],pieces:[],ratings:[],item_ratings:[],warnings:[]},base=`${this.plugin.settings.folder}/`;
     const files=this.plugin.app.vault.getFiles().filter(f=>f.path.startsWith(base)&&f.extension==='md').sort((a,b)=>a.path.localeCompare(b.path));const ids=new Set<string>();
     await Promise.all(files.map(async file=>{
       const relative=file.path.slice(base.length);
       try{
         if(relative.startsWith('Ratings/')){data.ratings.push(parseRating(await this.plugin.app.vault.read(file)));return;}
+        if(relative.startsWith('ItemRatings/')){data.item_ratings!.push(parseItemRating(await this.plugin.app.vault.read(file)));return;}
         if(!relative.startsWith('Outfits/')&&!relative.startsWith('Pieces/'))return;
         const record=parseRecord(await this.plugin.app.vault.read(file),relative);if(ids.has(record.id))throw Error(`Duplicate ID ${record.id}`);ids.add(record.id);
         if(record.type==='outfit')data.outfits.push(record);else data.pieces.push(record);
@@ -36,6 +38,7 @@ export class WardrobeStore implements Store {
     }
   }
   async rate(event:Parameters<Store['rate']>[0]){const path=this.full(`Ratings/${event.id}.md`);await this.ensureDirectory(this.full('Ratings'));await this.plugin.app.vault.create(path,serializeRating(event));}
+  async rateItem(event:ItemRating){const text=serializeItemRating(event),data=await this.load();if(!data.pieces.some(p=>p.id===event.piece_id))throw Error('Item no longer exists.');await this.ensureDirectory(this.full('ItemRatings'));await this.plugin.app.vault.create(this.full(`ItemRatings/${event.id}.md`),text);}
   private async save(record:Piece|Outfit){
     const directory=record.type==='piece'?'Pieces':'Outfits';
     // A record cannot redirect writes into another folder or an unrelated note.

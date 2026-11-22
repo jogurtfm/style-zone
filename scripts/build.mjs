@@ -5,6 +5,7 @@ const shared={bundle:true,target:'es2020',logLevel:'info'};
 await build({...shared,entryPoints:['src/main.ts'],outfile:'main.js',format:'cjs',platform:'browser',external:['obsidian']});
 await build({...shared,entryPoints:['src/browser.ts'],outfile:'dist/app.js',format:'esm',platform:'browser'});
 await build({...shared,entryPoints:['src/model.ts'],outfile:'dist/model.mjs',format:'esm',platform:'neutral'});
+await build({...shared,entryPoints:['src/item-model.ts'],outfile:'dist/item-model.mjs',format:'esm',platform:'neutral'});
 await copyFile('styles.css','dist/styles.css');
 await copyFile('web/index.html','dist/index.html');
 for(const file of ['main.js','styles.css','manifest.json'])await readFile(file);

@@ -10,6 +10,7 @@ This folder is the wardrobe homebase inside the existing Relay shared root: `Syn
 - `Pieces` contains one Markdown note per owned piece or shopping idea.
 - Each researched product record has a primary slot and compatible slots, exact buy link, photo source, price, sizes and observation date. The interface filters these records into an option database for each equipment slot.
 - `Ratings` contains one Markdown note per rating event. Every 1–5 rating is preserved; your most recent rating per outfit drives the taste profile.
+- `ItemRatings` contains independent 1–5 item-rating events, including exact product and style-feature snapshots. Every retake stays in the history. Item taste and outfit taste are shown and exported separately.
 - `Inspirations` is a place to drop references you like.
 - `Existing Pieces` is a place to drop photos of clothes you own. Use Add a piece to catalog each photo, or ask your stylist to turn the files into piece records.
 - `Assets/Research` contains the starter research photos. These travel through your vault sync, separately from plugin updates.
@@ -21,6 +22,8 @@ This folder is the wardrobe homebase inside the existing Relay shared root: `Syn
 ## Working with your stylist
 
 Tell the agent to read this folder, the outfit and piece notes, and all rating notes. Markdown frontmatter contains the structured fields. Body text contains styling and personal notes. No special database service or API key is needed.
+
+Open **Item libraries** to browse researched pieces by all eleven equipment slots. Curated libraries use `library_slots` metadata; turn off **Curated library only** to reveal the rest of the researched database. Filter color, store, maximum USD price and rating status. **Rate items one at a time** advances after a successful vote and supports keys 1–5. Optional item feedback saves with the next vote. **For you** uses local feature associations from your latest item opinions. These signals remain tentative while there are few votes.
 
 Keep IDs stable. Use existing piece IDs when creating new combinations. Never mark an idea as owned without confirmation. A blank price means unknown. Price observations have a date and source link; they are not live inventory promises. Preserve all rating notes, including earlier opinions. Read the latest files before editing, and preserve handwritten notes and unknown properties.
 

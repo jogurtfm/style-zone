@@ -1,4 +1,5 @@
 import {parse, stringify} from 'yaml';
+import type {ItemRating} from './item-model';
 
 export const SCHEMA = 1;
 export const GEAR_SLOTS = [
@@ -33,16 +34,20 @@ export interface Piece {
   image_source_url?:string; image_credit?:string; product_checked_at?:string;
   availability?:'available'|'unavailable'|'unverified'; available_sizes?:string[];
   variant_color?:string;
+  library_slots?:GearSlot[]; style_tags?:string[]; source_type?:string;
+  library_note?:string;
+  stylist_features?:{pattern?:string;silhouette?:string;[key:string]:unknown};
 }
 export interface Rating {
   schema:number; type:'rating'; id:string; outfit_id:string; rating:number;
   created_at:string; note:string; reasons:string[];
   snapshot:{title:string; styles:string[]; colors:string[]; occasions:string[];piece_ids?:string[];equipment?:Partial<Record<GearSlot,string>>};
 }
-export interface Catalog {outfits:Outfit[]; pieces:Piece[]; ratings:Rating[]; warnings:string[]}
+export interface Catalog {outfits:Outfit[]; pieces:Piece[]; ratings:Rating[]; item_ratings?:ItemRating[]; warnings:string[]}
 export interface Store {
   load():Promise<Catalog>;
   rate(event:Rating):Promise<void>;
+  rateItem?(event:ItemRating):Promise<void>;
   savePiece(piece:Piece):Promise<void>;
   saveOutfit(outfit:Outfit):Promise<void>;
   saveImage(file:File):Promise<string>;

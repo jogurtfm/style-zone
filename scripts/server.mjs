@@ -4,6 +4,7 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {parseRecord,parseRating,serializeRecord,serializeRating,safePath,safeUrl,validateRating} from '../dist/model.mjs';
+import {parseItemRating,serializeItemRating,validateItemRating} from '../dist/item-model.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const config=process.env.STYLE_ZONE_DATA_ROOT?{dataRoot:process.env.STYLE_ZONE_DATA_ROOT}:JSON.parse(await readFile(path.join(root,'.local/config.json'),'utf8'));
@@ -18,7 +19,7 @@ const json=(res,status,value)=>{res.writeHead(status,{'Content-Type':'applicatio
 async function body(req,limit=1024*1024){let size=0;const parts=[];for await(const chunk of req){size+=chunk.length;if(size>limit)throw Error('Request too large.');parts.push(chunk);}return Buffer.concat(parts);}
 const queues=new Map();
 async function serialized(key,fn){const previous=queues.get(key)??Promise.resolve();const next=previous.catch(()=>{}).then(fn);queues.set(key,next);try{return await next;}finally{if(queues.get(key)===next)queues.delete(key);}}
-async function catalog(){const data={outfits:[],pieces:[],ratings:[],warnings:[]},ids=new Set();for(const relative of (await Promise.all(['Outfits','Pieces','Ratings'].map(files))).flat().sort()){try{const text=await readFile(await safeFile(relative,true),'utf8');if(relative.startsWith('Ratings/'))data.ratings.push(parseRating(text));else{const record=parseRecord(text,relative);if(ids.has(record.id))throw Error(`Duplicate ID ${record.id}`);ids.add(record.id);data[record.type==='piece'?'pieces':'outfits'].push(record);}}catch(error){data.warnings.push(`${relative}: ${error.message}`);}}return data;}
+async function catalog(){const data={outfits:[],pieces:[],ratings:[],item_ratings:[],warnings:[]},ids=new Set();for(const relative of (await Promise.all(['Outfits','Pieces','Ratings','ItemRatings'].map(files))).flat().sort()){try{const text=await readFile(await safeFile(relative,true),'utf8');if(relative.startsWith('Ratings/'))data.ratings.push(parseRating(text));else if(relative.startsWith('ItemRatings/'))data.item_ratings.push(parseItemRating(text));else{const record=parseRecord(text,relative);if(ids.has(record.id))throw Error(`Duplicate ID ${record.id}`);ids.add(record.id);data[record.type==='piece'?'pieces':'outfits'].push(record);}}catch(error){data.warnings.push(`${relative}: ${error.message}`);}}return data;}
 async function saveRecord(record,type){
   if(record.type!==type)throw Error('Wrong record type.');
   parseRecord(serializeRecord(record));
@@ -44,6 +45,7 @@ const server=http.createServer(async(req,res)=>{
       }
       if(!req.headers['content-type']?.startsWith('application/json'))throw Error('JSON request required.');
       const value=JSON.parse((await body(req)).toString('utf8'));
+      if(url.pathname==='/api/item-ratings'){validateItemRating(value);const current=await catalog();if(!current.pieces.some(p=>p.id===value.piece_id))throw Error('Item no longer exists.');await mkdir(path.join(dataRoot,'ItemRatings'),{recursive:true});await writeFile(await safeFile(`ItemRatings/${value.id}.md`),serializeItemRating(value),{flag:'wx'});json(res,201,{saved:true});return;}
       if(url.pathname==='/api/ratings'){validateRating(value);const current=await catalog();if(!current.outfits.some(o=>o.id===value.outfit_id))throw Error('Outfit no longer exists.');await writeFile(await safeFile(`Ratings/${value.id}.md`),serializeRating(value),{flag:'wx'});json(res,201,{saved:true});return;}
       if(url.pathname==='/api/pieces'||url.pathname==='/api/outfits'){await saveRecord(value,url.pathname==='/api/pieces'?'piece':'outfit');json(res,200,{saved:true});return;}
       json(res,404,{error:'Unknown action.'});return;

@@ -24,6 +24,10 @@ Product option records add `slot`, `compatible_slots` (array), `product_id`, `sk
 
 `variant_color` optionally identifies an exact retailer Color option. Refreshes then consider only available variants of that color and use its variant photo and price range. Another color being available cannot make this color shoppable. A variant parameter in a buy link is an observed option reference, not the user's chosen size.
 
+The same field can identify an exact retailer `Finish` option for jewelry. A product with one color can use its single-color product photo. Multi-color products require the selected color's photo. Price observations use the maximum available variant price for conservative outfit budgeting.
+
+`library_slots` optionally curates a verified piece into one or more compatible slot libraries. It must agree with `slot` / `compatible_slots`; it does not change equipment identities. Curated lists are a subset of researched options, and the UI can reveal the full researched pool. Missing curation metadata falls back to the researched pool. Exact colorways are distinct choices, not a claim of distinct garment designs. `library_collection` can name the research batch. `library_note` contains styling suggestions. `style_tags`, `source_type` and `stylist_features` (including `pattern` and `silhouette`) support item preference signals. Styling interpretations are separate from factual retailer evidence and never establish ownership, measurements or fit.
+
 To research a set, read all piece notes for each compatible slot before adding products. Collect options across slots rather than duplicating a product per outfit. Save price and available variant evidence from official retailers in Research; retain product photo provenance. Exclude unavailable leads from the selectable slot options. Stock is observed at the recorded time, not monitored live.
 
 Known shopping cost sums only pieces that are not owned. Missing records, unknown prices and non-USD prices make the total incomplete. Partial totals display the number of unpriced pieces. No currency conversion or live price refresh is implied.
@@ -36,7 +40,15 @@ New snapshots also retain `piece_ids` and `equipment`, allowing the stylist to i
 
 Create a new file for every vote, including a changed opinion. Never edit previous events to simulate a new rating. Select the event with the greatest `created_at`, breaking timestamp ties lexically by `id`, for the current opinion. Different devices can create independent event files. Synced clock skew can affect timestamp ordering; conflict copies remain available for review.
 
-## Preference signals
+## Individual item rating events
+
+`ItemRatings/<UUID>.md` contains `schema: 1`, `type: item-rating`, `id`, `piece_id`, `rating` (integer 1–5), `created_at`, `note`, `reasons` and optional `rated_slot`. The `snapshot` stores the exact title, colors, compatible slots, style tags, pattern, silhouette, source type, product URL and color / finish at vote time. These events are independent of outfit votes in `Ratings/`.
+
+Every vote creates a new file. Earlier votes and comments remain intact. The current item opinion uses the greatest parsed timestamp, breaking ties lexically by event ID. Rating again can retain or replace the written feedback without editing an earlier event. A failed save does not advance the session. Clock skew across devices can still affect ordering.
+
+The item profile uses the latest vote per piece once. It accumulates `rating - 3` for each distinct color, style tag, pattern, silhouette, source type and optional rating-slot context, with score `sum / (count + 3)`. Item recommendations match product features against these signals and normalize by the square root of the matching feature count. Outfit scores continue to use only outfit events. A shared feature is an association, not proof of why an item was liked. Written notes remain available to a future stylist. JSON exports retain both complete histories, latest opinions and separate preference summaries; no external LLM call is made.
+
+## Outfit preference signals
 
 For each latest outfit rating, accumulate `rating - 3` for each distinct style, color and occasion in its snapshot. A feature score is `sum / (count + 3)`, which shrinks weak evidence toward neutral. Recommendation scores combine matching features and normalize by the square root of the number of matches. Display the evidence count and average rating with the signal. This is an interpretable local ranking, not proof of which feature caused the opinion.
 

@@ -7,7 +7,7 @@ const value=flag=>{const i=process.argv.indexOf(flag);return i<0?null:process.ar
 const vault=value('--vault'),explicit=value('--data-root');
 if(!vault&&!explicit)throw Error('Provide --vault ABSOLUTE_VAULT or --data-root DIRECTORY.');
 const dataRoot=path.resolve(explicit??path.join(vault,'Sync/Style Zone'));
-for(const dir of ['Outfits','Pieces','Ratings','Inspirations','Existing Pieces','Assets/Research','Assets/Uploads','Exports'])await mkdir(path.join(dataRoot,dir),{recursive:true});
+for(const dir of ['Outfits','Pieces','Ratings','ItemRatings','Inspirations','Existing Pieces','Assets/Research','Assets/Uploads','Exports'])await mkdir(path.join(dataRoot,dir),{recursive:true});
 const starter=JSON.parse(await readFile(path.join(root,'starter/catalog.json'),'utf8'));
 let added=0;
 for(const record of [...starter.pieces,...starter.outfits]){try{await writeFile(path.join(dataRoot,record.type==='piece'?'Pieces':'Outfits',record.id+'.md'),serializeRecord(record),{flag:'wx'});added++;}catch(error){if(error.code!=='EEXIST')throw error;}}

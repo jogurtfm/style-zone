@@ -4,6 +4,7 @@ async function request(path:string,options:RequestInit={}){const response=await 
 const store:Store={
   load:()=>request('catalog'),
   rate:event=>request('ratings',{method:'POST',body:JSON.stringify(event)}),
+  rateItem:event=>request('item-ratings',{method:'POST',body:JSON.stringify(event)}),
   savePiece:(piece:Piece)=>request('pieces',{method:'POST',body:JSON.stringify(piece)}),
   saveOutfit:(outfit:Outfit)=>request('outfits',{method:'POST',body:JSON.stringify(outfit)}),
   saveImage:async(file:File)=>{const response=await fetch(`/api/images?name=${encodeURIComponent(file.name)}`,{method:'POST',headers:{'Content-Type':file.type},body:file});const data=await response.json();if(!response.ok)throw Error(data.error);return data.path;},

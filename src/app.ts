@@ -1,6 +1,8 @@
 import {COLORS,GEAR_SLOTS,isProduct,reconcileProductEdit,pieceSlots,slotOptions,equipmentFor,DEFAULT_FILTERS,cost,filterOutfits,latestRatings,newRating,recommendation,safeUrl,taste,type Catalog,type Filters,type Outfit,type Piece,type Store,type GearSlot} from './model';
 
 import {fitPreview,productPhoto,productInfo,loadoutEditor,slotIcon} from './equipment';
+import {ItemLibrary} from './library';
+import {itemTaste,latestItemRatings} from './item-model';
 
 type Page='outfits'|'rate'|'wardrobe'|'profile';
 function el<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',text=''):HTMLElementTagNameMap[K]{const x=document.createElement(tag);x.className=cls;x.textContent=text;return x;}
@@ -13,11 +15,12 @@ function input(name:string,value='',type='text'){const x=el('input','sz-input');
 function select(name:string,options:[string,string][],value=''){const s=el('select','sz-select');s.name=name;for(const [v,t]of options){const o=el('option','',t);o.value=v;s.append(o);}s.value=value;return s;}
 
 export class StyleZoneApp {
+  private itemLibrary=new ItemLibrary();
   private data:Catalog={outfits:[],pieces:[],ratings:[],warnings:[]};
   private filters:Filters={...DEFAULT_FILTERS};
   private page:Page='outfits';
   private focusId='';
-  private inventorySlot:GearSlot|''='';
+
   private detail:HTMLDialogElement|null=null;
   private unsub?:()=>void;
   private disposed=false;
@@ -26,6 +29,7 @@ export class StyleZoneApp {
   private refreshSequence=0;
   private hasLoaded=false;
   private keyHandler=(event:KeyboardEvent)=>{
+    if(this.page==='wardrobe'&&!this.detail?.open&&this.itemLibrary.handleKey(event))return;
     if(this.page!=='rate'||this.detail?.open||event.ctrlKey||event.altKey||event.metaKey||(event.target instanceof Element&&event.target.closest('input,textarea,select,[contenteditable=true]')))return;
     const outfit=this.visible().find(o=>o.id===this.focusId);
     if(outfit&&/^[1-5]$/.test(event.key)){event.preventDefault();void this.rate(outfit,Number(event.key),true);}
@@ -41,13 +45,14 @@ export class StyleZoneApp {
   private render(){
     if(this.disposed||this.detail?.open)return;
     this.root.classList.toggle('sz-is-rate',this.page==='rate');
+    this.root.classList.toggle('sz-is-item-rate',this.page==='wardrobe'&&this.itemLibrary.ratingMode);
     const scroll=this.root.querySelector('.sz-content')?.scrollTop??0;
     this.root.replaceChildren();
     const shell=el('div','sz-shell');
     const rail=el('aside','sz-rail');
     const brand=el('div','sz-brand');brand.append(el('span','sz-logo','SZ'),el('div','', 'STYLE ZONE'));rail.append(brand,el('p','sz-rail-caption','A wardrobe that gets you.'));
     const nav=el('nav','sz-nav');nav.setAttribute('aria-label','Style Zone');
-    for(const [id,icon,title]of [['outfits','◫','Loadouts'],['rate','✦','Quick rate'],['wardrobe','▤','Item database'],['profile','◉','Your taste']] as const){const b=button(title,()=>this.navigate(id),`sz-nav-button ${this.page===id?'is-active':''}`);b.prepend(el('span','sz-nav-icon',icon));b.setAttribute('aria-current',this.page===id?'page':'false');nav.append(b);}rail.append(nav);
+    for(const [id,icon,title]of [['outfits','◫','Loadouts'],['rate','✦','Quick rate'],['wardrobe','▤','Item libraries'],['profile','◉','Your taste']] as const){const b=button(title,()=>this.navigate(id),`sz-nav-button ${this.page===id?'is-active':''}`);b.prepend(el('span','sz-nav-icon',icon));b.setAttribute('aria-current',this.page===id?'page':'false');nav.append(b);}rail.append(nav);
     const progress=taste(this.data.ratings);const railFoot=el('div','sz-rail-foot');railFoot.append(el('span','sz-eyebrow','GETTING TO KNOW YOU'),el('strong','',`${progress.rated} looks rated`),el('p','sz-muted',progress.rated?'Every rating makes the next edit more personal.':'Start with five looks. Go with your first instinct.'));
     const bar=el('div','sz-progress');const fill=el('span');fill.style.width=`${Math.min(100,progress.rated/5*100)}%`;bar.append(fill);railFoot.append(bar,button('Export for stylist',()=>void this.export(),'sz-button sz-subtle'));rail.append(railFoot);
     const content=el('main','sz-content');
@@ -130,12 +135,9 @@ export class StyleZoneApp {
   private openProduct(piece:Piece){const dialog=this.dialog(piece.title);dialog.append(productInfo(piece,this.store));dialog.append(button('Edit item record',()=>this.pieceForm(piece),'sz-button sz-subtle'));}
   private pieceRow(piece:Piece){const row=el('div','sz-piece-row');const text=el('div');text.append(el('strong','',piece.title),el('p','sz-muted',`${piece.store||'Store not selected'} · ${piece.ownership}${piece.price_checked_at?` · checked ${piece.price_checked_at}`:''}`));if(piece.price_note)text.append(el('p','sz-price-note',piece.price_note));const actions=el('div','sz-piece-actions');actions.append(el('span','',piece.ownership==='owned'?'Owned':piece.price===null?'Price needed':`${piece.currency} ${piece.price.toFixed(2)}`));if(safeUrl(piece.product_url))actions.append(link('Shop / view',piece.product_url));actions.append(button('Edit item',()=>this.pieceForm(piece),'sz-text-button'));row.append(text,actions);return row;}
   private renderPieces(parent:HTMLElement){
-    const h=this.heading(parent,'YOUR RESEARCHED ITEM DATABASE','A good option for every slot.','Exact products, colors, prices and buy links. Each slot keeps its own pool of alternatives.');h.append(button('Add a piece',()=>this.pieceForm(),'sz-button sz-primary'));
-    const slots=el('div','sz-slot-tabs');const all=button('All slots',()=>{this.inventorySlot='';this.render();},`sz-slot-filter ${!this.inventorySlot?'is-active':''}`);slots.append(all);
-    for(const slot of GEAR_SLOTS){const n=slotOptions(this.data.pieces,slot.id).length;const b=button(`${slot.short} · ${n}`,()=>{this.inventorySlot=slot.id;this.render();},`sz-slot-filter ${this.inventorySlot===slot.id?'is-active':''}`);b.prepend(slotIcon(slot.id));b.setAttribute('aria-label',`Item database slot: ${slot.label}`);slots.append(b);}parent.append(slots);
-    const visible=this.inventorySlot?slotOptions(this.data.pieces,this.inventorySlot):this.data.pieces.filter(isProduct);parent.append(el('p','sz-muted',`${visible.length} exact products · availability checked on each item record`));
-    const grid=el('div','sz-pieces-grid');for(const p of visible){const card=el('article','sz-piece-card sz-inventory-card');const photo=button('',()=>this.openProduct(p),'sz-product-thumb-button');photo.setAttribute('aria-label',`Inspect product: ${p.title}`);photo.append(productPhoto(p,this.store));card.append(photo,this.swatches(p.colors),el('span','sz-eyebrow',`${p.store} / ${pieceSlots(p).map(id=>GEAR_SLOTS.find(s=>s.id===id)?.short).join(' + ')}`),this.pieceRow(p));grid.append(card);}parent.append(grid);
-    const pending=this.data.pieces.filter(p=>!isProduct(p));if(pending.length){const more=el('details','sz-unverified-items');more.append(el('summary','',`${pending.length} personal / unverified records`),el('p','sz-muted','These records are preserved. They need an exact product link and verification before appearing in the shoppable item database.'));for(const p of pending)more.append(this.pieceRow(p));parent.append(more);}
+    parent.append(button('Add a piece',()=>this.pieceForm(),'sz-button sz-subtle'));
+    this.itemLibrary.render(parent,this.data,this.store,()=>this.render(),(message,error)=>this.toast(message,error),p=>this.openProduct(p),p=>this.pieceForm(p));
+    const pending=this.data.pieces.filter(p=>!isProduct(p));if(pending.length&&!this.itemLibrary.ratingMode){const more=el('details','sz-unverified-items');more.append(el('summary','',`${pending.length} personal / unverified records`),el('p','sz-muted','These records are preserved. They need an exact product link and verification before appearing in the shoppable libraries.'));for(const p of pending)more.append(this.pieceRow(p));parent.append(more);}
   }
   private pieceForm(piece?:Piece){
     const dialog=this.dialog(piece?'Edit your piece':'Add a piece'),form=el('form','sz-form');
@@ -168,6 +170,7 @@ export class StyleZoneApp {
     }catch(e){error.textContent=e instanceof Error?e.message:String(e);save.disabled=false;}})();};dialog.append(form);
   }
   private renderProfile(parent:HTMLElement){
+    this.itemLibrary.profile(parent,this.data);
     const profile=taste(this.data.ratings);this.heading(parent,'A STYLE THAT EVOLVES WITH YOU','A little more you, every time.','Your ratings reveal patterns in the looks you enjoy. These are starting points for your next suggestions.');
     const overview=el('div','sz-profile-summary');overview.append(el('strong','',`${profile.rated}`),el('div','',`distinct outfits rated · ${profile.events} rating events · ${profile.liked} rated 4 or 5`));parent.append(overview);
     if(!profile.rated){const empty=el('div','sz-empty');empty.append(el('h2','','Let’s find what clicks.'),el('p','sz-muted','Rate a few different outfits. A 1 or 2 is as useful as a 5.'),button('Start quick rating',()=>this.navigate('rate'),'sz-button sz-primary'));parent.append(empty);return;}
@@ -176,5 +179,5 @@ export class StyleZoneApp {
     parent.append(el('p','sz-muted','Signals compare ratings with the neutral midpoint of 3 and soften patterns supported by few examples. Colors and styles appear together, so these are associations rather than proof of why you liked an outfit.'));
     const history=el('section','sz-profile-card');history.append(el('h2','','Your latest calls'));const latest=[...latestRatings(this.data.ratings).values()].sort((a,b)=>b.created_at.localeCompare(a.created_at));for(const r of latest.slice(0,30)){const row=el('div','sz-history');row.append(el('strong','',`${r.rating}/5`),el('div','',r.snapshot.title),el('span','sz-muted',r.note||r.reasons.join(', ')||new Date(r.created_at).toLocaleDateString()));history.append(row);}parent.append(history,button('Export for stylist',()=>void this.export(),'sz-button sz-primary'));
   }
-  private async export(){try{await this.store.export({schema:1,exported_at:new Date().toISOString(),...this.data,preference_summary:taste(this.data.ratings),latest_ratings:[...latestRatings(this.data.ratings).values()]});this.toast('Export saved with outfits, pieces, rating history and taste signals.');}catch(e){this.toast(`Export failed: ${e instanceof Error?e.message:String(e)}`,true);}}
+  private async export(){try{await this.store.export({schema:1,exported_at:new Date().toISOString(),...this.data,preference_summary:taste(this.data.ratings),item_preference_summary:itemTaste(this.data.item_ratings??[]),latest_item_ratings:[...latestItemRatings(this.data.item_ratings??[]).values()],latest_ratings:[...latestRatings(this.data.ratings).values()]});this.toast('Export saved with outfits, pieces, rating history and taste signals.');}catch(e){this.toast(`Export failed: ${e instanceof Error?e.message:String(e)}`,true);}}
 }
