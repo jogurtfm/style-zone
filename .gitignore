@@ -4,9 +4,9 @@ release/
 .local/
 private/
 agentresearch/
-Existing Pieces/
-Inspirations/
-Outfit Combos/
+/Existing Pieces
+/Inspirations
+/Outfit Combos
 *.log
 *.zip
 *.tmp
